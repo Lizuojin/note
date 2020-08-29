@@ -1,0 +1,14 @@
+{
+  "name": "vue_press_note",
+  "version": "1.0.0",
+  "description": "'# Hello VuePress'",
+  "main": "index.js",
+  "scripts": {
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs",
+    "deploy": "deploy.sh"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
