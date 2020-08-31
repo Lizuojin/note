@@ -382,11 +382,11 @@ foo();  //输出2
 function foo() {
   console.log(this.a);
 }
-var obj = {
+var myObject = {
   a: 2,
   foo: foo
 }
-obj.foo();  // 输出2
+myObject.foo();  // 输出2
 
 ```
 <br/>
@@ -415,11 +415,11 @@ obj1.obj2.foo();  // 输出3
 function foo() {
   console.log(this.a)
 }
-var obj = {
+var myObject = {
   a: 2,
   foo: foo
 }
-var bar = obj.foo;
+var bar = myObject.foo;
 var a = 'oops, global';
 bar();  // 输出 oops, global
 ```
@@ -434,13 +434,13 @@ function foo() {
 function doFoo(fn) {
   fn()
 }
-var obj = {
+var myObject = {
   a: 2,
   foo: foo
 }
 
 var a = 'oops, global';
-doFoo(obj.foo);  // 输出 oops, global
+doFoo(myObject.foo);  // 输出 oops, global
 ```
 fn()的规则也是和上个例子一样
 
@@ -451,11 +451,11 @@ fn()的规则也是和上个例子一样
 function foo(){
   console.log(this.a)
 }
-var obj = {
+var myObject = {
   a: 1，
   b: 2
 }
-foo.call(obj);// 输出1
+foo.call(myObject);// 输出1
 ```
 <br/>
 
@@ -468,11 +468,11 @@ function foo() {
 function doFoo(fn) {
   fn();
 }
-var obj = {
+var myObject = {
   a: 2
 }
 var bar = function(){
-  foo.call(obj)
+  foo.call(myObject)
 }
 var a = 3;
 bar();// 输出2，而不是3
@@ -486,15 +486,15 @@ function foo(something) {
   console.log(this.a, something);
   return this.a + something;
 }
-function bind(fn, obj) {
+function bind(fn, myObject) {
   return function() {
-    return fn.apply(obj, arguments);
+    return fn.apply(myObject, arguments);
   }
 }
-var obj = {
+var myObject = {
   a: 2
 }
-var bar = bind(foo, obj);
+var bar = bind(foo, myObject);
 var b = bar(3); //2 3
 console.log(b); // 5
 ```
@@ -505,10 +505,10 @@ function foo(something) {
   console.log(this.a, something);
   return this.a + something;
 }
-var obj = {
+var myObject = {
   a: 2
 }
-var bar = foo.bind(obj);
+var bar = foo.bind(myObject);
 var b = bar(3);   // 2 3
 console.log(b);   // 5
 ```
@@ -557,16 +557,16 @@ new绑定优先级更高
 function foo(a) {
   this.a = a;
 }
-var obj = {};
+var myObject = {};
 
 // 显示绑定
-var bar = foo.bind(obj);
+var bar = foo.bind(myObject);
 bar(2);
-console.log(obj.a); // 输出2
+console.log(myObject.a); // 输出2
 
 // new绑定
 var baz = new bar(4);
-console.log(obj.a); // 输出2
+console.log(myObject.a); // 输出2
 console.log(baz.a); // 输出4
 ```
 
@@ -574,9 +574,9 @@ console.log(baz.a); // 输出4
 ---
 1. 函数是否在new中被调用，是则属于new绑定，this指向新创建的对象<br/>`var bar = new foo()`
 
-2. 函数是否通过call，apply或者bind调用，是则属于显示绑定，this指向指定的对象<br/>`var bar = foo.call(obj) `
+2. 函数是否通过call，apply或者bind调用，是则属于显示绑定，this指向指定的对象<br/>`var bar = foo.call(myObject) `
 
-3. 函数是否在某个上下文对象中调用，则则属于隐式绑定，this指向这个上下文对象<br/>`var bar = obj.foo()`
+3. 函数是否在某个上下文对象中调用，则则属于隐式绑定，this指向这个上下文对象<br/>`var bar = myObject.foo()`
 
 4. 如果以上都不是，则使用默认绑定，严格模式下，绑定到undefined，否则绑定到全局对象window<br/>`var bar = foo()`
 
@@ -638,6 +638,7 @@ bar.call(obj2); // 2,不是3！
 
 ## 对象
 ### 语法
+---
 对象可以通过两种形式定义：
 - 声明(文字)形式
 - 构造形式
@@ -691,23 +692,25 @@ console.log(number.toFixed(2));   // 打印 42.36
 :::
 
 ### 内容
+---
 存储在对象容器内部的是这些属性的名称，它们就像指针(引用)，指向值真正的存储位置
 #### 两种属性访问方式：
 ```js
-var obj = {
+var myObject = {
   a: 2
 }
 // 属性访问
-obj.a;    // 2
+myObject.a;    // 2
 
 // 键访问
-obj['a']  // 2  
+myObject['a']  // 2  
 ```
 #### 两种访问方式的区别：
 - 属性访问：要求属性名满足标识符的命名规范
 - 键访问：任意UTF-8/Unicode字符串
 
 ### 复制对象
+---
 准确表示对象的复制，判断它是浅复制还是深复制
 #### 浅复制(拷贝)
 拷贝一个对象，当值为基本类型会复制一份；值为复杂类型只是复制一份引用，指向同一个值，即当新旧两个对象的其中一个改变了复杂类型的值，另一个也会随之改变
@@ -719,7 +722,7 @@ obj['a']  // 2
 :::
 ```js
 // JSON格式化对象实现浅拷贝
-var obj = {
+var myObject = {
   a: 1，
   b: 'AAA'，
   c: true，
@@ -727,7 +730,7 @@ var obj = {
   e: undefined，
   f: function(){console.log('this is function')}
 }
-var newObj = JSON.parse(JSON.stringify(obj));
+var newObj = JSON.parse(JSON.stringify(myObject));
 console.log(newObj.a); // 输出1
 console.log(newObj.b); // 输出'AAA'
 console.log(newObj.c); // 输出true
@@ -741,7 +744,7 @@ console.log(newObj.f); // 输出undefined，f属性中的函数引用不能被JS
 :::
 ```js
 // ES6 Object.assign() 实现浅拷贝
-var obj = {
+var myObject = {
   a: 1,
   b: 'AAA',
   c: true,
@@ -762,6 +765,7 @@ console.log(newObj.f); // 输出ƒ (){console.log('this is function')}
 拷贝一个对象，不管对象属性的值是基本类型还是复制类型，都会复制一份新的，即两个新旧对象时互相独立的
 
 ### 属性描述符
+---
 可以使用Object.defineProperty() 添加属性、修改属性、设置特性
 ::: tip 三个特性
 - writable(可写)
@@ -775,15 +779,15 @@ console.log(newObj.f); // 输出ƒ (){console.log('this is function')}
 :::
 ```js
 // writable 
-var obj = {};
-Object.defineProperty(obj, 'a', {
+var myObject = {};
+Object.defineProperty(myObject, 'a', {
   value: 2,
   writable: false,    // 不可写，
   configurable: true,
   enumerable: true
 });
-obj.a = 3;
-console.log(obj.a);   //打印 2，严格模式下会报错 TypeError
+myObject.a = 3;
+console.log(myObject.a);   //打印 2，严格模式下会报错 TypeError
 ```
 <br/>
 
@@ -795,22 +799,22 @@ console.log(obj.a);   //打印 2，严格模式下会报错 TypeError
 
 ```js
 // configurable  
-var obj = {};
-Object.defineProperty(obj, 'a', {
+var myObject = {};
+Object.defineProperty(myObject, 'a', {
   value: 2,
   writable: true,    
   configurable: false,    // 不可配置
   enumerable: true
 });
 
-obj.a = 3;
-console.log(obj.a)    // 打印 3
+myObject.a = 3;
+console.log(myObject.a)    // 打印 3
 
-obj.a = 4;
-delete obj.a;
-console.log(obj.a);   // 打印 4
+myObject.a = 4;
+delete myObject.a;
+console.log(myObject.a);   // 打印 4
 
-Object.defineProperty(obj, 'a', {
+Object.defineProperty(myObject, 'a', {
   value: 6,
   writable: true,    
   configurable: true,
@@ -824,17 +828,171 @@ Object.defineProperty(obj, 'a', {
 :::
 
 ```js
-var obj = {
+var myObject = {
   a: 1,
   b: 2,
 }
-Object.defineProperty(obj, 'c', {
+Object.defineProperty(myObject, 'c', {
   value: 3,
   enumerable: false // 不可枚举
 })
 
 // 遍历对象
-for(var key in obj){
-  console.log(obj[key]); // 依次输出1 2
+for(var key in myObject){
+  console.log(myObject[key]); // 依次输出1 2
 }
 ```
+
+### 不变性
+---
+:::tip 对象常量属性
+该属性不可修改，不可重定义或者不可被删除
+:::
+```js
+var myObject = {};
+Object.defineProperty(myObject, 'FAVORITE_NUMBER', {
+  value: 42,
+  writable: false,
+  configurable: false
+})
+console.log(myObject.FAVORITE_NUMBER); // 输出42
+myObject.FAVORITE_NUMBER = 45; 
+delete myObject.FAVORITE_NUMBER 
+console.log(myObject.FAVORITE_NUMBER); // 输出42，常量属性依然在
+```
+
+:::tip 禁止扩展
+禁止一个对象添加属性并且保留已有属性，可以使用Object.preventExtensions()
+:::
+```js
+var myObject = {
+  a: 2
+};
+Object.preventExtensions(myObject)
+myObject.b = 3;
+console.log(myObject.b);   // undefined
+```
+
+:::tip 密封
+- 对象密封后，不能添加新的属性，不能重新配置也不能删除现有属性
+- 可以修改现有属性的值
+- Object.seal()依次调用对象属性的Object.preventExtensions()方法
+:::
+```js
+var myObject = {
+  name: 'www',
+  age: 23,
+  sex: '女'
+}
+Object.seal(myObject);
+
+console.log(delete myObject.name);    // 打印 false
+console.log(myObject);                // 输出{name:'www'，age: 23，sex:'女'}，name属性依然存在
+
+
+myObject.address = '广州';     // address属性添加失败，严格模式下报错TypeError
+console.log(myObject);        // 输出{name:'www'，age: 23，sex:'女'}，address属性添加失败
+
+// 报错，TypeError
+Object.defineProperty(myObject, 'name', {
+  configurable: true,
+  writable: true,
+  enumerable: true
+})
+```
+
+:::tip 冻结
+- 对象冻结后，不能修改对象属性上的值
+- Object.freeze() 调用Object.seal()并把所有属性的writable修改为false
+- 这是一个浅冻结，如果对象里还有对象，则对象的对象不收冻结影响
+:::
+```js
+var myObject = {
+  name: 'www',
+  obj: {
+    a: 1
+  }
+}
+Object.freeze(myObject);
+
+// 赋值失败，严格模式下，报错TypeError
+myObject.name = 'AAA';
+// 输出{name:'www'}
+console.log(myObject);
+
+myObject.obj.a = 2;
+console.log(myObject);
+
+// 报错TypeError
+Object.defineProperty(myObject, 'name', {
+  value: 'BBB'
+})
+```
+
+### Getter 和 Setter
+---
+:::tip
+- getter和setter是一个隐藏函数，分别在获取属性值和设置属性值时被调用
+- 一旦设置了getter和setter，该属性的value和writable则自动忽略
+- getter和setter通常是成对出现的
+:::
+```js
+var myObject = {
+  get a() {
+    return 2;
+  }
+}
+myObject.a = 3;
+// 输出2，因为a属性只定义了getter，没有定义setter，赋值无效
+console.log(myObject.a);
+
+Object.defineProperty(myObject，'b'，{
+  get: function(){
+    return this._b_;
+  }，
+  set: function(val){
+    this._b_ = val*3;
+  }，
+  enumerable: true
+})
+myObject.b = 3;
+// 输出9，3*3
+console.log(myObject.b);
+```
+
+### 存在性
+---
+:::tip 判断某个属性是否存在
+in：判断某个属性是否存在对象以及对象的原型链上
+hasOwnProperty：判断对象中是否存在某个属性
+:::
+```js
+var myObject = {
+  a: 2
+}
+console.log("a" in myObject);   // 输出true
+console.log("b" in myObject);   // 输出false
+
+console.log(myObject.hasOwnProperty('a'));    // 输出true
+console.log(myObject.hasOwnProperty('b'));    // 输出false
+
+var obj = Object.create(null); // obj没有进行[[Prototype]]原型委托，所以没有hasOwnProperty方法
+obj.name = 'why';
+console.log(obj.hasOwnProperty('name')); 
+console.log(Object.prototype.hasOwnProperty.call(obj,'name')); // 输出 true
+```
+::: warning 
+in 操作符检查的是某个属性名是否存在，4 in [2, 4, 6]返回false，因为数组[2, 4, 6]的属性名是0, 1, 2
+:::
+
+<!-- ## 混合对象“类”
+
+### 类理论
+#### 类/继承
+- 代码的组织结构形式
+- 软件中对真实世界中问题领域的建模方法
+
+**数据结构：** 把数据以及和它相关的行为封装起来
+
+**多态：** 父类的通用行为可以被子类用更特殊的行为重写 -->
+
