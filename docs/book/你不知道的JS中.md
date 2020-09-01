@@ -163,3 +163,58 @@ var a = 'abc';
 var b = a.split('').reverse().join('');
 console.log(b); // 输出abc
 ```
+
+### 数字的语法
+```js
+// JavaScript 中的数字字面量一般用十进制表示
+var a = 42;
+var b = 42.3;
+
+// 小数点前面的0可以省略
+var a = 0.42;
+var b = .42;
+
+// 小数部分后面的0也可以省略
+var a = 42.0;
+var b = 42.;
+```
+
+### 较小的数值
+二进制浮点数最大的问题：
+```js
+console.log(0.1 + 0.2 === 0.3) // false
+```
+
+#### 怎么来判断0.1+0.2与0.3是否相等呢？
+设置一个误差范围值：2^-52(2.220446049250313e-16)，该值定义在 Number.EPSILON 中
+```js
+// 比较两个数字是否相等
+function num(n1, n2) {
+  return Math.abs(n1 - n2) < Number.EPSILON
+}
+
+var a = 0.1 + 0.2;
+var b = 0.3;
+
+console.log(num(a,b));                     // true
+console.log(num(0.0000001, 0.0000002));    // false
+```
+### 整数的安全范围
+- 最大整数是2^52 - 1，即9007199254740991，ES6定义为Number.MAX_SAFE_INTEGER
+- 最小整数是-9007199254740991，ES6定义为Number.MIN_SAFE_INTEGER
+
+### 整数检测
+```js
+// Number.isInteger() 方法
+Number.isInteger(42);       // true
+Number.isInteger(42.000);   // true
+Number.isInteger(42.3);     // false
+```
+
+#### 检测值是否是安全整数
+```js
+// Number.isSafeInteger() 方法
+Number.isSafeInteger(Number.MAX_SAFE_INTEGER);    // true
+Number.inSafeInteger(Math.pow(2, 53));            // false
+Number.inSafeInteger(Math.pow(2, 53) - 1);        // true
+```
