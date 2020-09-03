@@ -1,7 +1,7 @@
 const slidebar = require('./config.sidebar')
 module.exports = {
   title: '前端知识梳理',
-  base: '/note/',
+  base: '/',
   themeConfig: {
     nav: [
       {
