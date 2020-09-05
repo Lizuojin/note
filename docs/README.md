@@ -4,7 +4,7 @@ home: true
 actionLink: /node/
 features:
 - title: 逆水行舟，不进则退
-  details: 记录每一天的进步, 一分耕耘，一分收获.
+  details: 让努力变成一种习惯，而不是一时热血.
 - title: 站在巨人的肩膀上
   details: 记录每一天的进步, 一分耕耘，一分收获.
 - title: day day up

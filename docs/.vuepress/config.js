@@ -20,7 +20,8 @@ module.exports = {
         ]
       },
       { text: "Vue", link: "/vue/" },
-      { text: "前端概括", link: "/allWeb/" }
+      { text: "资源工具", link: "/resource/resource/" }
+      // { text: "前端概括", link: "/allWeb/" }
     ],
     sidebar: slidebar,
   },

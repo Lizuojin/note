@@ -46,8 +46,7 @@ var a = null;
 ---
 JavaScript 中的变量是没有类型的，只有值才有，变量可以随时持有任何类型的值
 
-### undefined 和 undeclared
----
+#### undefined 和 undeclared
 :::tip 区别
 - **undefined:** 作用域中声明但还没有赋值的变量
 - **undeclared:** 作用域中未声明过的变量
@@ -629,4 +628,200 @@ parseInt(a);  // 42
 
 Number(b);    // NaN
 parseInt(b);  // 42
+```
+**区别：**
+- 解析：允许字符串中含有非数字字符，解析从左到右，遇到非数字字符就停止
+- 转换：不允许出现非数字字符，否则会失败并返回NaN
+---
+---
+#### 显示强制类型转换(显式转换为布尔值)
+- **Boolean()** 强制转换
+- **!!** 强制转换
+```js
+var a = '0';
+var b = [];
+
+var d = '';
+var e = 0;
+
+console.log(Boolean(a));   // true
+console.log(!!b);          // true
+
+console.log(Boolean(d));   // false
+console.log(!!e);          // false
+```
+:::tip 应用
+在JSON序列化过程中将值强制类型转换为 true 或者 false
+:::
+```js
+var a = [
+  1,
+  function() {}
+  2,
+  function() {}
+]
+JSON.stringify(a);    // '[1, null, 2, null]'
+
+JSON.stringify(a, function(key, val) {
+  if(typeof val == 'function') {
+    return !!val;
+  } else {
+    return val;
+  }
+});     // '[1, true, 2, true]'
+```
+---
+---
+#### 隐式强制类型转换(运算符)
+:::tip
+1. 运算符+可以隐式将数字转换为字符串
+2. 运算符-可以隐式的将字符串转换为数字
+:::
+```js
+var a = 42;
+var b = '0';
+
+var c = a + b;
+var d = c - 0;
+console.log(c); // 输出"420"
+console.log(d); // 输出420
+
+var e = [1,2];
+var f = [3,4];
+var g = e + f;
+console.log(g);
+// 输出1,23,4 数组相加时，会隐式的调用数组的valueOf()或者toString()
+// e.toString() => "1,2"
+// f.toString() => "3,4"
+
+var i = 42;
+var j = "42";
+console.log(i==j);
+console.log(j==i);
+var p = true;
+var q = 0;
+console.log(p==q);
+// 与数字进行比较，先将其转换成数字，再比较
+```
+---
+---
+#### 隐式强制类型转换(隐式转换为布尔值)
+:::tip
+- if语句的条件判断
+- for循环的第二条条件判断语句
+- do..while和while循环的循环判断条件
+- ?:三元运算符
+- ||和&&逻辑运算符
+> ||和&&逻辑运算符，短路返回
+> - ||逻辑运算符，从左到右，遇到真值，直接返回；前面都不是真值，返回最后一个，不管是真值还是假值
+> - &&逻辑运算符，从左到右，遇到假值，直接返回；前面都不是假值，返回最后一个，不管是真值还是假值
+:::
+```js
+var a = 42;
+var b = "abc";
+var c = false;
+var d = 0;
+
+console.log(a || b || c);   // 打印42，a为真值直接返回
+console.log(c || b || a);   // 打印'abc'，c为假值，b为真值返回b
+console.log(c || d || a);   // 打印42，a前面都是假值，返回后面一个，不管是真值还是假值
+
+console.log(a && b && c);   // 打印false，c前面都是真值，返回后面一个，不管是真值还是假值
+console.log(c && b && a);   // 打印false，c为假值，返回c
+console.log(b && d && a);   // 打印0，d为假值，直接返回
+```
+---
+---
+#### 隐式强制类型转换(符号)
+允许符号到字符串的显式强制类型转换，隐式强制类型转换会产生错误
+```js
+var a = Symbol('cool');
+console.log(String(a));   // 'Symbol(cool)'
+
+var b = Symbol('not cool');
+console.log(b + '');      // TypeError
+```
+
+### 宽松相等和严格相等
+---
+== 允许在相等比较中进行强制类型转换，而 === 不允许
+```js
+
+var a = 42;
+var b = "42";
+
+console.log(a==b);  // 输出true
+console.log(a===b); // 输出false，a为数字类型，b为字符串类型
+```
+```js
+// 避免 == true 和 == false
+var x = '42';
+var y = false;
+console.log(x == y);    // 打印false
+// '42' 不会转换为布尔值，而是true 转换为1，'42'转换为42
+```
+---
+---
+#### nullhe 和 undefined 之间的相等比较
+在 == 中 null 和 undefined 相等(也与自身相等)，与其他值都不相等
+```js
+var a = null;
+var b;
+
+a == b;       // true
+a == null;    // true
+b == null;    // true
+
+a == false;   // false
+b == false;   // false
+a == '';      // false
+b == '';      // false
+a == 0;       // false
+b == 0;       // false
+```
+---
+---
+#### 对象和非对象之间的相等比较
+对象调用ToPrimitive抽象操作(如 toString()、valueOf())强制转换为基本类型
+```js
+var a = 42;
+var b = [ 42 ];
+
+a == b;   // true
+
+```
+
+### 语法
+语法与表达式有所差别，语句相当于句子，表达式相当于短语，运算符相当于标点符号和连接词
+
+### 语句的结果值
+语句都有一个结果值，返回最后一个语句/表达式的结果
+> 在控制台输入 var a = 42 会得到结果值 undefined，而非42
+```js
+// 获取语句的结果值
+// ES7 规范提案的一项：do表达式
+var a, b;
+a = do {
+  if(true) {
+    b = 4 + 38;
+  }
+}
+console.log(a)
+```
+
+#### 表达式的副作用
+```js
+// 函数调用
+function foo() {
+  a = a + 1;
+}
+var a = 1;
+foo()   // 结果值是undefined，副作用a的值被改变
+
+// 递增递减运算符
+// a++ 首先返回变量a的当前值42(再将该值赋给b)，然后将a的值加1
+var a = 42;
+var b = a++;
+console.log(b);   // 42
+console.log(a);   // 43
 ```
