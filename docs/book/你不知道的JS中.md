@@ -825,3 +825,210 @@ var b = a++;
 console.log(b);   // 42
 console.log(a);   // 43
 ```
+
+## 异步和性能
+现在运行的部分和将来运行的部分之间的关系就是异步编程的核心
+### 分块的程序
+```js
+// 分块的程序
+function now() {
+  return 21;
+}
+function later() {
+  answer = answer * 2;
+  console.log('later:' + answer);
+}
+var answer = now();
+setTimeout(function(){
+  later();
+},1000);
+
+// 现在执行的块：
+function now() {
+  return 21;
+}
+function later() {};
+var answer = now();
+setTimeout(function(){
+  later();
+},1000);
+
+// 将来执行的块：
+answer = answer * 2;
+console.log('later:' + answer);
+```
+### 异步控制台
+---
+:::tip 无法理解的console.log函数
+1. console.log函数并不是JavaCcript的正式一部分，它是宿主环境添加到JavaScript中的
+2. 在Node.js环境下，它是严格的同步的
+3. 在浏览器下，正常情况下是'同步'的，非正常情况下是异步的。
+:::
+```js
+var a = {
+  index: 1
+}
+console.log(a);
+a.index++;
+console.log(a);
+
+// 有些浏览器在某些环境下，会把console.log 等I/O操作放在后台执行，意味着a.index++
+// 操作执行完毕后，才执行两个console.log函数，造成输出结果是：{index:2}
+```
+
+### 事件循环
+---
+环境提供了一种机制来处理程序中多个块的执行，且执行每块时调用 JavaScript 引擎，这种机制称为事件循环
+```js
+// 伪代码
+
+// eventLoop 是一个用作队列的数组(先进，先出)
+var eventLoop = [];
+var event;
+
+while(true) {
+  // 一次tick
+  if(eventLoop.length > 0) {
+    // 拿到队列中的下一个事件
+    event = eventLoop.shift();
+
+    // 现在，执行下一个事件
+    try {
+      event();
+    } catch(err) {
+      reportError(err);
+    }
+  }
+}
+```
+
+### 完整运行
+---
+JavaScript 是单线程特性，代码具有原子性(线程之间不会互相干扰)
+```js
+var a = 1;
+var b = 2;
+
+function foo() {
+  a++;
+  b = b + a;
+  a = b + 3;
+}
+
+function bar() {
+  b++;
+  a = 8 + b;
+  b = a * 2;
+}
+
+ajax('http://som1.url', foo)
+ajax('http://som1.url', bar)
+```
+- 一旦 foo() 开始运行，它的所有代码都会在 bar() 中任意代码运行之前完成，称为**完整运行**
+- 这个程序只有两个可能输出，取决于哪个函数先运行，如果存在多线程，输出的结果数目会增加
+:::tip 不确定性
+- JavaScript 的特性中，函数顺序的不确定性就是通常所说的**竞态条件**；函数之间互相竞争
+- 函数(事件)顺序级别上的确定性要高于多线程情况下的语句顺序级别的确定性
+:::
+
+### 任务
+:::tip 任务队列
+- 挂在在事件循环队列的每个tick之后的一个队列
+- tick中出现异步动作不会导致新事件添加到事件循环队列中，而是当前tick的任务队列末尾添加一个任务
+:::
+```js
+console.log(1);
+setTimeout(function() {
+  console.log(2);
+}, 0);
+
+schedule( function() {
+  console.log(3);
+  schedule( function() {
+    console.log(4);
+  })
+})
+// 打印顺序 1 3 4 2 
+```
+1. 全局代码tick执行完，打印1 3 4，setTimeout() 在任务队列末尾添加一个任务
+2. 执行任务队列的第一个任务，如果该任务还有异步动作，就在任务队列添加一个任务
+3. 重复第二步，直到 任务队列清空
+
+### 什么是Promise
+---
+#### 未来值
+> 1. 卖一个汉堡，但我不能马上得到这个汉堡，收银员给我一张收据(**承诺promise**)，保证最终我会得到汉堡
+> 2. 在等待的过程中还可以做些其他事情。收据当作汉堡的占位符，这个占位符是的这个值不再依赖时间，这是一个**未来值**
+> 3. 最后，用收据换来了汉堡，即我需要的值准备好了，我用承诺值换取这个值本身
+> 4. 汉堡可能卖完了，即未来值的一个重要特性，它可能成功，也可能失败
+> 5. 永远没有被叫到号，即处于一种未决议状态
+
+Promise 是一种封装和组合未来值的易于复用的机制
+
+#### 完成事件
+> 1. 调用一个函数foo()执行某个任务，这个函数可能立即完成任务，也可能需要一段时间才能完成
+> 2. 要通过某种方式在foo()完成的时候得到通知，以便继续下一步
+> 3. 侦听某个通知，把对通知的需求重新组织为对foo()发出的一个**完成事件**的侦听
+
+:::tip 回调与Promise的通知
+- **回调：** 通知就是任务调用回调
+- **Promise：** 侦听来自任务的事件，然后得到通知，根据情况继续
+:::
+```js
+// 伪代码
+foo(x) {
+  // 开始做点可能耗时的工作
+  // 构造一个listener 事件通知处理对象来返回
+  return listener
+}
+foo(42)
+var evt = foo(42);
+evt.on('completion', function() {
+  // 可以进行下一步
+})
+evt.on('failure', function() {
+  // foo() 中出错
+})
+```
+
+### Promise 信任的问题
+
+#### 调用过早
+Promise调用then()的时候，即使Promise已经决议，提供给then()的回调也总被异步调用
+
+#### 调用过晚
+一个Promise决议后，这个Primose注册的回调都会在下一个异步时机点上依次被立即调用，这些回调中的任意一个都无法影响或延误对其他回调的调用
+```js
+p.then(function() {
+  p.then(function() {
+    console.log('c')
+  })
+  console.log('a')
+})
+p.then( function() {
+  console.log('b')
+})
+// 'c'无法打断或抢占'b'，这是因为Primose的运作方式
+```
+:::tip Primose调用技巧
+不应该依赖于不同Promise 间回调的顺序和调度
+:::
+```js
+var p3 = new Promise( function(resolve,reject) {
+  resolve('B')
+})
+var p1 = new Promise( function(resolve, reject) {
+  resolve(p3)
+})
+var p2 = new Promise( function(resolve,reject) {
+  resolve('A')
+})
+p1.then( function(v) {
+  console.log(v);
+})
+p2.then( function(v) {
+  console.log(v);
+})
+// A B，而不是 B A
+// 规定的行为把p3展开到p1，但是是异步地展开，所以p1的回调排在p2的回调之后
+```
