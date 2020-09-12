@@ -970,7 +970,7 @@ Promise 是一种封装和组合未来值的易于复用的机制
 > 2. 要通过某种方式在foo()完成的时候得到通知，以便继续下一步
 > 3. 侦听某个通知，把对通知的需求重新组织为对foo()发出的一个**完成事件**的侦听
 
-:::tip 回调与Promise的通知
+:::tip 回调和Promise的通知
 - **回调：** 通知就是任务调用回调
 - **Promise：** 侦听来自任务的事件，然后得到通知，根据情况继续
 :::
@@ -992,7 +992,7 @@ evt.on('failure', function() {
 ```
 
 ### Promise 信任的问题
-
+---
 #### 调用过早
 Promise调用then()的时候，即使Promise已经决议，提供给then()的回调也总被异步调用
 
@@ -1032,3 +1032,145 @@ p2.then( function(v) {
 // A B，而不是 B A
 // 规定的行为把p3展开到p1，但是是异步地展开，所以p1的回调排在p2的回调之后
 ```
+
+#### 回调未调用
+任何东西(甚至JavaScript)都不能阻止Promise向你通知它的协议
+```js
+function timeout(delay) {
+  return new Promise( function(resolve, reject) {
+    setTimeout( function() {
+      reject('Timeout');
+    }, delay)
+  })
+}
+
+promise.race([
+  foo(),
+  timeout(3000)
+]).then(
+  function() {
+    // foo() 及时完成
+  },
+  function(err) {
+    // 或者foo()被拒绝，或者只是没能按时完成
+    // 查看err来了解是那种情况
+  }
+)
+// 保证foo()有一个输出信号，防止其永久挂住程序
+```
+
+#### 调用次数过少或过多
+Promise 只会接受第一次决议，并默默地忽略任何后续调用
+
+#### 未能传递参数/环境值
+- Promise 至多只能有一个决议值(完成或拒绝)
+- 不管值是什么，都会传给所有注册的回调
+- 使用多个参数调用resolve() 或者 reject()，第一个参数之后的所有参数都会被忽略
+- 要传递多个值，必须把他们封装在单个值中传递，比如数组或对象
+
+#### 吞掉错误或异常
+Promise的创建过程中或者查看其决议结果过程中的任何时间点上出现了一个JavaScript 异常错误，异常就会被捕捉，并且这个Promise被拒绝
+```js
+var p = new Promise( function(resolve, reject) {
+  foo.bar();    // foo未定义，所以会出错
+  resolve(42);
+})
+p.then(
+  function fulfilled() {
+    // 永远不会到这里
+  },
+  function rejected(err) {
+    // err 将会是一个来自foo.bar这一行的TypeError异常对象
+  }
+)
+// foo.bar()中发生的JavaScript异常导致了Promise拒绝，可以捕捉并对其作出响应
+```
+
+### Promise 模式
+---
+
+:::tip Promise.all([..])
+- 等待两个或更多并行/并发的任务都完成才能继续
+- 需要一个参数，是一个数组，通常由Promise实例组成
+- 成员promise 中任何一个被拒绝，主Promis.all([])promise就会立即拒绝
+:::
+```js
+var p1 = request('http://some.url.1/');
+var p2 = request('http://some.url.2/');
+
+Promise.all([p1,p2]).then(function(msgs) {
+  return request('http://some.url.3/')
+}).then( function(msg) {
+  console.log(msg)
+})
+```
+
+:::tip Promise.race([..])
+- 有任何一个promise决议为完成，Promise.all([..])就会完成
+- 传入一个空数组Promise.all([..])永远不会决议，而不是立即决议
+:::
+```js
+var p1 = request('http://some.url.1/');
+var p2 = request('http://some.url.2/');
+
+Promise.all([p1,p2]).then(function(msgs) {
+  return request('http://some.url.3/')
+}).then( function(msg) {
+  console.log(msg)
+})
+```
+### 生成器
+--- 
+- 在ES6之前，一个函数一旦开始执行，将不会被中断，一直到函数执行完毕
+- 在ES6之后，由于生成器的存在，函数可以一次或多次启动和停止，并不一定非得完成
+```js
+// 生成器函数的语法: *号的位置可以随意
+function *foo() {};
+function * foo() {};
+function* foo() {};
+function * foo() {};
+```
+
+:::tip 运行生成器
+- 生成器的基本特性没有改变，仍然可以接受参数、返回值，例 `function *foo(){}`
+- 调用生成器，会生成一个迭代器对象，用于控制生成器，例 `var it = foo()`
+- 调用迭代器`it.next()`，结果是一个对象，该对象有两个属性
+  - value属性：持有*foo返回的值(如果有的话)
+  - done属性：代码是否带执行完毕，false未执行完，true执行完
+- 传递给第一个next()的任何东西会默认丢失
+- 生成器运行到 yield 处暂停
+- next() 可以向暂停的yield 表达式发送值
+:::
+```js
+// 运行生成器
+function *foo(x,y) {
+  var y = x * (yield 'hello');
+  return y
+}
+var it = foo(6);    // 创建迭代器
+
+var res = it.next();
+console.log(res);         // {value: "hello", done: false}
+console.log(res.value);   // hello
+
+res = it.next(7);        
+console.log(res.value);   // 42
+console.log(res);         // {value: 42, done: true}
+```
+:::tip yield*委托
+- yield*委托的行为和yield相同
+- yield*委托是把生成器控制委托给一个iterator，这个iterator迭代完毕即意味着生成器迭代完毕
+:::
+```js
+// yield*委托
+function *foo() {
+  yield *[1,2,3];
+}
+var it = foo();
+it.next();  // 输出{value: 1, done: false}
+it.next();  // 输出{value: 2, done: false}
+it.next();  // 输出{value: 3, done: false}
+it.next();  // 输出{value: undefined, done: true}
+```
+
+### Web Worker
