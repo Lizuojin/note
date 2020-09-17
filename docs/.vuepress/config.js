@@ -13,7 +13,8 @@ module.exports = {
             text: '看书取经', 
             items: [
               { text: '你不知道的JS(上)', link: '/book/你不知道的JS上/'},
-              { text: '你不知道的JS(中)', link: '/book/你不知道的JS中/'}
+              { text: '你不知道的JS(中)', link: '/book/你不知道的JS中/'},
+              { text: '你不知道的JS(下)', link: '/book/你不知道的JS下/'}
             ],
           }
 

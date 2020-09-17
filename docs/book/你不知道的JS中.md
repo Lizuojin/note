@@ -2,7 +2,7 @@
 sidebar: auto
 # sidebarDepth: 4
 ---
-# 你不知道的JS中
+# 你不知道的JS(中)
 ## 类型和语法
 ### 类型
 ---
@@ -792,9 +792,11 @@ a == b;   // true
 ```
 
 ### 语法
+---
 语法与表达式有所差别，语句相当于句子，表达式相当于短语，运算符相当于标点符号和连接词
 
 ### 语句的结果值
+---
 语句都有一个结果值，返回最后一个语句/表达式的结果
 > 在控制台输入 var a = 42 会得到结果值 undefined，而非42
 ```js
@@ -1174,3 +1176,88 @@ it.next();  // 输出{value: undefined, done: true}
 ```
 
 ### Web Worker
+---
+在浏览器环境，提供多个JavaScript引擎实例，运行在各自的线程上，这样独立的多线程被称为Web Worker
+- Worker 线程之间以及它们和主线程之间不会共享任何作用域或资源，它们不能直接通信，必须通过消息完成
+- Worker 不能访问主线程的全局对象(document、window、parent)、DOM对象、全局变量，
+- 但，可以执行网络操作(Ajax、WebSockets)以及设定定时器，可以访问navigator、location、JSON和applicationCache
+
+主线程采用new命令，调用Worker()构造函数，新建一个 Worker 线程
+```js
+// Worker()构造函数的参数是一个脚本文件
+// Worker 不能读取本地文件，所以这个脚本必须来自网络
+var worker = new Worker('http://some.url.a/work.js');
+```
+
+<br/>
+主线程调用worker.postMessage()方法，向 Worker 发消息。
+
+```js
+worker.postMessage('Hello World');
+worker.postMessage({method: 'echo', args: ['Work']});
+```
+
+<br/>
+主线程通过worker.onmessage指定监听函数，接收子线程发回来的消息
+
+```js
+// 事件对象的data属性可以获取 Worker 发来的数据
+worker.onmessage = function (event) {
+  console.log('Received message ' + event.data);
+  doSomething();
+}
+
+function doSomething() {
+  // 执行任务
+  worker.postMessage('Work done!');
+}
+```
+
+<br/>
+Worker 完成任务以后，主线程就可以把它关掉
+
+```js
+worker.terminate();
+```
+
+#### Worker 线程
+- Worker 线程内部需要有一个监听函数，监听message事件
+- self.postMessage()方法用来向主线程发送消息
+
+```js
+self.addEventListener('message', function (e) {
+  self.postMessage('You said: ' + e.data);
+}, false);
+
+// self代表子线程自身，即子线程的全局对象。因此，等同于下面两种写法
+// 写法一
+this.addEventListener('message', function (e) {
+  this.postMessage('You said: ' + e.data);
+}, false);
+
+// 写法二
+addEventListener('message', function (e) {
+  postMessage('You said: ' + e.data);
+}, false);
+```
+
+<br/>
+self.close()用于在 Worker 内部关闭自身
+
+```js
+self.close(); 
+```
+
+<br/>
+Worker 内部通过importScripts()方法，加载额外的JavaScript脚本
+
+```js
+// 脚本加载是同步的，会阻塞余下 Worker 的执行
+importScript('script1.js', 'script1.js')
+```
+
+#### Web Worker 通常应用的方面
+- 处理密集型数字计算
+- 大数据集排序
+- 数据处理（压缩、音频分析、图像处理等）
+- 高流量网络通信
