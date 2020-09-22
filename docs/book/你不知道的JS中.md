@@ -1121,6 +1121,77 @@ Promise.all([p1,p2]).then(function(msgs) {
   console.log(msg)
 })
 ```
+
+### 迭代器
+---
+迭代器是一种有序的、连续的、基于拉取的用于消耗数据的组织方式
+```js
+var arr = [1,2,3];
+var it = arr[Symbol.iterator]();
+
+it.next();  // 输出{value: 1, done: false}
+it.next();  // 输出{value: 2, done: false}
+it.next();  // 输出{value: 3, done: false}
+
+it.next();  // 输出{value: undefined, done: true}，true代表已迭代完毕
+```
+
+#### 迭代器可选接口
+- **return：** 向迭代器发出一个信号，表明消费者代码已经完毕，不会再从其中提取任何值。
+- **throw：** 向迭代器抛出一个异常/错误
+
+#### 迭代器与循环
+```js
+// 迭代器与循环
+for(v of it) {
+  console.log(v)
+}
+
+// for-of循环的等价形式
+for(var v,res; (res=it.next()) &&!res.done;) {
+  v = res.value;
+  console.log(v)
+}
+```
+
+#### 自定义迭代器
+```js
+// 自定义斐波拉契数组迭代器
+var Fib = {
+  [Symbol.iterator]() {
+    var n1 = 2, n2 = 1;
+    return {
+      [Symbol.iterator]() {
+        return this;
+      },
+      next() {
+        var current = n2;
+        n2 = n1;
+        n1 = n2 + current;
+        return {
+          value: current,
+          done: false
+        }
+      },
+      return(v) {
+        return {
+          value: v,
+          done: true
+        }
+      }
+    }
+  }
+}
+
+// 输出1 1 2 3 5 8 13 21 34 55
+for(var v of Fib) {
+  console.log(v);
+  if(v>50) {
+    break;
+  }
+}
+```
+
 ### 生成器
 --- 
 - 在ES6之前，一个函数一旦开始执行，将不会被中断，一直到函数执行完毕

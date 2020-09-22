@@ -20,7 +20,29 @@ module.exports = {
 
         ]
       },
-      { text: "Vue", link: "/vue/" },
+      { 
+        text: "Vue全家桶", 
+        items: [
+          {
+            text: 'Vue', 
+            items: [
+              { text: '知识梳理', link: '/VueAll/Vue/知识梳理/'},
+            ],
+          },
+          {
+            text: 'VueRouter', 
+            items: [
+              { text: '知识梳理', link: '/VueAll/VueRouter/知识梳理/'},
+            ],
+          },
+          {
+            text: 'Vuex', 
+            items: [
+              { text: '知识梳理', link: '/VueAll/Vuex/知识梳理/'},
+            ],
+          }
+        ]
+      },
       { text: "资源工具", link: "/resource/resource/" }
       // { text: "前端概括", link: "/allWeb/" }
     ],
