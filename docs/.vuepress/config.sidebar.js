@@ -20,21 +20,31 @@ module.exports = {
       ]
     },
   ],
-  "/vue/":[
+  "/VueAll/":[
     {
       title: "Vue",
       name: "Vue",
-      collabsable: true,
-    },
-    {
-      title: "Vuex",
-      name: "Vuex",
-      collabsable: true,
+      collabsable: false,
+      children: [
+        {title: 'Vue梳理', path: '/VueAll/Vue/Vue梳理'},
+        {title: 'Vue性能优化', path: '/VueAll/Vue/Vue性能优化'},
+      ]
     },
     {
       title: "VueRouter",
       name: "VueRouter",
-      collabsable: true,
-    }
+      collabsable: false,
+      children: [
+        {title: 'VueRouter梳理', path: '/VueAll/VueRouter/知识梳理'},
+      ]
+    },
+    {
+      title: "Vuex",
+      name: "Vuex",
+      collabsable: false,
+      children: [
+        {title: 'Vuex梳理', path: '/VueAll/Vuex/知识梳理'},
+      ]
+    },
   ],
 }

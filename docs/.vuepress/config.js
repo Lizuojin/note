@@ -8,7 +8,7 @@ module.exports = {
         text: 'JavaScript', 
         items: [
           { text: 'JavaScript基础', link: '/JS/'},
-          {text: 'ECMAScript 6', link: '/ES6/'},
+          { text: 'ECMAScript 6', link: '/ES6/' },
           {
             text: '看书取经', 
             items: [
@@ -21,30 +21,24 @@ module.exports = {
         ]
       },
       { 
-        text: "Vue全家桶", 
-        items: [
-          {
-            text: 'Vue', 
-            items: [
-              { text: '知识梳理', link: '/VueAll/Vue/知识梳理/'},
-            ],
-          },
-          {
-            text: 'VueRouter', 
-            items: [
-              { text: '知识梳理', link: '/VueAll/VueRouter/知识梳理/'},
-            ],
-          },
-          {
-            text: 'Vuex', 
-            items: [
-              { text: '知识梳理', link: '/VueAll/Vuex/知识梳理/'},
-            ],
-          }
-        ]
+        text: "Vue生态",
+        link: '/VueAll/',
+        // items: [
+        //   {
+        //     text: 'Vue', 
+        //     link: '/VueAll/Vue/Vue梳理/'
+        //   },
+        //   {
+        //     text: 'VueRouter',
+        //     link: '/VueAll/VueRouter/知识梳理/' 
+        //   },
+        //   {
+        //     text: 'Vuex',
+        //     link: '/VueAll/Vuex/知识梳理/' 
+        //   }
+        // ]
       },
-      { text: "资源工具", link: "/resource/resource/" }
-      // { text: "前端概括", link: "/allWeb/" }
+      { text: '资源工具', link: '/resource/resource/' }
     ],
     sidebar: slidebar,
   },

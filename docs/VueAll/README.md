@@ -1,1 +1,1 @@
-vue
+![img](../.vuepress/public/img/vueLogo.png)
