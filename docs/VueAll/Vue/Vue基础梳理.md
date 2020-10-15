@@ -613,26 +613,432 @@ vm.student.address = '广东广州';
 Vue.set(vm.student,'address','广东广州')
 ```
 
+### 修饰符
+---
+#### 1. 事件修饰符
+:::tip 在JavaScript的代码编写的过程中，使用event.preventDefault()和event.stopPropagation()两个方法是非常常见的需求，为此Vue内置了几种事件修饰符：
+- `.stop`：阻止冒泡
+- `.prevent`：阻止浏览器的默认行为、
+- `.capture`：事件捕获模式
+- `.self`：只有触发元素是自身时才执行的事件
+- `.once`：只执行一次的事件
+- `.passive`：事件行为立即触发，而不会等待
+:::
+
+```html
+<!-- 阻止冒泡 -->
+<a @click.stop="doThis"></a>
+
+<!-- 阻止浏览器的默认行为 -->
+<form @submit.prevent="onSubmit"></form>
+
+<!-- 事件捕获模式 -->
+<div @click.capture="doThis">...</div>
+
+<!-- 只有触发元素是自身时才执行的事件 -->
+<div @click.self="doThis">...</div>
+
+<!-- 只执行一次的事件 -->
+<div @click.once="doThis">...</div>
+
+<!-- 事件行为立即触发，而不会等待 -->
+<div @scroll.passive="onScroll">...</div>
+
+<!-- 修饰符可以串联 -->
+<a @click.stop.prevent="doThis"></a>
+```
+
+#### 2. 事件修饰符
+:::tip 在监听键盘事件时，我们经常需要检查详细的按键。Vue 允许为v-on在监听键盘事件时添加按键修饰符，常见的按钮修饰符有：
+- `.enter`：回车键
+- `.tab`：tab键
+- `.delete`：删除键或者退格键
+- `.esc`：esc键
+- `.space`：空格键
+- `.up`：上方向键
+- `.down`：下方向键
+- `.left`：左方向键
+- `.right`：右方向键
+- `.ctrl`：ctrl键
+- `.alt`：alt键
+- `.shift`：shift键
+:::
+```html
+<!-- 回车键 -->
+<div @keyup.enter="doThis">...</div>
+
+<!-- esc键 -->
+<div @keyup.esc="doThis">...</div>
+
+<!-- 左方向键 -->
+<div @keyup.left="doThis">...</div>
+
+<!-- ctrl键 -->
+<div @keyup.ctrl="doThis">...</div>
+```
+
+:::tip .exact 修饰符
+`.exact` 修饰符允许你使用精确的按键组合来控制事件的触发
+:::
+```html
+<!-- 即使 Alt 或 Shift 被一同按下时也会触发 -->
+<button v-on:click.ctrl="onClick">A</button>
+
+<!-- 有且只有 Ctrl 被按下的时候才触发 -->
+<button v-on:click.ctrl.exact="onCtrlClick">A</button>
+
+<!-- 没有任何系统修饰符被按下的时候才触发 -->
+<button v-on:click.exact="onClick">A</button>
+```
+
+## Vue 组件
+
+### 基本示例
+```js
+// 定义一个名为 button-counter 的新组件
+Vue.component('button-counter', {
+  data: function () {
+    return {
+      count: 0
+    }
+  },
+  template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
+})
+```
+
+### 使用组件的一些细节
+:::tip is属性解决标签正确嵌套的问题
+当在使用一些特定的标签中嵌套组件的时候，有时候可能报错，这个时候可以给组件添加 `is` 属性来解决
+:::
+```html
+<table>
+  <tbody>
+    <row></row>
+    <row></row>
+    <row></row>
+  </tbody>
+</table>
+```
+
+```js
+Vue.component('row', {
+  template: '<tr> this is a row component!</tr>'
+})
+var app = new Vue({
+  el: '#app'
+})
+```
+**运行结果：**<br/>
+![img](../../.vuepress/public/img/component1.png)
+
+**使用is属性**
+```html
+<table>
+  <tbody>
+    <tr is="row"></tr>
+    <tr is="row"></tr>
+    <tr is="row"></tr>
+  </tbody>
+</table>
+```
+**运行结果：**<br/>
+![img](../../.vuepress/public/img/component2.png)
+
+:::tip ref引用
+在某些情况下，我们不得不选择操作DOM，Vue提供了 `ref` 特性来让我们直接操作DOM。`ref` 再不同的情况下，有不同的返回结果：
+
+- 在普通的标签上，它返回元素标签本身
+- 在组件上，它返回组件的引用
+:::
+```html
+<div ref="hello" @click="handleHelloClick">hello,world</div>
+<item ref="item" @item-change="handleItemChange"></item>
+```
+```js
+Vue.component('item', {
+  data() {
+    return {
+      message: 'this is a  message!'
+    }
+  },
+  methods: {
+    handleItemClick() {
+      this.$emit('item-change');
+    }
+  },
+  template: '<div @click="handleItemClick">{{message}}</div>'
+})
+var app = new Vue({
+  el: '#app',
+  methods: {
+    handleHelloClick() {
+      console.log(this.$refs.hello.innerHTML);
+    },
+    handleItemChange() {
+      console.log(this.$refs.item.message);
+    }
+  }
+})
+```
+**运行结果：**<br/>
+![img](../../.vuepress/public/img/component3.png)
+
+### props
+---
+`props`选项包含在组件上注册的，该组件可以接受的 prop 列表
+
+```html
+<blog-post title="My journey with Vue"></blog-post>
+```
+
+```js
+Vue.component('blog-post', {
+  props: ['title'],
+  template: '<h3>{{ title }}</h3>'
+})
+```
+
+#### 1. props 类型
+##### 数组形式
+```js
+props: ['title', 'likes', 'isPublished', 'commentIds', 'author']
+```
+
+##### 对象形式
+- props 的键是父组件传过来的值
+- props 的值是类型
+
+```js
+props: {
+  title: String,
+  likes: Number,
+  isPublished: Boolean,
+  commentIds: Array,
+  author: Object,
+  callback: Function,
+  contactsPromise: Promise // or any other constructor
+}
+```
+#### 2. 传递静态或动态 Prop
+```html
+<!-- 静态的值 -->
+<blog-post title="My journey with Vue"></blog-post>
+
+<!-- 动态赋予一个变量的值 -->
+<blog-post v-bind:title="post.title"></blog-post>
+
+<!-- 动态赋予一个复杂表达式的值 -->
+<blog-post
+  v-bind:title="post.title + ' by ' + post.author.name"
+></blog-post>
+```
+
+#### 3. 单向数据流
+:::tip 单向下行绑定
+父级 prop 的更新会向下流动到子组件中，子组件中所有的 prop 都将会刷新为最新的值，但是反过来则不行
+:::
+
+##### 常见变更 prop 的情形：
+**prop 作为本地数据来使用**
+```js
+// 在 data 中定义一个属性，并将这个 prop 作为其初始值
+props: ['initialCounter'],
+data: function () {
+  return {
+    counter: this.initialCounter
+  }
+}
+```
+<br/>
+
+**prop 需要进行转换**
+```js
+// 使用这个 prop 的值来定义一个计算属
+props: ['size'],
+computed: {
+  normalizedSize: function () {
+    return this.size.trim().toLowerCase()
+  }
+}
+```
+:::warning
+在 JavaScript 中对象和数组是通过引用传入的，所以对于一个数组或对象类型的 prop 来说，在子组件中改变变更这个对象或数组本身**将会影响到父组件的状态**。
+:::
+
+### 父子组件通信
+---
+:::tip 通信原则
+- 父组件能向子组件传递任何类型的值，子组件通过props属性接受。
+- 子组件不能修改父组件传递过来的值，子组件通过this.$emit()方法向父组件派发事件，并且这个事件可以携带参数。
+:::
+<br/>
+
+**父组件**
+```html
+<counter :count="0" @change="handleChange"></counter>
+```
+```js
+var app = new Vue({
+  el: '#app',
+  data() {
+    return {
+      total: 0
+    }
+  },
+  methods: {
+    handleChange(step) {
+      this.total += step;
+    }
+  }
+})
+```
+<br/>
+
+**子组件**
+```html
+<div @click="handleCounterClick">{{number}}</div>
+```
+```js
+var app = new Vue({
+  props: ['count'],
+  data() {
+    return {
+      number: this.count
+    }
+  },
+  methods: {
+    handleCounterClick() {
+      this.number++;
+      this.$emit('change', 1);
+    }
+  }
+})
+```
+当触发子组件的 handleCounterClick 事件时，通过 $emit 
 
 
+### 组件插槽
+---
+:::tip Vue 中组件的 slot 插槽，简单理解就是：父组件可以向子组件传递一段 html 内容，子组件在 slot 标签的位置接受。插槽有三种情况：
+- 普通的slot插槽
+- 具名slot插槽
+- 作用域插槽slot-scope
+:::
 
+#### 1. 普通插槽
+```html
+<item>
+  <p>这里是父组件给的html内容</p>
+</item>
+```
+```js
+Vue.component('item', {
+  template: '<div><slot></slot></div>'
+})
+```
+**运行结果：**<br/>
+![img](../../.vuepress/public/img/slot.png)
 
+#### 2. 具名插槽
+当父组件需要传递多模块的内容给子组件时，子组件需要写多个slot插槽，这个时候需要给每一个插槽起一个名字
+```html
+<item>
+  <template v-slot="header">
+    <div>header</div>
+  </template>
+  <template v-slot="footer">
+    <div>footer</div>
+  </template>
+</item>
+```
+```js
+Vue.component('item', {
+  template: `<div>
+              <slot name="header"></slot>
+              <div>content</div>
+              <slot name="footer"></slot>
+            </div>`
+})
+```
+**运行结果：**<br/>
+![img](../../.vuepress/public/img/slot1.png)
 
+#### 3. 作用域插槽
+作用域插槽能让插槽中的内容能够访问子组件中的数据
+```html
+<!-- 父组件 -->
+<item>
+  <template v-slot:nameSlot="slotProps">
+    {{ slotProps.slotProps.user }}
+  </template>
+</item>
 
+<!-- 子组件 -->
+<slot name="nameSlot" :slotProps='slotProps'></slot>
+```
 
+```js
+// 子组件
+data() {
+  return {
+    slotProps: {
+      user: '作用域插槽'
+    },
+  }
+},
+```
 
+### 动态组件
+---
+使用`component`组件，再配合此组件的is属性能够实现组件的动态切换
+```html
+<component :is="type"></component>
+<button @click="handleChange">change</button>
+```
 
+```js
+Vue.component('child-one', {
+  template: '<div>child-one</div>'
+})
+Vue.component('child-two', {
+  template: '<div>child-two</div>'
+})
+var app = new Vue({
+  el: '#app',
+  data() {
+    return {
+      type: 'child-one'
+    }
+  },
+  methods: {
+    handleChange() {
+      this.type = (this.type=='child-one'?'child-two':'child-one');
+    }
+  }
+})
+```
+:::tip v-once指令配合动态组件
+在动态组件的切换过程中，会不断的销毁和重建子组件，如果组件的内容是相对固定的，可以在子组件上使用v-once指令来缓存。
+:::
+```js
+Vue.component('child-one', {
+  template: '<div v-once>child-one</div>'
+})
+Vue.component('child-two', {
+  template: '<div v-once>child-two</div>'
+})
+```
 
+:::tip keep-alive保持动态组件的状态
+相同的道理，由于在动态组件的切换过程中，会不断的销毁和重建组件，如果你想保持一些组件的状态时，可以使用keep-alive组件来进行组件缓存
+:::
 
-
-
-
-
-
-
-
-
-
+```html
+<keep-alive>
+  <component :is="type"></component>
+</keep-alive>
+<button @click="handleChange">change</button>
+```
 
 
 ## 持续更新中...

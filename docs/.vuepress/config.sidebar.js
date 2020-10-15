@@ -24,10 +24,11 @@ module.exports = {
     {
       title: "Vue",
       name: "Vue",
-      collabsable: false,
+      collabsable: true,
       children: [
-        {title: 'Vue梳理', path: '/VueAll/Vue/Vue梳理'},
+        {title: 'Vue基础梳理', path: '/VueAll/Vue/Vue基础梳理'},
         {title: 'Vue性能优化', path: '/VueAll/Vue/Vue性能优化'},
+        {title: '应该知道的Vue', path: '/VueAll/Vue/应该知道的Vue'},
       ]
     },
     {
@@ -35,7 +36,7 @@ module.exports = {
       name: "VueRouter",
       collabsable: false,
       children: [
-        {title: 'VueRouter梳理', path: '/VueAll/VueRouter/知识梳理'},
+        {title: 'VueRouter知识点梳理', path: '/VueAll/VueRouter/知识梳理'},
       ]
     },
     {
