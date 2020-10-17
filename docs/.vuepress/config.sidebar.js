@@ -36,7 +36,7 @@ module.exports = {
       name: "VueRouter",
       collabsable: false,
       children: [
-        {title: 'VueRouter知识点梳理', path: '/VueAll/VueRouter/知识梳理'},
+        {title: 'Vue Router知识点梳理', path: '/VueAll/VueRouter/知识梳理'},
       ]
     },
     {
@@ -44,7 +44,7 @@ module.exports = {
       name: "Vuex",
       collabsable: false,
       children: [
-        {title: 'Vuex梳理', path: '/VueAll/Vuex/知识梳理'},
+        {title: 'Vuex知识点梳理', path: '/VueAll/Vuex/知识梳理'},
       ]
     },
   ],

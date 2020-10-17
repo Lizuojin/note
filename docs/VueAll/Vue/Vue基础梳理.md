@@ -1,5 +1,6 @@
 ---
-sidebar: auto
+# sidebar: auto
+sidebarDepth: 3
 ---
 # Vue
 ## Vue 基础知识
