@@ -23,20 +23,12 @@ module.exports = {
       { 
         text: "Vue生态",
         link: '/VueAll/',
-        // items: [
-        //   {
-        //     text: 'Vue', 
-        //     link: '/VueAll/Vue/Vue梳理/'
-        //   },
-        //   {
-        //     text: 'VueRouter',
-        //     link: '/VueAll/VueRouter/知识梳理/' 
-        //   },
-        //   {
-        //     text: 'Vuex',
-        //     link: '/VueAll/Vuex/知识梳理/' 
-        //   }
-        // ]
+      },
+      {
+        text: '日积月累', 
+        items: [
+          { text: '面试收集', link: '/codeBlock/'},
+        ]
       },
       { text: '资源工具', link: '/resource/resource/' }
     ],

@@ -1,6 +1,13 @@
 module.exports = {
   "/JS/":[
     {
+      title: "目录",
+      collapsable: false,
+      children: [
+        {title: 'JS基础思维导图', path: '/JS/JavaScript思维导图'},
+      ]
+    },
+    {
       title: "JavaScript基础",
       collapsable: false,
       children: [
@@ -8,7 +15,7 @@ module.exports = {
         {title: '作用域', path: '/JS/作用域'},
         {title: '闭包', path: '/JS/闭包'},
       ]
-    },
+    }
   ],
   '/ES6/':[
     {
@@ -17,6 +24,15 @@ module.exports = {
       children: [
         {title: '类', path: '/ES6/类'},
         {title: '模块化', path: '/ES6/模块化'},
+      ]
+    },
+  ],
+  '/codeBlock/':[
+    {
+      title: "面试收集",
+      collapsable: false,
+      children: [
+        {title: 'JS面试整理', path: '/codeBlock/jobInterview/js-interview'},
       ]
     },
   ],
