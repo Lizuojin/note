@@ -27,7 +27,8 @@ module.exports = {
       {
         text: '日积月累', 
         items: [
-          { text: '面试收集', link: '/codeBlock/'},
+          { text: '面试收集', link: '/jobInterview/'},
+          { text: '好文收集', link: '/article/'},
         ]
       },
       { text: '资源工具', link: '/resource/resource/' }

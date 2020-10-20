@@ -27,12 +27,21 @@ module.exports = {
       ]
     },
   ],
-  '/codeBlock/':[
+  '/article/':[
+    {
+      title: "好文收集",
+      collapsable: false,
+      children: [
+        {title: 'Vue好文', path: '/article/vue-article'},
+      ]
+    },
+  ],
+  '/jobInterview/':[
     {
       title: "面试收集",
       collapsable: false,
       children: [
-        {title: 'JS面试整理', path: '/codeBlock/jobInterview/js-interview'},
+        {title: 'JS面试收集', path: '/jobInterview/js-interview'},
       ]
     },
   ],
