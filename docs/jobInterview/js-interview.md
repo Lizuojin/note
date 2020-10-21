@@ -431,7 +431,8 @@ console.log(instance2.colors);      //"red,blue,green"
 
 ### 3. 组合继承
 :::tip 
-将原型链和借用构造函数的技术组合到一块，从而发挥二者之长的一种继承模式
+将原型链和借用构造函数的技术组合到一块，从而发挥二者之长的一种继承模式，缺陷：
+- 父类构造函数被调用多次
 :::
 ```js
 function Super() {
@@ -497,6 +498,273 @@ console.log(anotherPerson.friends);
 console.log(yetAnotherPerson.friends);
 anotherPerson.sayHi();  //"hi" 
 
+```
+
+### 5. 寄生组合式继承
+:::tip
+通过借用构造函数来继承属性，通过原型链的混成形式来继承方法
+:::
+```js
+function object(o){ 
+  function F(){} 
+  F.prototype = o; 
+  return new F(); 
+} 
+
+function inheritPrototype(subType, superType){ 
+  var prototype = object(superType.prototype); //创建对象
+  prototype.constructor = subType; //增强对象
+  subType.prototype = prototype; //指定对象
+} 
+
+function SuperType(name){ 
+  this.name = name; 
+  this.colors = ["red", "blue", "green"]; 
+} 
+SuperType.prototype.sayName = function(){ 
+  console.log(this.name); 
+}; 
+function SubType(name, age){ 
+  SuperType.call(this, name); 
+  this.age = age; 
+} 
+inheritPrototype(SubType, SuperType); 
+SubType.prototype.sayAge = function(){ 
+  console.log(this.age); 
+}; 
+
+```
+
+### 6. Class 实现继承
+:::tip 
+运用 `ES6` 的 `class` 新特性来实现继承
+:::
+```js
+class Animal {
+  constructor(name) {
+    this.name = name;
+    this.colors = ['red','blue'];
+  }
+  eat() {
+    console.log(this.name + ' is eatting');
+  }
+}
+class Dog extends Animal {
+  constructor(name) {
+    super(name);
+  }
+}
+var dog1 = new Dog('dog1');
+var dog2 = new Dog('dog2');
+dog1.colors.push('yellow');
+console.log(dog1.name);  // 输出dog1
+console.log(dog2.colors);// 输出['red','blue']
+console.log(dog2.eat()); // 输出dog2 is eatting
+```
+
+## ES6
+### 1. var、let 和 const 的区别
+:::tip
+1. `var` 声明的变量会提升到作用域的顶部，而 `let` 和 `const` 不会进行提升
+2. `var` 声明的全局变量会被挂载到全局 `window` 对象上，而 `let` 和 `const` 不会
+3. `var` 可以重复声明同一个变量，而 `let` 和 `const` 不会
+4. `var` 声明的变量作用域范围是函数作用域，而 `let` 和 `const` 声明的变量作用域范围是块级作用域。
+5. `const` 声明的常量，一旦声明则不能再次赋值，再次赋值会报错(更改对象属性不会，因为对象地址没有变)
+:::
+
+#### 作用域提升：
+```js
+console.log(a);  // 输出undefined
+console.log(b);  // 报错
+console.log(PI); // 报错
+var a = 'abc';
+let b = 'ABC';
+const PI = 3.1415;
+```
+
+#### 挂载到全局变量：
+```js
+var a = 'abc';
+let b = 'ABC';
+const PI = 3.1415;
+
+console.log(window.a);  // 输出abc
+console.log(window.b);  // 输出undefined
+console.log(window.PI); // 输出undefined
+```
+
+#### 重复声明变量：
+```js
+var a = 'abc';
+var a;
+console.log(a); // 输出abc
+
+let b = 'ABC';
+let b;// 报错
+```
+
+#### 变量的作用域范围：
+```js
+function foo() {
+  var flag = true;
+  if(flag) {
+    var a = 'abc';
+    let b = 'ABC';
+    console.log(a); // 输出abc
+    console.log(b); // 输出ABC
+  }
+  console.log(a); // 输出abc
+  console.log(b); // 报错
+}
+foo();
+```
+
+#### const 常量
+```js
+const PI = 3.1415;
+PI = 3.1415926; // 报错
+
+const obj = {
+  a: 1,
+  b: 2
+}
+obj.a = 3
+
+console.log(obj)   //{a: 3, b: 2}
+```
+
+#### 2. 扩展/收缩符
+:::tip
+ES6新增加的运算符 `...`，称为扩展或者收缩，具体作用取决于到底如何使用。
+:::
+```js
+// ...的扩展
+function foo(x,y,z) {
+  console.log(x,y,z); // 输出1,2,3
+}
+var arr = [1,2,3];
+foo(...arr);          // 扩展数组：ES6写法
+foo.apply(null,arr);  // 扩展数组：ES5写法
+
+
+// ...的收缩
+// 1.收集参数：ES6写法
+function bar(...arr) {
+  console.log(arr);   // 输出[1,2,3,4,5]
+}
+// 2.收集参数：ES5写法
+function foo(){
+  var args = Array.prototype.slice.call(arguments);
+  console.log(args);  // 输出[1,2,3,4,5]
+}
+bar(1,2,3,4,5);
+foo(1,2,3,4,5)
+```
+
+## JavaScript 异步
+
+### 回调函数
+回调函数广泛在于我们所编写的 `JavaScript` 代码中，它表现在时间绑定，Ajax请求或者其他情况下，如
+```js
+ajax(url, () => {
+  console.log('这里是回调函数');
+})
+```
+**回调地狱：** 回调函数很好的解决了某些异步情况，但过度滥用回调函数会造成回调地狱，即回调函数过长，嵌套过深。过长或者嵌套过深的回调函数，会让回调函数存在强耦合关系，一旦有一个函数有所改动，那么可能会牵一发而动全身。一个回调地狱可能如下所示：
+```js
+ajax(firstUrl, () => {
+  console.log('这里是首次回调函数');
+  ajax(secondUrl, () => {
+    console.log('这里是第二次回调函数');
+    ajax(threeUrl, () => {
+      console.log('这里是第三次回调函数');
+      // todo更多
+    })
+  })
+})
+```
+
+### Generator
+在ES6之前，一个函数一旦执行将不会被中断，一直到函数执行完毕，在ES6之后，由于Generator的存在，函数可以暂停自身，待到合适的机会再次执行。用Generator可以解决回调地狱。
+```js
+function *fetch() {
+  yield ajax(url, () => {console.log('这里是首次回调函数');});
+  yield ajax(url, () => {console.log('这里是第二次回调函数');});
+  yield ajax(url, () => {console.log('这里是第三次回调函数');});
+}
+var it = fetch();
+var result1 = it.next();
+var result2 = it.next();
+var result3 = it.next();
+```
+
+### Promise
+`Promise` 翻译过来就是承诺的意思，`Promise` 一共有三种状态：`pending(等待中)`、`resolve(完成)` 和 `reject(拒绝)`，这个承诺意味着在将来一定会有一个表决，并且只能表决一次，表决的状态一定是 `resolve(完成)` 或者 `reject(拒绝)`，一个 `Promise` 可能会是如下的形式：
+```js
+// 普通的Promise
+function foo() {
+  return new Promise((resolve,reject) => {
+    // 第一次表决有效，其后无论是resolve()还是reject()都无效
+    resolve(true); 
+    resolve(false);
+  })
+}
+
+// Promise解决回调地狱
+ajax(url).then(res => {
+  console.log('这里是首次回调函数');
+}).then(res => {
+  console.log('这里是第二次回调函数');
+}).then(res => {
+  console.log('这里是第三次回调函数');
+})
+```
+
+**Promise.all()：** `Promise.all()`方法是把一个或者几个 `Promise` 组合在一个数组里，只有当数组中的所有 `Promise` 全部表决完成，才返回
+```js
+var p1 = Promise.resolve(1);
+var p2 = new Promise((resolve) => {
+  setTimeout(() => {
+    resolve(2);
+  }, 100);
+})
+var p3 = 3;
+Promise.all([p1,p2,p3]).then((res) => {
+  console.log(res); // 输出[1,2,3]
+})
+```
+
+**Promise.race()：** `Promise.race()` 方法把一个或者几个 `Promise` 组合在一个数组里，只要数组中有一个表决了，就返回
+```js
+var p1 = Promise.resolve(1);
+var p2 = new Promise((resolve) => {
+  setTimeout(() => {
+    resolve(2);
+  }, 100);
+})
+var p3 = 3;
+Promise.race([p2,p1,p3]).then((res) => {
+  console.log(res); // 输出1
+})
+```
+
+### async/await
+如果一个方法前面加上了 `async`，那么这个方法就会返回一个 `Promise`，`async` 就是将函数用 `Promise.resolve()` 包裹了下，并且 `await` 只能配合 `async` 使用，不能单独出现。一个 `async/await` 可能会是如下的形式：
+```js
+// 普通的async/await
+async function foo() {
+  let number = await 3; // await自动用promise.resolve()包装
+  console.log(number);
+}
+foo();
+
+// async/await解决回调地狱
+async function fetch() {
+  var result1 = await ajax(url1);
+  var result2 = await ajax(url2);
+  var result3 = await ajax(url3);
+}
+fetch();
 ```
 
 

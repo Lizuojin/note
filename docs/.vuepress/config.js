@@ -8,7 +8,7 @@ module.exports = {
         text: 'JavaScript', 
         items: [
           { text: 'JavaScript基础', link: '/JS/'},
-          { text: 'ECMAScript 6', link: '/ES6/' },
+          { text: 'ECMAScript 6', link: '/ES6/导读' },
           {
             text: '看书取经', 
             items: [

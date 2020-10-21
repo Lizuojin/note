@@ -19,11 +19,11 @@ module.exports = {
   ],
   '/ES6/':[
     {
-      title: "ES6新特性",
+      title: "目录",
       collapsable: false,
       children: [
-        {title: '类', path: '/ES6/类'},
-        {title: '模块化', path: '/ES6/模块化'},
+        {title: '导读', path: '/ES6/导读'},
+        {title: 'ECMAScript 6 新特性', path: '/ES6/ES6新特性'},
       ]
     },
   ],
@@ -49,7 +49,7 @@ module.exports = {
     {
       title: "Vue",
       name: "Vue",
-      collabsable: true,
+      collabsable: false,
       children: [
         {title: 'Vue基础梳理', path: '/VueAll/Vue/Vue基础梳理'},
         {title: 'Vue性能优化', path: '/VueAll/Vue/Vue性能优化'},
