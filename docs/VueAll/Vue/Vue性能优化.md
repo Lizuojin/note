@@ -1,3 +1,7 @@
+---
+# sidebar: auto
+sidebarDepth: 1
+---
 # Vue性能优化
 
 ## 1. 如何定位 Vue 应用性能问题

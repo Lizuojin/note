@@ -91,7 +91,7 @@ console.log([]==![])  // true
 5. 即 `0==0`，返回 `true`
 
 类型转换规则，如下图：
-![img](../.vuepress/public/img/type.png)
+![img](../../.vuepress/public/img/type.png)
 
 ## == 和 ===
 :::tip === 严格相等
@@ -767,11 +767,37 @@ async function fetch() {
 fetch();
 ```
 
+## JavaScript 原生 3 种绑定事件
+```html
+<!-- 1、直接在标签里绑定 -->
+<button id="btn" onclick="handleClick()">
+  自定义函数
+</button>
 
+<script>
+	// 2、利用 DOM0 进行绑定
+  var btn = document.getElementById('btn')
+  btn.onclick = handleClick()
+  
+  ///3、利用 DOM3 进行绑定
+  btn.addEventListener('click', handleClick)
+</script>
+```
 
+## 创建对象的方式
+```js
+// 对象字面量
+const obj = {}
 
+// 构造函数
+function Obj() {}
+const obj = new Obj()
 
+// Object.create，此时属性挂载在原型上
+const obj = Object.create({name: 'name'})
+```
 
+## new 运算符原理
 
 
 

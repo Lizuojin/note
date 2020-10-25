@@ -14,8 +14,14 @@ module.exports = {
         {title: '事件循环机制', path: '/JS/事件循环机制'},
         {title: '作用域', path: '/JS/作用域'},
         {title: '闭包', path: '/JS/闭包'},
+        {title: '变量对象', path: '/JS/变量对象'},
       ]
+    },
+    {
+      title: "持续更新中...",
+      collapsable: false,
     }
+
   ],
   '/ES6/':[
     {
@@ -38,17 +44,39 @@ module.exports = {
   ],
   '/jobInterview/':[
     {
-      title: "面试收集",
+      title: "JavaScript相关",
       collapsable: false,
       children: [
-        {title: 'JS面试收集', path: '/jobInterview/js-interview'},
+        {title: 'JavaScript基础面试题', path: '/jobInterview/js/js1-interview'},
+        {title: 'JavaScript进阶面试题', path: '/jobInterview/js/js2-interview'},
+      ]
+    },
+    {
+      title: "Vue全家桶相关",
+      collapsable: false,
+      children: [
+        {title: 'Vue', path: '/jobInterview/vue/vue1-interview'},
+        {title: 'VueRouter', path: '/jobInterview/vue/VueRouter1-interview'},
+      ]
+    },
+    {
+      title: "Css相关",
+      collapsable: false,
+      children: [
+        {title: 'Css', path: '/jobInterview/css/css1-interview'},
+      ]
+    },
+    {
+      title: "浏览器相关",
+      collapsable: false,
+      children: [
+        {title: '浏览器相关', path: '/jobInterview/borwser/browser1-interview'},
       ]
     },
   ],
   "/VueAll/":[
     {
       title: "Vue",
-      name: "Vue",
       collabsable: false,
       children: [
         {title: 'Vue基础梳理', path: '/VueAll/Vue/Vue基础梳理'},
@@ -58,7 +86,6 @@ module.exports = {
     },
     {
       title: "VueRouter",
-      name: "VueRouter",
       collabsable: false,
       children: [
         {title: 'Vue Router知识点梳理', path: '/VueAll/VueRouter/知识梳理'},
@@ -66,7 +93,6 @@ module.exports = {
     },
     {
       title: "Vuex",
-      name: "Vuex",
       collabsable: false,
       children: [
         {title: 'Vuex知识点梳理', path: '/VueAll/Vuex/知识梳理'},
