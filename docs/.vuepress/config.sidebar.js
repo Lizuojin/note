@@ -14,6 +14,7 @@ module.exports = {
         {title: '事件循环机制', path: '/JS/事件循环机制'},
         {title: '作用域', path: '/JS/作用域'},
         {title: '闭包', path: '/JS/闭包'},
+        {title: '原型与原型链', path: '/JS/原型与原型链'},
         {title: '变量对象', path: '/JS/变量对象'},
       ]
     },
@@ -71,6 +72,14 @@ module.exports = {
       collapsable: false,
       children: [
         {title: '浏览器相关', path: '/jobInterview/borwser/browser1-interview'},
+      ]
+    },
+    {
+      title: "性能优化相关",
+      collapsable: false,
+      children: [
+        {title: '性能优化', path: '/jobInterview/optimize/optimize1-interview'},
+        {title: 'Vue性能优化', path: '/jobInterview/optimize/optimizeVue-interview'},
       ]
     },
   ],

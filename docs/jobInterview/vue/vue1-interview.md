@@ -129,7 +129,7 @@ Vue 实例有一个完整的生命周期，也就是从开始创建、初始化�
 | mounted        | vm.$el 挂载到实例上去之后调用该钩子 |
 | beforeUpdate   | 组件数据更新之前调用，发生在虚拟 DOM 打补丁之前 |
 | update         | 组件数据更新之后 |
-| activited      | keep-alive 专属，组件被激活时调用 |
+| activated      | keep-alive 专属，组件被激活时调用 |
 | deactivated    | keep-alive 专属，组件被销毁时调用 |
 | beforeDestroy  | 组件销毁前调用 |
 | destroyed      | 组件销毁后调用 |
@@ -261,3 +261,60 @@ SSR大致的意思就是 vue 在客户端将标签渲染成的整个 html 片段
 - **服务器负载问题**：在 Node.js 中渲染完整的应用程序，显然会比仅仅提供静态文件的 server 更加大量占用 CPU 资源，因此如果应用是在高流量环境下使用，需要准备相应的服务器负载
 
 如果没有 SSR 开发经验的同学，可以参考本文作者的另一篇 SSR 的实践文章[《Vue SSR 踩坑之旅》](https://juejin.im/post/6844903824956588040)，里面 SSR 项目搭建以及附有项目源码。
+
+
+## 17、什么是 MVVM？
+Model–View–ViewModel （MVVM） 是一个软件架构设计模式，由微软 WPF 和 Silverlight 的架构师 Ken Cooper 和 Ted Peters 开发，是一种简化用户界面的事件驱动编程方式。由 John Gossman（同样也是 WPF 和 Silverlight 的架构师）于2005年在他的博客上发表
+
+MVVM源于经典的 MVC (Model-view-controller) 模式，MVVM的出现促进了前端开发和后端业务逻辑的分离，极大地提高了前端的开发效率，MVVM 的核心是 ViewModel 层，它就是一个中转站(value converter)，该层向上与view层进行双向数据绑定，向下与 model 层通过接口请求进行数据交互，起到承上启下的作用
+![img](../../.vuepress/public/img/MVVM.png)
+
+### view 层
+View 是视图层，也就是用户界面，前端主要用 HTML 和 css 构建
+
+### Model 层
+Model 是指数据模型，泛指后端进行的各种业务逻辑处理和数据操控，对于前端来说就是后端提供的 API 接口
+
+### ViewModel 层
+ViewModel 是由前端开发人员组织生成和维护的视图数据层，在这一层，前端开发人员从后端获取到 Model 数据进行转换处理，做二次封装，生成 View 层预期使用的视图数据模型，ViewModel 所封装出来的数据模型包括了视图的状态和行为，而 Model 层的数据模型只包含了视图的状态，比如页面的这一块展示什么，而页面加载进来发生什么，点击发生什么，滚动发生什么，这些都属于视图的行为(交互)，视图的状态和行为都封装在了 ViewModel 层，这样的封装让 ViewModel 可以完整地描述 View 层
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

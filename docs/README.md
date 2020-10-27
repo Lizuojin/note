@@ -2,12 +2,14 @@
 home: true
 # actionText: Get Started →
 actionLink: /node/
+heroText: 前端知识梳理
+tagline: 查缺补漏，厚积薄发
 features:
-- title: "八级师傅学手艺"
+- title: 八级师傅学手艺
   details: 让学习变成一种习惯，而不是一时热血.
-- title: 站在巨人的肩膀上
-  details: 记录每一天的进步, 一分耕耘，一分收获.
-- title: day day up
-  details: 记录每一天的进步, 一分耕耘，一分收获.
-# footer: MIT Licensed | Copyright © 2018-present Evan You
+- title: 冰冻三尺，非一日之寒
+  details: 记录前端一个个知识点，走进不一样的前端世界
+- title: 乐此不疲
+  details: 难知识重复重复再重复学，新知识一个接一个补
+footer: MIT Licensed | Copyright © 2019-present lizuojin. ICP许可证号 粤ICP备2020105694号
 ---
