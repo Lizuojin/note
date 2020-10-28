@@ -63,16 +63,7 @@ module.exports = {
     {
       title: "Css相关",
       collapsable: false,
-      children: [
-        {title: 'Css', path: '/jobInterview/css/css1-interview'},
-      ]
-    },
-    {
-      title: "浏览器相关",
-      collapsable: false,
-      children: [
-        {title: '浏览器相关', path: '/jobInterview/borwser/browser1-interview'},
-      ]
+      path: '/jobInterview/css/css1-interview'
     },
     {
       title: "性能优化相关",
@@ -80,6 +71,25 @@ module.exports = {
       children: [
         {title: '性能优化', path: '/jobInterview/optimize/optimize1-interview'},
         {title: 'Vue性能优化', path: '/jobInterview/optimize/optimizeVue-interview'},
+      ]
+    },
+    {
+      title: "前后端通信",
+      collapsable: false,
+      children: [
+        {title: 'HTTP 相关', path: '/jobInterview/http/http-interview'},
+      ]
+    },
+    {
+      title: "实战相关面试题",
+      collapsable: false,
+      path: '/jobInterview/other/'
+    },
+    {
+      title: "浏览器相关",
+      collapsable: false,
+      children: [
+        {title: '浏览器相关', path: '/jobInterview/borwser/browser1-interview'},
       ]
     },
   ],
@@ -90,7 +100,7 @@ module.exports = {
       children: [
         {title: 'Vue基础梳理', path: '/VueAll/Vue/Vue基础梳理'},
         {title: 'Vue性能优化', path: '/VueAll/Vue/Vue性能优化'},
-        {title: '应该知道的Vue', path: '/VueAll/Vue/应该知道的Vue'},
+        {title: '应该知 道的Vue', path: '/VueAll/Vue/应该知道的Vue'},
       ]
     },
     {

@@ -797,7 +797,69 @@ const obj = new Obj()
 const obj = Object.create({name: 'name'})
 ```
 
-## new 运算符原理
+## 判断数据类型是否是数组
+### 1. 通过检查该实例是不是 Array 类型
+```js
+console.log(arr instanceof Array) ;//返回true则表示是数组类型，否则就不是。
+```
+
+### 2. 数组自带方法 Array.isArray(arr)
+```js
+var arr = [1, 2, 3];
+var obj = {name: 'sb'};
+var a = 'a';
+
+console.log(Array.isArray(arr));    // true
+console.log(Array.isArray(obj));    // false
+console.log(Array.isArray(a));      // false
+```
+
+### 3. 判断类型的构造函数是不是 Array
+```js
+var arr=[1,2,3];
+console.log(arr.constructor===Array);//"true" 返回true就是
+```
+
+## 数组去重
+### 1. 利用`ES6` 的 `Set` 去重
+不考虑兼容性，这种去重的方法代码最少。这种方法还无法去掉“{}”空对象
+```js
+function unique (arr) {
+  return Array.from(new Set(arr))
+}
+var arr = [1,2,3,2,3,4,5];
+console.log(unique(arr));     // [1, 2, 3, 4, 5]
+```
+#### 利用 `...` 简化代码
+```js
+var arr = [1,2,3,2,3,4,5];
+console.log([...new Set(arr)])
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
