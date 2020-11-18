@@ -12,6 +12,7 @@ module.exports = {
       collapsable: false,
       children: [
         {title: '事件循环机制', path: '/JS/事件循环机制'},
+        {title: '执行上下文栈', path: '/JS/执行上下文栈'},
         {title: '作用域', path: '/JS/作用域'},
         {title: '闭包', path: '/JS/闭包'},
         {title: '原型与原型链', path: '/JS/原型与原型链'},
@@ -36,10 +37,10 @@ module.exports = {
   ],
   '/article/':[
     {
-      title: "好文收集",
+      title: "好文学习",
       collapsable: false,
       children: [
-        {title: 'Vue好文', path: '/article/vue-article'},
+        {title: 'Vue相关', path: '/article/vue/vueArticle1'},
       ]
     },
   ],
@@ -100,7 +101,9 @@ module.exports = {
       children: [
         {title: 'Vue基础梳理', path: '/VueAll/Vue/Vue基础梳理'},
         {title: 'Vue性能优化', path: '/VueAll/Vue/Vue性能优化'},
-        {title: '应该知 道的Vue', path: '/VueAll/Vue/应该知道的Vue'},
+        {title: '应该知道的Vue', path: '/VueAll/Vue/应该知道的Vue'},
+        {title: 'Vue源码阅读准备', path: '/VueAll/Vue/Vue源码阅读准备'},
+        {title: 'Vue源码目录', path: '/VueAll/Vue/Vue源码目录'}
       ]
     },
     {
