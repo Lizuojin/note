@@ -46,19 +46,19 @@ Vue 应用的性能问题可以分为两个部分：
 在基于 Vue 的一个 [big table benchmark](https://github.com/vuejs/vue/blob/v2.5.17/benchmarks/big-table/index.html?1535282017690) 里，可以看到在渲染一个一个 1000 x 10 的表格的时候，开启 `Object.freeze()` 前后重新渲染的对比
 
 **开启优化之前：**
-![img](../../.vuepress/public/img/bigTable1.png)
+![img](../image/bigTable1.png)
 
 **开启优化之后：**
-![img](../../.vuepress/public/img/bigTable2.png)
+![img](../image/bigTable2.png)
 
 在这个例子里，使用了 `Object.freeze()` 比不使用快了 4 倍
 
 ### 2.4.2 为什么Object.freeze() 的性能会更好
 不使用 `Object.freeze()` 的CPU开销
-![img](../../.vuepress/public/img/cpu1.png)
+![img](../image/cpu1.png)
 
 使用 `Object.freeze()` 的CPU开销
-![img](../../.vuepress/public/img/cpu2.png)
+![img](../image/cpu2.png)
 
 对比可以看出，使用了 `Object.freeze()` 之后，减少了 `observer` 的开销。重复渲染节省了很多时间
 

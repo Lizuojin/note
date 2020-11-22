@@ -78,7 +78,7 @@ Vue 实例被创建时的初始化过程中会运行一些**生命周期钩子**
 - `errorCaptured`会在捕获子组件、孙组件发生错误时触发(2.5.0+版本新增)
 :::
 
-![img](../../.vuepress/public/img/lifecycle.png)
+![img](../image/lifecycle.png)
 
 ### 模板语法
 ---
@@ -154,7 +154,7 @@ var app = new Vue({
   }
 })
 ```
-![img](../../.vuepress/public/img/v-name.png)
+![img](../image/v-name.png)
 
 ##### 参数与动态参数
 
@@ -252,7 +252,7 @@ var app = new Vue({
 })
 ```
 **运行结果：**
-![img](../../.vuepress/public/img/methods.png)
+![img](../image/methods.png)
 
 :::tip 区别
 - 计算属性：**是基于它们的响应式依赖进行缓存的**，只在相关响应式依赖发生改变时它们才会重新求值
@@ -358,7 +358,7 @@ var app = new Vue({
 })
 ```
 **运行结果：**<br/>
-![img](../../.vuepress/public/img/class.png)
+![img](../image/class.png)
 
 ##### 数组语法
 - 数组中的值对应data中的属性，属性的值渲染为class
@@ -396,7 +396,7 @@ var app = new Vue({
 })
 ```
 **运行结果：**<br/>
-![img](../../.vuepress/public/img/style1.png)
+![img](../image/style1.png)
 
 ##### 直接绑定到一个样式对象或数组通常更好，这会让模板更清晰
 ```html
@@ -423,7 +423,7 @@ var app = new Vue({
 })
 ```
 **运行结果：**<br/>
-![img](../../.vuepress/public/img/style.png)
+![img](../image/style.png)
 
 ### 条件渲染
 ---
@@ -517,7 +517,7 @@ data() {
 }
 ```
 **运行结果：**<br/>
-![img](../../.vuepress/public/img/v-for.png)
+![img](../image/v-for.png)
 
 #### 2. 对象渲染列表
 - item代表循环渲染时，对象的值
@@ -543,7 +543,7 @@ data() {
 }
 ```
 **运行结果：**<br/>
-![img](../../.vuepress/public/img/v-for1.png)
+![img](../image/v-for1.png)
 
 #### 3. v-for 与 v-if 一同使用
 - v-for 的优先级比 v-if 更高，这意味着 v-if 将分别重复运行于每个 v-for 循环中
@@ -730,7 +730,7 @@ var app = new Vue({
 })
 ```
 **运行结果：**<br/>
-![img](../../.vuepress/public/img/component1.png)
+![img](../image/component1.png)
 
 **使用is属性**
 ```html
@@ -743,7 +743,7 @@ var app = new Vue({
 </table>
 ```
 **运行结果：**<br/>
-![img](../../.vuepress/public/img/component2.png)
+![img](../image/component2.png)
 
 :::tip ref引用
 在某些情况下，我们不得不选择操作DOM，Vue提供了 `ref` 特性来让我们直接操作DOM。`ref` 再不同的情况下，有不同的返回结果：
@@ -782,7 +782,7 @@ var app = new Vue({
 })
 ```
 **运行结果：**<br/>
-![img](../../.vuepress/public/img/component3.png)
+![img](../image/component3.png)
 
 ### props
 ---
@@ -938,7 +938,7 @@ Vue.component('item', {
 })
 ```
 **运行结果：**<br/>
-![img](../../.vuepress/public/img/slot.png)
+![img](../image/slot.png)
 
 #### 2. 具名插槽
 当父组件需要传递多模块的内容给子组件时，子组件需要写多个slot插槽，这个时候需要给每一个插槽起一个名字
@@ -962,7 +962,7 @@ Vue.component('item', {
 })
 ```
 **运行结果：**<br/>
-![img](../../.vuepress/public/img/slot1.png)
+![img](../image/slot1.png)
 
 #### 3. 作用域插槽
 作用域插槽能让插槽中的内容能够访问子组件中的数据

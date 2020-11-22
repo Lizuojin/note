@@ -267,7 +267,7 @@ SSR大致的意思就是 vue 在客户端将标签渲染成的整个 html 片段
 Model–View–ViewModel （MVVM） 是一个软件架构设计模式，由微软 WPF 和 Silverlight 的架构师 Ken Cooper 和 Ted Peters 开发，是一种简化用户界面的事件驱动编程方式。由 John Gossman（同样也是 WPF 和 Silverlight 的架构师）于2005年在他的博客上发表
 
 MVVM源于经典的 MVC (Model-view-controller) 模式，MVVM的出现促进了前端开发和后端业务逻辑的分离，极大地提高了前端的开发效率，MVVM 的核心是 ViewModel 层，它就是一个中转站(value converter)，该层向上与view层进行双向数据绑定，向下与 model 层通过接口请求进行数据交互，起到承上启下的作用
-![img](../../.vuepress/public/img/MVVM.png)
+![img](../image/MVVM.png)
 
 ### view 层
 View 是视图层，也就是用户界面，前端主要用 HTML 和 css 构建

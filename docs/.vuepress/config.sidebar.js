@@ -103,7 +103,7 @@ module.exports = {
         {title: 'Vue性能优化', path: '/VueAll/Vue/Vue性能优化'},
         {title: '应该知道的Vue', path: '/VueAll/Vue/应该知道的Vue'},
         {title: 'Vue源码阅读准备', path: '/VueAll/Vue/Vue源码阅读准备'},
-        {title: 'Vue源码目录', path: '/VueAll/Vue/Vue源码目录'}
+        {title: 'Vue源码', path: '/VueAll/Vue/Vue源码'}
       ]
     },
     {
@@ -121,4 +121,16 @@ module.exports = {
       ]
     },
   ],
+  "/largeWeb/": [
+    {
+      title: "webpack",
+      collapsable: false,
+      children: [
+        {title: '安装', path: '/largeWeb/webpack/install'},
+        {title: '起步', path: '/largeWeb/webpack/start'},
+        {title: '打包静态资源', path: '/largeWeb/webpack/static'},
+        {title: '管理输出', path: '/largeWeb/webpack/output'},
+      ]
+    },
+  ]
 }

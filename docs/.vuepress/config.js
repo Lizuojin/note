@@ -22,7 +22,13 @@ module.exports = {
       },
       { 
         text: "Vue生态",
-        link: '/VueAll/',
+        link: '/vueAll/',
+      },
+      {
+        text: '大前端', 
+        items: [
+          { text: 'webpack', link: '/largeWeb/webpack/install'},
+        ]
       },
       {
         text: '日积月累', 
@@ -32,6 +38,7 @@ module.exports = {
         ]
       },
       { text: '资源工具', link: '/resource/resource/' }
+
     ],
     sidebar: slidebar,
   },

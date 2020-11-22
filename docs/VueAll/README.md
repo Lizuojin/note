@@ -6,4 +6,4 @@ Vue.js 是一个JavaScriptMVVM库，是一套构建用户界面的渐进式框�
 
 Vue 的核心库只关注视图层，它不仅易于上手，还便于与第三方库或既有项目整合。授予了这么高的评价的vue.js，也是开源世界华人的骄傲，因为它的作者是位中国人–尤雨溪（Evan You）
 
-![img](../.vuepress/public/img/vueLogo.png)
+![img](./image/vueLogo.png)

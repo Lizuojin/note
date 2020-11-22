@@ -91,7 +91,7 @@ console.log([]==![])  // true
 5. 即 `0==0`，返回 `true`
 
 类型转换规则，如下图：
-![img](../../.vuepress/public/img/type.png)
+![img](../image/type.png)
 
 ## == 和 ===
 :::tip === 严格相等

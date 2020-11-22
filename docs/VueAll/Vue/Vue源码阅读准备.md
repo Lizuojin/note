@@ -218,7 +218,38 @@ promise3
 promise4
 ```
 
+## 7. 目录结构
+源码位于src目录下，下面对src下的目录进行介绍
 
+![img](../image/vue-code.png)
+
+### compiler
+该目录是编译相关的代码，即将 template 模板转化成 render 函数的代码
+
+### core
+这部分代码是 vue 的核心代码
+- **components**：内置组件的代码，即 keep-alive 代码
+- **global-api**：全局API代码，mixin，extend 等 api 在这里实现
+- **instance**：vue实例化相关代码，包括初始化，事件，生命周期，渲染等部分的代码
+- **observer**：响应式数据相关代码
+- **util**：工具方法
+- **vdom**：虚拟 dom 的代码
+
+### platforms
+platforms下包含两个子目录，web 和 weex。
+
+分别代表可以打包生成在web端使用的 vue 代码和在native端使用的 weex 代码
+
+### server
+该目录下是 SSR 相关的代码。
+
+Vue.js 是构建客户端应用程序的框架。除了可以在浏览器中输出 Vue 组件，也可以将同一个组件渲染为服务器端的 HTML 字符串，将它们直接发送到浏览器，最后将这些静态标记"激活"为客户端上完全可交互的应用程序。
+
+### sfc
+我们平时开发时，都是写 .vue 文件。sfc 的代码就是提供一个解析器，把.vue文件代码解析成一个 javascript 对象
+
+### shared
+该目录下定义了一些公用的工具方法，提供给上面的几个目录内代码使用
 
 
 
