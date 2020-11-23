@@ -129,7 +129,8 @@ module.exports = {
         {title: '安装', path: '/largeWeb/webpack/install'},
         {title: '起步', path: '/largeWeb/webpack/start'},
         {title: '打包静态资源', path: '/largeWeb/webpack/static'},
-        {title: '管理输出', path: '/largeWeb/webpack/output'},
+        {title: 'webpack 核心', path: '/largeWeb/webpack/core'},
+        {title: 'webpack 进阶', path: '/largeWeb/webpack/advanced'},
       ]
     },
   ]
