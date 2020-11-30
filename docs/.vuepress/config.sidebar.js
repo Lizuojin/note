@@ -37,10 +37,18 @@ module.exports = {
   ],
   '/article/':[
     {
-      title: "好文学习",
+      title: "Vue 相关",
       collapsable: false,
       children: [
-        {title: 'Vue相关', path: '/article/vue/vueArticle1'},
+        {title: 'Vue 源码的一些函数', path: '/article/vue/vueSoundCodeFun'},
+      ]
+    },
+    {
+      title: "JavaScript 相关",
+      collapsable: false,
+      children: [
+        {title: '你应该知道的一些JS数组技巧', path: '/article/JavaScript/arraySkill'},
+
       ]
     },
   ],

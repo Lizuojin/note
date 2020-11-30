@@ -27,7 +27,7 @@ module.exports = {
       {
         text: '大前端', 
         items: [
-          { text: 'webpack', link: '/largeWeb/webpack/install'},
+          { text: 'webpack', link: '/largeWeb/webpack/'},
         ]
       },
       {

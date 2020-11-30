@@ -94,34 +94,242 @@ module.exports = {
 ],
 ```
 
+## 区分开发模式和生产模式
+区分开发环境和生产环境，最好的办法是把公用配置提取到一个配置文件，生产环境和开发环境只写自己需要的配置，在打包的时候再进行合并即可，`webpack-merge` 可以帮我们做到这个事情
 
+我们先对目录结构进行修改
+```sh
+webpack-demo
+|- package.json
+|- webpack.config.js
+|- webpack.common.js
+|- webpack.dev.js
+|- webpack.prod.js
+|- /dist
+|- /src
+  |- index.js
+  |- math.js
+|- /node_modules
+```
 
+新建完webpack.common.js文件后，我们需要把公用配置提取出来，它的代码看起来应该是下面这样子的：
+```js
+const path = require('path');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+module.exports = {
+  entry: {
+    app: './src/index.js'
+  },
+  plugins: [
+    new CleanWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      title: 'Production'
+    })
+  ],
+  output: {
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, './dist')
+  }
+};
+```
+提取完 `Webpack` 公用配置文件后，我们开发环境下的配置，也就是 `webpack.dev.js` 中的代码，将剩下下面这些：
+```js
+const merge = require('webpack-merge');
+const common = require('./webpack.common.js');
 
+module.exports = merge(common, {
+  devtool: 'inline-source-map',
+  devServer: {
+    contentBase: './dist'
+  }
+});
+```
+而生产环境下的配置，也就是 `webpack.prod.js` 中的代码，可能是下面这样子的：
+```js
+const merge = require('webpack-merge');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const common = require('./webpack.common.js');
 
+module.exports = merge(common, {
+  plugins: [
+    new UglifyJSPlugin()
+  ]
+});
+```
+在处理完以上三个 `.js` 文件后，我们需要做一件事情：
+- 当处于开发环境下时，把 `webpack.common.js` 中的配置和 `webpack.dev.js` 中的配置合并在一起
+- 当处于生产环境下时，把 `webpack.common.js` 中的配置和 `webpack.prod.js` 中的配置合并在一起
 
+针对以上问题，我们可以使用 `webpack-merge` 进行合并，在使用之前，我们需要使用如下命令进行安装：
+```sh
+$ npm install webpack-merge -D
+```
 
+重新在 `package.json` 中配置一下我们的打包命令:
+```json
+// ...
+"scripts": {
+  "start": "webpack-dev-server --open --config webpack.dev.js",
+  "build": "webpack --config webpack.prod.js"
+}
+// ...
+```
 
+## 代码分离
+此特性能够把代码分离成更小的块，按需加载或并行加载这些文件，控制资源加载优先级，如果使用合理，会极大影响加载时间。
 
+有三种常用的代码分离方法：
+- 入口起点：使用 `entry` 配置手动地分离代码。
+- 防止重复：使用 `CommonsChunkPlugin` 去重和分离 `chunk`
+- 动态导入：通过模块的内联函数调用来分离代码。
 
+### 入口起点
+项目的目录结构:
+```sh
+webpack-demo
+|- package.json
+|- webpack.config.js
+|- /dist
+|- /src
+  |- index.js
+  |- another-module.js
+|- /node_modules
+```
+/src/index.js
+```js
+import _ from 'lodash';
 
+function component() {
+  var element = document.createElement('div');
 
+  element.innerHTML = _.join(['Hello', 'webpack'], ' ');
+  return element;
+}
 
+document.body.appendChild(component());
+```
 
+/src/another-module.js
+```js
+import _ from 'lodash';
 
+console.log(
+  _.join(['Another', 'module', 'loaded!'], ' ')
+);
+```
+webpack.config.js
+```js {6-7}
+const path = require('path');
+const HTMLWebpackPlugin = require('html-webpack-plugin');
 
+module.exports = {
+  entry: {
+    index: './src/index.js',
+    another: './src/another-module.js'
+  },
+  plugins: [
+    new HTMLWebpackPlugin({
+      title: 'Code Splitting'
+    })
+  ],
+  output: {
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  }
+};
+```
 
+### 防止重复
+`CommonsChunkPlugin` 插件可以将公共的依赖模块提取到已有的入口 `chunk` 中，或者提取到一个新生成的 `chunk`。让我们使用这个插件，将之前的示例中重复的 `lodash` 模块去除：
+```js {14-16}
+  const path = require('path');
+  const webpack = require('webpack');
+  const HTMLWebpackPlugin = require('html-webpack-plugin');
 
+  module.exports = {
+    entry: {
+      index: './src/index.js',
+      another: './src/another-module.js'
+    },
+    plugins: [
+      new HTMLWebpackPlugin({
+        title: 'Code Splitting'
+      }),
+      new webpack.optimize.CommonsChunkPlugin({
+        name: 'common' // 指定公共 bundle 的名称。
+      })
+    ],
+    output: {
+      filename: '[name].bundle.js',
+      path: path.resolve(__dirname, 'dist')
+    }
+  };
+```
 
+### 动态导入
 
+#### import() 语法
+- `chunkFilename `: 决定非入口 `chunk` 的名称，更多信息请查看 [output 相关文档](https://www.webpackjs.com/configuration/output/#output-chunkfilename)
+- `webpackChunkName`: 会将我们的 `bundle` 被命名为 `[webpackChunkName].bundle.js`，更多信息请查看 [import() 相关文档](https://www.webpackjs.com/api/module-methods/#import-)
 
+webpack.config.js
+```js
+const path = require('path');
+const HTMLWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
+module.exports = {
+  entry: {
+    index: './src/index.js',
+  },
+  plugins: [
+    new HTMLWebpackPlugin({
+      title: 'Code Splitting'
+    }),
+  ],
+  output: {
+    filename: '[name].bundle.js',
+    chunkFilename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  }
+};
+```
+project
+```js
+webpack-demo
+|- package.json
+|- webpack.config.js
+|- /dist
+|- /src
+  |- index.js
+|- /node_modules
+```
+/src/index.js
+```js
 
+function getComponent() {
 
+  return import(/* webpackChunkName: "lodash" */ 'lodash').then(_ => {
+    var element = document.createElement('div');
+    element.innerHTML = _.join(['Hello', 'webpack'], ' ');
+    return element;
+  }).catch(error => 'An error occurred while loading the component');
+  }
 
+getComponent().then(component => {
+  document.body.appendChild(component);
+})
+```
 
-
-
-
-
-
+打包结果：
+```js
+           Asset       Size  Chunks                    Chunk Names
+lodash.bundle.js     544 kB       0  [emitted]  [big]  lodash
+ index.bundle.js    6.22 kB       1  [emitted]         index
+      index.html  191 bytes          [emitted]
+   [0] ./src/index.js 391 bytes {1} [built]
+   [2] (webpack)/buildin/global.js 509 bytes {0} [built]
+   [3] (webpack)/buildin/module.js 517 bytes {0} [built]
+```

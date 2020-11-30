@@ -1,8 +1,6 @@
----
-sidebarDepth: 1
----
-# vue 相关
-## Vue 源码的一些函数
+
+
+# Vue 源码的一些函数
 ### 1. 数据类型的判断
 `Object.prototype.toString.call()`返回的数据格式为 `[object Object]` 类型，然后用 `slice` 截取第8位到倒一位，得到结果为 `Object`
 ```js
