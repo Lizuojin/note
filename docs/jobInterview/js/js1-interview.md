@@ -836,18 +836,91 @@ var arr = [1,2,3,2,3,4,5];
 console.log([...new Set(arr)])
 ```
 
+## JavScript 有几种类型的值？你能画一下他们的内存图吗？
+- 栈：原始数据类型(undefined、null、boolean、number、string)
+  - 原始数据类型直接存储在 **栈(stack)** 中的简单数据段
+  - 占据空间小、大小固定，属于被频繁使用数据
+- 堆：引用数据类型(对象、数组、函数)
+  - 占据空间大、大小不固定
+  - 引用类型在栈中存储了指针，该指针指向堆中该实体的起始地址
 
+![img](../image/stack.png)
 
+## 介绍 JS 有哪些内置对象
+js 中的内置对象主要指的是在程序执行前存在全局作用域里的由 js 定义的一些全局值属性、函数和用来实例化其他对象的构造函数对象。一般我们经常用到的如全局变量值 NaN、undefined；全局函数如parseInt()、parseFloat()；用来实例化对象的构造函数 Date、Object 等；还有提供数学计算的单体内置对象 Math 对象
 
+参考：[标准内置对象分类](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects)
 
+## nul 和 undefined 的区别？
+他们都是基础数据类型：
+- undefined：
+  - 一般变量声明了但还没有定义的时候会返回 undefined；
+  - 函数没有使用 return 语句指定返回值，会返回一个 undefined 值；
+  - 调用函数没有传递参数值，参数会被初始化为 undefined
+- null：主要用于赋值给一些可能返回对象的变量，用于初始化
 
+## 模块化开发怎么做?
+我对模块化开发的理解是，一个模块是实现一个特定功能的一组方法
 
+### 原始写法
+由于**函数**具有独立作用域的特点，最原始的写法是几个函数作为一个模块
+- 缺点：容易造成全局变量的污染，并且模块间没有联系
+```js
+function m1(){
+  //...
+}
 
+function m2(){
+  //...
+}
+```
 
+### 对象写法
+把模块写成一个对象，所有的模块成员都放到这个对象里面
+- 缺点：会暴露所有模块成员，内部状态可以被外部改写
+```js
+var module1 = new Object({
+  _count : 0,
 
+  m1: function (){
+  //...
+  },
 
+  m2: function (){
+  //...
+  }
 
+});
 
+// 内部状态被外部改写
+module1._count = 5;
+```
+
+### 立即执行函数写法
+可以达到不暴露私有成员的目的
+```js
+var module1 = (function(){
+
+  var _count = 0;
+
+  var m1 = function(){
+    //...
+  };
+
+  var m2 = function(){
+    //...
+  };
+
+  return {
+    m1 : m1,
+    m2 : m2
+  };
+
+})();
+
+// 外部代码无法读取内部的_count变量
+console.info(module1._count); //undefined
+```
 
 
 

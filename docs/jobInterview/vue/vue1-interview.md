@@ -93,8 +93,17 @@ computed: {
 ```
 
 ## 5、computed 和 watch 的区别和运用的场景？
-- **computed**：是计算属性，依赖于其他值，并且可以进行缓存，当依赖的值发生改变时，在下一次获取 `computed` 时，才会重新计算 `computed` 值
-- **watch**：类似于数据监听的回调，每当监听的数据改变时都会执行回调进行后续操作
+- **computed**：是计算属性：
+  - 名称不能与 data 里的对象重复
+  - 依赖于其他值，是多个值变化引起一个值变化，是多对一 
+  - 并且可以进行缓存，当依赖的值发生改变时，在下一次获取 `computed` 时，才会重新计算 `computed` 值
+  - 必须有 return
+  - 只能是同步
+- **watch**：类似于数据监听的回调：
+  - 名称必须和 data 里对象一样
+  - 监听一个值，一个值变化引起多个值的变化
+  - 没有 return
+  - 可以异步
 ### 运用场景：
 - **computed**：当我们需要数值计算、依赖于其他数据时，应该使用computed，因为可以利用 computed 的缓存特性，避免每次获取值时，都要重新计算；
 - **watch**：当我们需要在数据变化时执行异步或开销较大的操作时，应该使用 watch，使用 watch 选项允许我们执行异步操作
@@ -149,7 +158,7 @@ Vue 的父组件和子组件生命周期钩子函数执行顺序可以归类为�
 父 beforeDestroy -> 子 beforeDestroy -> 子 destroyed -> 父 destroyed
 
 ## 9、在哪个生命周期内调用异步请求？
-可以在钩子函数 created、beforeMount、mounted 中进行调用，因为在这三个钩子函数中，data 已经创建，可以将服务端端返回的数据进行赋值。但是本人推荐在 created 钩子函数中调用异步请求，因为在 created 钩子函数中调用异步请求有以下优点：
+可以在钩子函数 created、beforeMount、mounted 中进行调用，因为在这三个钩子函数中，data 已经创建，可以将服务端端返回的数据进行赋值。但是本人推荐在 created 钩子函数中调用异步请求，因为在 **created 钩子函数**中调用异步请求有以下优点：
 - 能更快获取到服务端数据，减少页面 loading 时间；
 - ssr 不支持 beforeMount 、mounted 钩子函数，所以放在 created 中有助于一致性
 

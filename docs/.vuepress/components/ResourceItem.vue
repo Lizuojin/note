@@ -243,6 +243,11 @@ export default {
             text: '上面的交互都很酷...',
             url: 'https://tympanus.net/codrops/',
           },
+          {
+            title: 'TweenMax.js', 
+            text: '适用于移动端和现代互联网的超高性能专业级动画插件',
+            url: 'https://www.tweenmax.com.cn/',
+          },
         ],
         '构建工具/包管理器': [
           {

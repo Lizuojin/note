@@ -1,12 +1,13 @@
 # 进阶
 
 ## Tree Shaking
-`Tree Shaking` 是一种术语，通常用来描述 `js` 中未使用的代码。
-:::tip 注意
-`Tree Shaking` 只适用于 `ES Module` 语法(既通过 `export` 导出，`import` 引入)，因为它依赖于 `ES Module` 的静态结构特性。
+:::tip 知识点
+- `Tree Shaking` 是一种术语，用于描述移除 `JavaScript` 上下文中的未引用代码
+- 依赖于 `ES2015` 模块系统中的静态结构特性，例如 `import` 和 `export`
+- `sideEffects` 属性作为标记可以安全地删除文件中未使用的部分
 :::
-在 `src` 目录下新建一个 `math.js` 文件，他的代码如下
 
+在 `src` 目录下新建一个 `math.js` 文件，他的代码如下
 ```js
 // math.js
 export function add(a, b) {
@@ -95,13 +96,15 @@ module.exports = {
 ```
 
 ## 区分开发模式和生产模式
-区分开发环境和生产环境，最好的办法是把公用配置提取到一个配置文件，生产环境和开发环境只写自己需要的配置，在打包的时候再进行合并即可，`webpack-merge` 可以帮我们做到这个事情
+:::tip 知识点
+- 公用配置(webpack.common.js)提取到一个配置文件，生产环境(webpack.dev.js)和开发环境(webpack.prod.js)只写自己需要的配置，使用`webpack-merge` 打包的时候再进行合并
+- 在 `scprit` 定义开发环境脚本(npm run start)，定义生产环境脚本(npm run build)
+:::
 
 我们先对目录结构进行修改
 ```sh
 webpack-demo
 |- package.json
-|- webpack.config.js
 |- webpack.common.js
 |- webpack.dev.js
 |- webpack.prod.js
@@ -180,10 +183,12 @@ $ npm install webpack-merge -D
 ## 代码分离
 此特性能够把代码分离成更小的块，按需加载或并行加载这些文件，控制资源加载优先级，如果使用合理，会极大影响加载时间。
 
+:::tip 知识点
 有三种常用的代码分离方法：
 - 入口起点：使用 `entry` 配置手动地分离代码。
 - 防止重复：使用 `CommonsChunkPlugin` 去重和分离 `chunk`
 - 动态导入：通过模块的内联函数调用来分离代码。
+:::
 
 ### 入口起点
 项目的目录结构:
@@ -242,7 +247,13 @@ module.exports = {
 ```
 
 ### 防止重复
-`CommonsChunkPlugin` 插件可以将公共的依赖模块提取到已有的入口 `chunk` 中，或者提取到一个新生成的 `chunk`。让我们使用这个插件，将之前的示例中重复的 `lodash` 模块去除：
+:::tip 知识点
+- `CommonsChunkPlugin` 插件可以将公共的依赖模块提取到：
+    - **已有的入口 `chunk` 中**
+    - **提取到一个新生成的 `chunk`**
+:::
+
+让我们使用这个插件，将之前的示例中重复的 `lodash` 模块去除：
 ```js {14-16}
   const path = require('path');
   const webpack = require('webpack');
@@ -333,3 +344,68 @@ lodash.bundle.js     544 kB       0  [emitted]  [big]  lodash
    [2] (webpack)/buildin/global.js 509 bytes {0} [built]
    [3] (webpack)/buildin/module.js 517 bytes {0} [built]
 ```
+
+## 懒加载
+有些代码不需要每次加载页面的时候都要请求它，会对性能产生负面的影响；结合上面说到代码分离，将一些可以在第一次交互的时候加载的代码分离出来，有需要再加载这部分的代码
+
+project
+```sh
+webpack-demo
+|- package.json
+|- webpack.config.js
+|- /dist
+|- /src
+  |- index.js
+  |- print.js
+|- /node_modules
+```
+
+src/print.js
+```js
+console.log('The print.js module has loaded! See the network tab in dev tools...');
+
+export default () => {
+  console.log('Button Clicked: Here\'s "some text"!');
+}
+```
+
+src/index.js
+```js
+import _ from 'lodash';
+
+function component() {
+  var element = document.createElement('div');
+  var button = document.createElement('button');
+  var br = document.createElement('br');
+
+  button.innerHTML = 'Click me and look at the console!';
+  element.innerHTML = _.join(['Hello', 'webpack'], ' ');
+  element.appendChild(br);
+  element.appendChild(button);
+
+
+  button.onclick = e => import(/* webpackChunkName: "print" */ './print').then(module => {
+    var print = module.default;
+
+    print();
+  });
+
+  return element;
+}
+
+document.body.appendChild(component());
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
