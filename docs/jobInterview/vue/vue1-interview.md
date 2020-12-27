@@ -309,13 +309,31 @@ Vue 主要通过以下 4 个步骤来实现数据双向绑定的：
 
 - 实现一个订阅器 Dep：订阅器采用 发布-订阅 的设计模式，用来收集 Watcher ，对监听器 Observer 和订阅者 Watcher 进行统一的管理
 
+## 21、vue 常用的修饰符
+- `.prevent`: 提交事件不再重载页面
+- `.stop`: 阻止单击事件冒泡
+- `.self`: 当事件发生在该元素本身而不是子元素的时候会触发
 
+## 22、vue 中 key 值的作用
+vue 中 key 值的作用可以分为两种情况来考虑。
 
+### v-if 中使用 key
+由于 `vue` 会尽可能高效地渲染元素，通常会复用已有元素而不是从新渲染，因此当我们使用 `v-if` 来实现元素切换的时候，如果切换前后含有相同类型的元素，那么这个元素就会被复用，如果是 `input` 元素，那么切换前后用户的输入不会被清除掉，这样是不符合需求的。因此我们可以通过使用 `key` 标识一个元素，这个情况下，使用 `key` 的元素不会被复用。**这个时候 `key` 的作用是用来标识一个独立的元素**
+```html
+<template v-if="loginType">
+  <label>Username</label>
+  <input placeholder="Enter your username" key="username-input">
+</template>
 
+<template v-else>
+  <label>Email</label>
+  <input placeholder="Enter your email address" key="email-input">
+</template>
+```
 
-
-
-
+### v-for 中使用 key
+用 `v-for` 更新已渲染过的元素列表时，它默认使用 **就地复用** 的策略。如果数据项的顺序发生了改变，`Vue` 不会移动 `DOM` 元素来匹配数据项的顺序，而是简单复用此处的每个元素。因此通过为每个列表项提供一个 `key` 值，来以便 `Vue` 跟踪元素，从而高效的实现复用。**这个时候 `key` 的作用是为了高效的更新渲染虚拟 DOM**
+![img](../image/diff.png)
 
 
 

@@ -27,9 +27,27 @@ history 路由模式的实现主要基于存在下面几个特性：
 - 我们可以使用 popstate 事件来监听 url 的变化，从而对页面进行跳转（渲染）
 - history.pushState() 或 history.replaceState() 不会触发 popstate 事件，这时我们需要手动触发页面跳转（渲染）
 
+## 3、vue-router 中的导航钩子函数
 
+### 全局导航守卫
+- `beforeEach` 全局前置守卫
+- `beforeResolve` 全局解析守卫
+- `afterEach` 全局后置钩子
 
+### 路由独享守卫
+- `beforeEnter` 路由独享守卫
 
+### 组件内守卫
+- `beforeRouterEnter` 
+- `beforeRouterUpdate`
+- `beforeRouterLeave`
+
+## 4、$route 和 $router 的区别？
+### $route
+是 “路由信息对象”，包括 path，parms，hash，query，fulPath，matched，name等路由信息参数。
+
+### $router
+是“路由实例”对象包括了路由的跳转方法，钩子函数等。
 
 
 
