@@ -57,16 +57,16 @@ module.exports = {
       title: "JavaScript相关",
       collapsable: false,
       children: [
-        {title: 'JavaScript基础面试题', path: '/jobInterview/js/js1-interview'},
-        {title: 'JavaScript进阶面试题', path: '/jobInterview/js/js2-interview'},
+        {title: 'JavaScript基础面试题', path: '/jobInterview/js/jsBaseInterview'},
+        {title: 'JavaScript进阶面试题', path: '/jobInterview/js/jsAdvanceInterview'},
       ]
     },
     {
       title: "Vue全家桶相关",
       collapsable: false,
       children: [
-        {title: 'Vue', path: '/jobInterview/vue/vue1-interview'},
-        {title: 'VueRouter', path: '/jobInterview/vue/VueRouter1-interview'},
+        {title: 'Vue', path: '/jobInterview/vue/vueInterview1'},
+        {title: 'VueRouter', path: '/jobInterview/vue/VueRouterInterview1'},
       ]
     },
     {
@@ -78,15 +78,15 @@ module.exports = {
       title: "性能优化相关",
       collapsable: false,
       children: [
-        {title: '性能优化', path: '/jobInterview/optimize/optimize1-interview'},
-        {title: 'Vue性能优化', path: '/jobInterview/optimize/optimizeVue-interview'},
+        {title: '性能优化', path: '/jobInterview/optimize/optimizeInterview'},
+        {title: 'Vue性能优化', path: '/jobInterview/optimize/optimizeVueInterview'},
       ]
     },
     {
       title: "前后端通信",
       collapsable: false,
       children: [
-        {title: 'HTTP 相关', path: '/jobInterview/http/http-interview'},
+        {title: 'HTTP 相关', path: '/jobInterview/http/httpInterview'},
       ]
     },
     {
@@ -98,7 +98,7 @@ module.exports = {
       title: "浏览器相关",
       collapsable: false,
       children: [
-        {title: '浏览器相关', path: '/jobInterview/borwser/browser1-interview'},
+        {title: '浏览器相关', path: '/jobInterview/borwser/browserInterview'},
       ]
     },
   ],

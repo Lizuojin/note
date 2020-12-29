@@ -226,7 +226,7 @@ new Vue({
 因为组件是用来复用的，且 JS 里对象是引用关系，如果组件中 data 是一个对象，那么这样作用域没有隔离，子组件中的 data 属性值会相互影响，如果组件中 data 选项是一个函数，那么每个实例可以维护一份独立的对象拷贝，组件实例之间的 data 属性不会互相影响；而 new Vue 的实例，是不会被复用的，因此不存在引用对象的问题
 
 ## 14、v-model 的原理？
-我们在 vue 项目中使用 v-model 在表单元素input、textarea、select实现双向数据绑定，其实 v-model 本质上不过是语法糖，v-model 在内部对不同的元素使用不同的属性并抛出不同的事件 
+我们在 vue 项目中使用 v-model 在表单元素`input`、`textarea`、`select`实现双向数据绑定，可以看成是 `value + input` 方法的语法糖，v-model 在内部对不同的元素使用不同的属性并抛出不同的事件 
 - `text` 和 `textarea` 元素使用 `value` 属性 和 `input` 事件
 - `checkbox` 和 `radio` 使用 `check` 属性 和 `change` 事件
 - `select` 字段将 `value` 作为 `prop` 并将 `change` 作为事件
@@ -321,13 +321,13 @@ vue 中 key 值的作用可以分为两种情况来考虑。
 由于 `vue` 会尽可能高效地渲染元素，通常会复用已有元素而不是从新渲染，因此当我们使用 `v-if` 来实现元素切换的时候，如果切换前后含有相同类型的元素，那么这个元素就会被复用，如果是 `input` 元素，那么切换前后用户的输入不会被清除掉，这样是不符合需求的。因此我们可以通过使用 `key` 标识一个元素，这个情况下，使用 `key` 的元素不会被复用。**这个时候 `key` 的作用是用来标识一个独立的元素**
 ```html
 <template v-if="loginType">
-  <label>Username</label>
-  <input placeholder="Enter your username" key="username-input">
+    <label>Username</label>
+    <input placeholder="Enter your username" key="username-input">
 </template>
 
 <template v-else>
-  <label>Email</label>
-  <input placeholder="Enter your email address" key="email-input">
+    <label>Email</label>
+    <input placeholder="Enter your email address" key="email-input">
 </template>
 ```
 
@@ -335,18 +335,50 @@ vue 中 key 值的作用可以分为两种情况来考虑。
 用 `v-for` 更新已渲染过的元素列表时，它默认使用 **就地复用** 的策略。如果数据项的顺序发生了改变，`Vue` 不会移动 `DOM` 元素来匹配数据项的顺序，而是简单复用此处的每个元素。因此通过为每个列表项提供一个 `key` 值，来以便 `Vue` 跟踪元素，从而高效的实现复用。**这个时候 `key` 的作用是为了高效的更新渲染虚拟 DOM**
 ![img](../image/diff.png)
 
+## 23、vue 中，子组件为何不可以修改父组件传递的 `Prop`
+`Vue` 提倡单向数据流，即父级 `props` 的更新会流向子组件，但是反过来则不行，这是为了防止意外的改变父组件状态，使得应用的数据流变得难以理解，
+需要特别注意的是:
+- 当你从子组件修改的 `prop` 属于基础类型时会触发提示。这种情况下，你是无法修改父组件的数据源的，因为基础类型赋值时是值拷贝
+- 当你修改引用类型值(Object、Array)时不会触发提示，并且会修改父组件数据源的数据
 
+## 24、vue 2.x 中如何检测数组的变化的
+使用函数劫持的方式，重写数组的方法，`Vue` 将 `data` 中的数组进行了原型链重写，指向了自己定义的数组原型方法，这样当调用数组 `api` 时，可以通知依赖更新，如果数组中包含引用类型，会对数组中的引用类型再次递归遍历进行监控，这样就实现了监测数组的变化
 
+## 25、nextTick 的实现原理是什么
+在 `DOM` 更新结束之后执行回调，`nextTick` 主要使用了宏任务和微任务。
 
+`nextTick` 将传入的函数，push 到数组(callbacks)中，再根据执行环境分别尝试采用
+- Promise
+- MutationObserver
+- setImmediate
+- 如果以上都不行则采用 setTimeout
 
+遍历数组执行回调
 
+## 26、Vue 事件绑定原理说一下
+- 原生事件绑定是通过 `addEventListener` 绑定给真实元素的
+- 组件事件绑定是通过 `Vue` 自定义的 `$on` 实现的
 
+## 27、Vue 模板编译原理说一下
+简单说，`Vue` 的编译过程就是将 `template` 转化为 `render` 函数的过程，会经历以下阶段
+- 将 `模板字符串` 生成 `AST` 树(解析器)
+    - 使用大量的正则表达式对模板进行解析，遇到标签、文本的时候都会执行对应的钩子进行相关处理
+- 对 `AST` 进行静态节点标记，主要用来做虚拟 DOM 的渲染优化(优化器)
+- 使用 `AST` 生成 `render` 函数代码字符串(代码生成器)
 
+参考文章：[Vue模板编译原理](https://segmentfault.com/a/1190000013763590)
 
+<!-- ## 28、Vue2.x和Vue3.x渲染器的diff算法分别说一下 -->
 
+## 28、keep-alive 组件有什么作用
+如果组件切换的时候，保存一些组件的状态防止多次渲染，就可以使用 `keep-alive` 组件包裹需要保存的组件
 
-
-
+## 29、vue 中 mixin 和 mixins 区别
+- `mixin`: 全局注册一个混入，影响注册之后所有的创建的每个 Vue 实例，
+- `mixins`: 选项接受一个混入对象的数组，当组件使用混入对象时，所有混入对象的选项将被 “混合” 进该组件本身的选项
+    - 数据发生冲突时以组件数据优先
+    - 同名钩子函数将合并为一个数组，因此都将被调用，另外，**混入对象的钩子将在组件自身钩子之前调用**
+    - 值为对象的选项(methods、components、directives)，将被合并为同一个对象。两个对象键名冲突时，取 **组件对象** 的键值对。
 
 
 
