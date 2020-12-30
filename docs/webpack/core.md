@@ -154,7 +154,7 @@ module.exports = {
 
 以下是官方提供的devtool各个属性的解释以及打包速度对比图：
 
-![img](../image/devtool.png)
+![img](./image/devtool.png)
 
 通过上图我们可以看出，良好的 `source-map` 配置不仅能帮助我们提高打包速度，同时在代码维护和调错方面也能有很大的帮助，一般来说，`source-map` 的最佳实践是下面这样的：
 - 开发环境下(development)：推荐将 `devtool` 设置成 `cheap-module-eval-source-map`
@@ -196,10 +196,10 @@ module.exports = {
 :::tip 配置前后对比
 - 配置前
 
-  ![img](../image/devtool-no.png)
+  ![img](./image/devtool-no.png)
 - 配置后
 
-  ![img](../image/devtool-yes.png)
+  ![img](./image/devtool-yes.png)
 
 `source map` 功能更容易追踪错误和警告，一个来自 `print.js` 的错误，它能明确告诉你
 :::
@@ -347,7 +347,7 @@ module.exports = {
 
 再次使用 `npx webpack` 进行打包，如下图，可以看到此次打包后，`app.bundle.js` 的大小明显变小了。
 
-![img](../image/bable.png)
+![img](./image/bable.png)
 
 
 

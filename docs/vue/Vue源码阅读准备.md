@@ -221,7 +221,7 @@ promise4
 ## 7. 目录结构
 源码位于src目录下，下面对src下的目录进行介绍
 
-![img](../image/vue-code.png)
+![img](./image/vue-code.png)
 
 ### compiler
 该目录是编译相关的代码，即将 template 模板转化成 render 函数的代码

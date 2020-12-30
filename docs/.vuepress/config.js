@@ -22,12 +22,17 @@ module.exports = {
       },
       { 
         text: "Vue生态",
-        link: '/vueAll/',
+        items: [
+            { text: 'Vue', link: '/vue/Vue基础梳理'},
+            { text: 'VueRouter', link: '/vueRouter/知识梳理'},
+            { text: 'Vuex', link: '/vuex/知识梳理'},
+
+        ]
       },
       {
         text: '大前端', 
         items: [
-          { text: 'webpack', link: '/largeWeb/webpack/'},
+          { text: 'webpack', link: '/webpack/install'},
         ]
       },
       {
@@ -38,7 +43,6 @@ module.exports = {
         ]
       },
       { text: '资源工具', link: '/resource/resource/' }
-
     ],
     sidebar: slidebar,
   },

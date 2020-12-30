@@ -1,11 +1,11 @@
 # VueRouter 面试题
-## 1、vue-router 路由模式有几种？
+## ● vue-router 路由模式有几种？
 vue-router 有 3 种路由模式：hash、history、abstract
 - **hash**：使用 URL hash值作为路由
 - **history**：使用 HTML5 History API 和服务器配置
 - **abstract**：支持所有 JavaScript 运行环境，如 Node.js 服务器端。如果发现没有浏览器的 API，路由会自动强制进入这个模式
 
-## 2、能说下 vue-router 中常用的 hash 和 history 路由模式实现原理吗？
+## ● 能说下 vue-router 中常用的 hash 和 history 路由模式实现原理吗？
 ### hash 模式的实现原理
 早期的前端路由的实现就是基于 location.hash 来实现的。其实现原理很简单，location.hash 的值就是 URL 中 # 后面的内容。比如下面这个网站，它的 location.hash 的值为 '#search'：
 ```js
@@ -27,7 +27,7 @@ history 路由模式的实现主要基于存在下面几个特性：
 - 我们可以使用 popstate 事件来监听 url 的变化，从而对页面进行跳转（渲染）
 - history.pushState() 或 history.replaceState() 不会触发 popstate 事件，这时我们需要手动触发页面跳转（渲染）
 
-## 3、vue-router 中的导航钩子函数
+## ● vue-router 中的导航钩子函数
 
 ### 全局导航守卫
 - `beforeEach` 全局前置守卫
@@ -42,13 +42,48 @@ history 路由模式的实现主要基于存在下面几个特性：
 - `beforeRouterUpdate`
 - `beforeRouterLeave`
 
-## 4、$route 和 $router 的区别？
+## ● $route 和 $router 的区别？
 ### $route
-是 “路由信息对象”，包括 path，parms，hash，query，fulPath，matched，name等路由信息参数。
+**路由信息对象**，表示当前激活的路由的状态信息，包括 path，params，hash，query，fullPath，matched，name等路由信息参数。
 
 ### $router
-是“路由实例”对象包括了路由的跳转方法，钩子函数等。
+**路由实例对象**，包括了路由的跳转方法，钩子函数等。
 
+## ● vue-router 是什么，它有哪些组件
+是 Vue 官方的路由管理器，和 `Vue` 的核心深度集成，用于构建单页面应用
+ 
+组件有：
+- `<router-link>`: 路由声明式跳转
+- `<router-view>`: 渲染路由的容器
+
+## ● active-class 是哪个组件的属性
+是属于 `vue-router` 的样式方法，当 `<router-link>` 标签被点击是将会应用这个样式
+- 在 router-link 中使用
+```js
+<router-link to='/' active-class="active" >首页</router-link>
+```
+- 进行全局配置
+```js
+const router = new VueRouter({
+    routes,
+    linkActiveClass: 'active'
+});
+```
+
+想要链接使用“精确匹配模式”，则使用 `exact` 属性：
+```js
+// 在 router-link 中使用
+<router-link to='/' active-class="active" exact>首页</router-link>
+
+// 进行全局配置
+const router = new VueRouter({
+    routes,
+    linkExactActiveClass: 'active'
+});
+```
+## ● 怎么定义动态路由? 怎么获取传过来的值
+- **定义**: 在路由路径中使用动态路径参数，以冒号开头
+- **获取值**: 通过 `this.$router.params` 获取
 
 
 
