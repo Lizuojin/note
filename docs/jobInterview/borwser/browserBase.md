@@ -1,4 +1,4 @@
-# 浏览器相关面试题
+# 浏览器基础知识
 ## 事件机制
 :::tip 注册事件
 注册事件，我们一般使用 `addEventListener(name, callback, boolean)` 函数，该函数支持三个参数，参数说明如下：
@@ -197,3 +197,10 @@ console.log(sessionStorage.getItem('age'));// 打印23
 - 主键集合：IDBKeyRange 对象
 :::
 详细内容参考：[阮一峰--浏览器数据库 IndexedDB 入门教程](http://www.ruanyifeng.com/blog/2018/07/indexeddb.html)
+
+## Service Worler
+`Service Worker` 是运行在浏览器背后的独立线程，一般可以用来实现缓存功能。使用 `Service Worker` 的话，传输协议必须为 HTTPS。因为 `Service Worker` 中涉及到请求拦截，所以必须使用 `HTTPS` 协议来保障安全。
+
+`Service Worker` 实现缓存功能一般分为三个步骤：
+- 首先需要先注册 `Service Worker`
+- 监听到 `install` 事件以后就可以缓存需要的文件

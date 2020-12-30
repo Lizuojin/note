@@ -57,50 +57,58 @@ module.exports = {
       title: "JavaScript相关",
       collapsable: false,
       children: [
-        {title: 'JavaScript基础面试题', path: '/jobInterview/js/jsBaseInterview'},
-        {title: 'JavaScript进阶面试题', path: '/jobInterview/js/jsAdvanceInterview'},
+        {title: 'JavaScript基础面试题', path: '/jobInterview/js/jsBase'},
+        {title: 'JavaScript进阶面试题', path: '/jobInterview/js/jsAdvance'},
       ]
     },
     {
       title: "Vue全家桶相关",
       collapsable: false,
       children: [
-        {title: 'Vue', path: '/jobInterview/vue/vueInterview1'},
-        {title: 'VueRouter', path: '/jobInterview/vue/VueRouterInterview1'},
+        {title: 'Vue', path: '/jobInterview/vue/vue'},
+        {title: 'VueRouter', path: '/jobInterview/vue/VueRouter'},
       ]
     },
     {
-      title: "Css相关",
+      title: "CSS相关",
       collapsable: false,
-      path: '/jobInterview/css/css1-interview'
+      path: '/jobInterview/css/css'
     },
     {
       title: "性能优化相关",
       collapsable: false,
       children: [
-        {title: '性能优化', path: '/jobInterview/optimize/optimizeInterview'},
-        {title: 'Vue性能优化', path: '/jobInterview/optimize/optimizeVueInterview'},
+        {title: '性能优化', path: '/jobInterview/optimize/optimize'},
+        {title: 'Vue性能优化', path: '/jobInterview/optimize/optimizeVue'},
       ]
     },
     {
-      title: "前后端通信",
+      title: "网络相关",
       collapsable: false,
       children: [
-        {title: 'HTTP 相关', path: '/jobInterview/http/httpInterview'},
+        {title: 'HTTP', path: '/jobInterview/http/http'},
       ]
     },
     {
-      title: "实战相关面试题",
-      collapsable: false,
-      path: '/jobInterview/other/'
-    },
+        title: "安全相关",
+        collapsable: false,
+        children: [
+          {title: '安全防范', path: '/jobInterview/safety/safetyPrecaution'},
+        ]
+      },
     {
       title: "浏览器相关",
       collapsable: false,
       children: [
-        {title: '浏览器相关', path: '/jobInterview/borwser/browserInterview'},
+        {title: '浏览器基础知识', path: '/jobInterview/borwser/browserBase'},
+        {title: '浏览器缓存机制', path: '/jobInterview/borwser/browserCache'},
       ]
     },
+    {
+        title: "实战相关",
+        collapsable: false,
+        path: '/jobInterview/other/'
+      },
   ],
   "/VueAll/":[
     {
