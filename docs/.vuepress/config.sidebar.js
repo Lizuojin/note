@@ -110,16 +110,25 @@ module.exports = {
             path: '/jobInterview/other/'
         },
     ],
-    "/vue/": [
+    "/vue2/": [
         {
             title: "目录",
             collabsable: false,
             children: [
-                { title: 'Vue基础梳理', path: '/vue/Vue基础梳理' },
-                { title: 'Vue性能优化', path: '/vue/Vue性能优化' },
-                { title: '应该知道的Vue', path: '/vue/应该知道的Vue' },
-                { title: 'Vue源码阅读准备', path: '/vue/Vue源码阅读准备' },
-                { title: 'Vue源码', path: '/vue/Vue源码' }
+                { title: 'Vue基础梳理', path: '/vue2/Vue基础梳理' },
+                { title: 'Vue性能优化', path: '/vue2/Vue性能优化' },
+                { title: '应该知道的Vue', path: '/vue2/应该知道的Vue' },
+                { title: 'Vue源码阅读准备', path: '/vue2/Vue源码阅读准备' },
+                { title: 'Vue源码', path: '/vue2/Vue源码' }
+            ]
+        },
+    ],
+    "/vue3/": [
+        {
+            title: "目录",
+            collabsable: false,
+            children: [
+                { title: '知识梳理', path: '/vue3/知识梳理' },
             ]
         },
     ],

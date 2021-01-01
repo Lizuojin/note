@@ -23,7 +23,8 @@ module.exports = {
       { 
         text: "Vue生态",
         items: [
-            { text: 'Vue', link: '/vue/Vue基础梳理'},
+            { text: 'Vue2', link: '/vue2/Vue基础梳理'},
+            { text: 'Vue3', link: '/vue3/知识梳理'},
             { text: 'VueRouter', link: '/vueRouter/知识梳理'},
             { text: 'Vuex', link: '/vuex/知识梳理'},
 
