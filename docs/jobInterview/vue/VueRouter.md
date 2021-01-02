@@ -85,5 +85,31 @@ const router = new VueRouter({
 - **定义**: 在路由路径中使用动态路径参数，以冒号开头
 - **获取值**: 通过 `this.$router.params` 获取
 
+## ● vue-router 响应路由参数的变化
+当使用路由参数时，例如从 `/content?id=1` 到 `/content?id=2`，此时原来的组件实例会被复用。这也意味着组件的生命周期钩子不会再被调用，此时 `vue` 应该如何响应路由参数的变化？
+- 使用 `watch` 监听 `$route` 对象
+```js
+watch: {
+    '$route' (to, from) {
+        // 对路由变化作出响应...
+    }
+}
+```
+- `beforeRouteUpdate` 守卫，该守卫在重用的组件里调用
+```js
+beforeRouteUpdate (to, from, next) {
+    // react to route changes...
+    // don't forget to call next()
+}
+```
 
+## ● vue-router 实现路由懒加载(动态加载路由) 
+把不同路由对应的组件分割成不同的代码块，然后当前路由被访问的时候才加载对应的组件
+
+**结合Vue的异步组件 和 Webpack的代码分割功能，**轻松实现路由组件的懒加载 
+
+1. 使用 AMD 风格的 `require` 
+2. 使用 ES6 语法 `import`
+    - 使用 `webpackChunkName` 把组件按组分块
+3. 使用 webpack 特有的 `require.ensure()`
 

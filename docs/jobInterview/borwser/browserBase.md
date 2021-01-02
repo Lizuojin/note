@@ -143,7 +143,7 @@ window.addEventListener('message',function(e){
 3. sessionStorage
 4. indexDB
 :::
-![img](../image/storage.png)
+![img](./image/storage.png)
 
 ### 1. Cookie
 #### 设置cookie

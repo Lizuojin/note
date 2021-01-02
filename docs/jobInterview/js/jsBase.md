@@ -91,7 +91,7 @@ console.log([]==![])  // true
 5. 即 `0==0`，返回 `true`
 
 类型转换规则，如下图：
-![img](../image/type.png)
+![img](./image/type.png)
 
 ## == 和 ===
 :::tip === 严格相等
@@ -847,7 +847,7 @@ console.log([...new Set(arr)])
   - 占据空间大、大小不固定
   - 引用类型在栈中存储了指针，该指针指向堆中该实体的起始地址
 
-![img](../image/stack.png)
+![img](./image/stack.png)
 
 ## 介绍 JS 有哪些内置对象
 js 中的内置对象主要指的是在程序执行前存在全局作用域里的由 js 定义的一些全局值属性、函数和用来实例化其他对象的构造函数对象。一般我们经常用到的如全局变量值 NaN、undefined；全局函数如parseInt()、parseFloat()；用来实例化对象的构造函数 Date、Object 等；还有提供数学计算的单体内置对象 Math 对象
@@ -1356,3 +1356,51 @@ for(let i = 1; i < 5; i++) {
 	}, i * 1000)
 }
 ```
+
+## javascript 有哪几种方法定义函数
+[详解](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Functions)
+
+### 1. 函数声明
+```js
+// name: 函数名
+// param: 传递给函数的参数的名称，一个函数最多可以有255个参数
+// statements: 组成函数体的声明语句
+function name([param[, param[, ... param]]]) { statements }
+```
+### 2. 函数表达式
+函数表达式不会提升，所以不能在定义之前调用
+```js
+var myFunction = function name([param[, param[, ... param]]]) { statements }
+```
+
+### 3. 函数生成器声明
+[详解](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/function*)
+```js
+function* name([param[, param[, ...param]]]) { statements }
+```
+
+### 4. 箭头函数表达式
+[详解](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Functions/Arrow_functions)
+```js
+(param1, param2, …, paramN) => { statements }
+(param1, param2, …, paramN) => expression
+//相当于：(param1, param2, …, paramN) =>{ return expression; }
+
+// 当只有一个参数时，圆括号是可选的：
+(singleParam) => { statements }
+singleParam => { statements }
+
+// 没有参数的函数应该写成一对圆括号。
+() => { statements }
+```
+
+##  5. Function构造函数
+
+
+
+
+
+
+
+
+
