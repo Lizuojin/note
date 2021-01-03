@@ -4,7 +4,7 @@ sidebarDepth: 1
 ---
 # JavaScript 基础知识面试题
 
-## 对象类型
+## ● 对象类型
 :::tip
 在 `JavaScript` 中，除了原始类型，其他的都是对象类型，对象类型存储的是地址，而原始类型存储的是值。
 :::
@@ -42,7 +42,7 @@ console.log(p2.age);  // 输出18
 2. 在函数内部，改变 `person` 的属性，会同步反映到对象 `p1` 上，`p1` 对象中的 `age` 属性发生了改变，即值为52
 3. `testPerson` 函数又返回了一个新的对象，这个对象此时和参数 `person` 没有任何关系，因为它分配了一个新的内存地址
 
-## typeof 和 instanceof
+## ● typeof 和 instanceof
 :::tip typeof
 `typeof` 能准确判断除 `null` 以外的原始类型的值，对于对象类型，除了函数会判断成 `function`，其他对象类型一律返回 `object`
 :::
@@ -72,7 +72,7 @@ var str = new String('abc');
 console.log(str instanceof String)// true
 ```
 
-## 对象类型
+## ● 对象类型
 `JavaScript` 中，类型转换只有三种：
 1. 转换成数字
 2. 转换成布尔值
@@ -93,7 +93,7 @@ console.log([]==![])  // true
 类型转换规则，如下图：
 ![img](./image/type.png)
 
-## == 和 ===
+## ● == 和 ===
 :::tip === 严格相等
 `===` 叫做严格相等，是指：左右两边不仅值要相等，类型也要相等，例如 `'1'===1` 的结果是 `false`，因为一边是 `string`，另一边是 `number`。
 :::
@@ -109,13 +109,13 @@ console.log('1'===1); // 输出false
 - 除了 `undefined`、`null`、`false`、`0`、`-0`、`NaN`和 `空字符串` 转换成 `false` 以外，其他所有值都转换成 `true`，包括所有对象。
 :::
 
-## new构造调用的过程
+## ● new构造调用的过程
 1. 创建一个全新的对象
 2. 新对象会被执行原型连接
 3. 这个新对象会绑定到函数调用的this
 4. 返回新对象
 
-## this全面解析
+## ● this全面解析
 `JavaScript` 中的 `this` 只有如下几种情况，并按他们的优先级从低到高划分如下：
 1. 独立函数调用，例如 `getUserInfo()`，此时 `this` 指向全局对象 `window`
 2. 对象调用，例如 `stu.getStudentName()`，此时 `this` 指向调用的对象 `stu`
@@ -152,7 +152,7 @@ var p1 = new Person('p1 name');
 p1.getName();
 ```
 
-## 闭包
+## ● 闭包
 当一个函数能够记住并访问它所在的词法作用域的时候，就产生了闭包，即使函数式在词法作用域之外执行
 
 :::tip 闭包的几种表现形式
@@ -247,7 +247,7 @@ for(let i=1;i<=5;i++){
 }
 ```
 
-## 浅拷贝与深拷贝
+## ● 浅拷贝与深拷贝
 由于 `JavaScript` 中对象是引用类型，保存的是地址，深、浅拷贝的区别是：当拷贝结束后，在一定程度上改变原对象中的某一个引用类型属性的值，新拷贝出来的对象依然受影响的话，就是浅拷贝，反之就是深拷贝。
 :::tip 浅拷贝的几种实现方法
 1. 利用 `Object.assign()` 方法
@@ -371,7 +371,7 @@ console.log(newObj.age);      // 输出23
 console.log(newObj.job.money);// 输出12，不受影响
 ```
 
-## 继承
+## ● 继承
 在 JavaScript `ES6`之前，实现继承需要依赖原型、原型链和构造函数等等技术手段组合使用，在 `ES6` 之后，可以使用Class类继承(并没有真正的类，只是一个语法糖，实质依然是函数)
 
 :::tip 继承的几种方式
@@ -562,106 +562,7 @@ console.log(dog2.colors);// 输出['red','blue']
 console.log(dog2.eat()); // 输出dog2 is eatting
 ```
 
-## ES6
-### 1. var、let 和 const 的区别
-:::tip
-1. `var` 声明的变量会提升到作用域的顶部，而 `let` 和 `const` 不会进行提升
-2. `var` 声明的全局变量会被挂载到全局 `window` 对象上，而 `let` 和 `const` 不会
-3. `var` 可以重复声明同一个变量，而 `let` 和 `const` 不会
-4. `var` 声明的变量作用域范围是函数作用域，而 `let` 和 `const` 声明的变量作用域范围是块级作用域。
-5. `const` 声明的常量，一旦声明则不能再次赋值，再次赋值会报错(更改对象属性不会，因为对象地址没有变)
-:::
-
-#### 作用域提升：
-```js
-console.log(a);  // 输出undefined
-console.log(b);  // 报错
-console.log(PI); // 报错
-var a = 'abc';
-let b = 'ABC';
-const PI = 3.1415;
-```
-
-#### 挂载到全局变量：
-```js
-var a = 'abc';
-let b = 'ABC';
-const PI = 3.1415;
-
-console.log(window.a);  // 输出abc
-console.log(window.b);  // 输出undefined
-console.log(window.PI); // 输出undefined
-```
-
-#### 重复声明变量：
-```js
-var a = 'abc';
-var a;
-console.log(a); // 输出abc
-
-let b = 'ABC';
-let b;// 报错
-```
-
-#### 变量的作用域范围：
-```js
-function foo() {
-  var flag = true;
-  if(flag) {
-    var a = 'abc';
-    let b = 'ABC';
-    console.log(a); // 输出abc
-    console.log(b); // 输出ABC
-  }
-  console.log(a); // 输出abc
-  console.log(b); // 报错
-}
-foo();
-```
-
-#### const 常量
-```js
-const PI = 3.1415;
-PI = 3.1415926; // 报错
-
-const obj = {
-  a: 1,
-  b: 2
-}
-obj.a = 3
-
-console.log(obj)   //{a: 3, b: 2}
-```
-
-#### 2. 扩展/收缩符
-:::tip
-ES6新增加的运算符 `...`，称为扩展或者收缩，具体作用取决于到底如何使用。
-:::
-```js
-// ...的扩展
-function foo(x,y,z) {
-  console.log(x,y,z); // 输出1,2,3
-}
-var arr = [1,2,3];
-foo(...arr);          // 扩展数组：ES6写法
-foo.apply(null,arr);  // 扩展数组：ES5写法
-
-
-// ...的收缩
-// 1.收集参数：ES6写法
-function bar(...arr) {
-  console.log(arr);   // 输出[1,2,3,4,5]
-}
-// 2.收集参数：ES5写法
-function foo(){
-  var args = Array.prototype.slice.call(arguments);
-  console.log(args);  // 输出[1,2,3,4,5]
-}
-bar(1,2,3,4,5);
-foo(1,2,3,4,5)
-```
-
-## JavaScript 异步
+## ● JavaScript 异步
 
 ### 回调函数
 回调函数广泛在于我们所编写的 `JavaScript` 代码中，它表现在时间绑定，Ajax请求或者其他情况下，如
@@ -767,7 +668,7 @@ async function fetch() {
 fetch();
 ```
 
-## JavaScript 原生 3 种绑定事件
+## ● JavaScript 原生 3 种绑定事件
 ```html
 <!-- 1、直接在标签里绑定 -->
 <button id="btn" onclick="handleClick()">
@@ -784,7 +685,7 @@ fetch();
 </script>
 ```
 
-## 创建对象的方式
+## ● 创建对象的方式
 ```js
 // 对象字面量
 const obj = {}
@@ -797,7 +698,7 @@ const obj = new Obj()
 const obj = Object.create({name: 'name'})
 ```
 
-## 判断数据类型是否是数组
+## ● 判断数据类型是否是数组
 ### 1. instanceof
 通过检查该实例是不是 Array 类型
 ```js
@@ -823,7 +724,7 @@ var arr=[1,2,3];
 console.log(arr.constructor === Array);//"true" 返回true就是
 ```
 
-## 数组去重
+## ● 数组去重
 ### 1. 利用`ES6` 的 `Set` 去重
 不考虑兼容性，这种去重的方法代码最少。这种方法还无法去掉“{}”空对象
 ```js
@@ -839,7 +740,7 @@ var arr = [1,2,3,2,3,4,5];
 console.log([...new Set(arr)])
 ```
 
-## JavScript 有几种类型的值？你能画一下他们的内存图吗？
+## ● JavScript 有几种类型的值？你能画一下他们的内存图吗？
 - 栈：原始数据类型(undefined、null、boolean、number、string)
   - 原始数据类型直接存储在 **栈(stack)** 中的简单数据段
   - 占据空间小、大小固定，属于被频繁使用数据
@@ -849,12 +750,12 @@ console.log([...new Set(arr)])
 
 ![img](./image/stack.png)
 
-## 介绍 JS 有哪些内置对象
+## ● 介绍 JS 有哪些内置对象
 js 中的内置对象主要指的是在程序执行前存在全局作用域里的由 js 定义的一些全局值属性、函数和用来实例化其他对象的构造函数对象。一般我们经常用到的如全局变量值 NaN、undefined；全局函数如parseInt()、parseFloat()；用来实例化对象的构造函数 Date、Object 等；还有提供数学计算的单体内置对象 Math 对象
 
 参考：[标准内置对象分类](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects)
 
-## nul 和 undefined 的区别？
+## ● nul 和 undefined 的区别？
 他们都是基础数据类型：
 - undefined：
   - 一般变量声明了但还没有定义的时候会返回 undefined；
@@ -862,7 +763,7 @@ js 中的内置对象主要指的是在程序执行前存在全局作用域里�
   - 调用函数没有传递参数值，参数会被初始化为 undefined
 - null：主要用于赋值给一些可能返回对象的变量，用于初始化
 
-## 模块化开发怎么做?
+## ● 模块化开发怎么做?
 模块化的开发方式可以提高代码的复用率，方便代码进行管理，通常一个文件就是一个模块，有自己的作用域，只向外暴露特定的变量和函数，原始的写法有 `函数写法`、`对象写法`、`立即函数写法`， 目前流行的 `JS` 模块化开发规范有 `CommonJS`、`AMD`、`CDM`
 
 ### 函数写法
@@ -1025,7 +926,7 @@ function test(ele) {
 
 ```
 
-## JS 的几种模块规范
+## ● JS 的几种模块规范
 
 ### 1. commonJS 方案
 - 以同步的方式引入模块，(因为在服务端文件都存储在本地磁盘，所以读取非常快，所以同步的方式加载没有问题)
@@ -1052,12 +953,12 @@ function test(ele) {
   - **AMD** 依赖的模块加载完成后就直接执行依赖模块
   - **CMD** 依赖模块加载完成后并不执行，只是下载，到所有的依赖模块都加载好后，进入回调函数逻辑，遇到 `require` 语句的时候才执行对应的模块
 
-## ES6 模块与 ComonJS 模块、AMD、CMD 的差异
+## ● ES6 模块与 ComonJS 模块、AMD、CMD 的差异
 
 - `CommonJS` 模块输出的是 **值的拷贝** ；`ES6` 模块输出的是 **值的引用**
 - `CommonJS` 模块是运行时加载；`ES6` 模块是编译时输出接口
 
-## 数组有哪些原生方法，列举一下？
+## ● 数组有哪些原生方法，列举一下？
 
 ### 一、数组检测
 
@@ -1298,7 +1199,7 @@ console.log(numbers.reduce(getSum));  // 125
 #### 2. reduceRight() 方法
 从数组末尾位开始遍历，其他特性与 `reduce()` 方法一致
 
-## 判断一个 Object 对象是否为空
+## ● 判断一个 Object 对象是否为空
 
 ### 1. `for...in...` 遍历属性
 ```js
@@ -1336,7 +1237,7 @@ function fn() {
 fn()
 ```
 
-## 使用闭包实现每隔一秒打印 1,2,3,4
+## ● 使用闭包实现每隔一秒打印 1,2,3,4
 ### 立即执行函数方式
 ```js
 for(var i = 1; i < 5; i++) {
@@ -1357,7 +1258,7 @@ for(let i = 1; i < 5; i++) {
 }
 ```
 
-## javascript 有哪几种方法定义函数
+## ● javascript 有哪几种方法定义函数
 [详解](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Functions)
 
 ### 1. 函数声明
@@ -1394,13 +1295,67 @@ singleParam => { statements }
 () => { statements }
 ```
 
-##  5. Function构造函数
+###  5. Function构造函数
+
+## ● 如何判断数据类型
+### 1. typeof
+- 返回数据类型，包含这7种： `number`、`boolean`、`symbol`、`string`、`object`、`undefined`、`function`
+- typeof null，返回 `object`
+- 引用类型，除了 `function` 返回 `function` 类型外，其他均返回 `Object`
+
+其中，`null` 有属于自己的数据类型 `Null` ， 引用类型中的 数组、日期、正则 也都有属于自己的具体类型，而 `typeof` 对于这些类型的处理，只返回了处于其原型链最顶端的 `Object` 类型，没有错，但不是我们想要的结果。
+
+### 2. toString
+`toString()` 是 `Object` 的原型方法，调用该方法，默认返回当前对象的 [[Class]] 
+
+直接调用 `toString()` 就能返回 `[object Object]` 。而对于其他对象，则需要通过 `call / apply` 来调用才能返回正确的类型信息
+```js
+Object.prototype.toString.call('') ;                // [object String]
+Object.prototype.toString.call(1) ;                 // [object Number]
+Object.prototype.toString.call(true) ;              // [object Boolean]
+Object.prototype.toString.call(Symbol());           // [object Symbol]
+Object.prototype.toString.call(undefined) ;         // [object Undefined]
+Object.prototype.toString.call(null) ;              // [object Null]
+Object.prototype.toString.call(new Function()) ;    // [object Function]
+Object.prototype.toString.call(new Date()) ;        // [object Date]
+Object.prototype.toString.call([]) ;                // [object Array]
+Object.prototype.toString.call(new RegExp()) ;      // [object RegExp]
+Object.prototype.toString.call(new Error()) ;       // [object Error]
+Object.prototype.toString.call(document) ;          // [object HTMLDocument]
+Object.prototype.toString.call(window) ;            // [object global] window 是全局对象 global 的引用
+```
+
+### 3. constructor
+1. `null` 和 `undefined` 无 `constructor`，这种方法判断不了。
+2. 还有，如果自定义对象，开发者重写 `prototype` 之后，原有的 `constructor` 会丢失，因此，为了规范开发，在重写对象原型时一般都需要重新给 `constructor` 赋值，以保证对象实例的类型不被篡改。
+
+### 4. instanceof
+![img](./image/instanceof.png)
+
+由上图可以看出 `[]` 的原型指向 `Array.prototype`，间接指向 `Object.prototype`, 因此 `[] instanceof Array` 返回 `true`， `[] instanceof Object` 也返回 `true`
+
+`instanceof` 只能用来判断两个对象是否属于实例关系， 而不能判断一个对象实例具体属于哪种类型。
+
+## ● console.log(1+'2')和 console.log(1-'2')的打印结果
+`12` 和 `-1`
+
+- 原因，除了加法运算符 `+` 有可能把运算值转为字符串，其他运算符都会把运算值自动转成数值
+
+## JavaScript 两个数组找重复的值
+使用 `filter()` 遍历方法结合 `indexOf()` 
+```js
+var array1 = [1, 2];
+var array2 = [2, 3];
+
+var newArr = array1.filter(function(n) {
+    return array2.indexOf(n) != -1
+});
+console.log(newArr); // [2]
+```
+## 数组和链表的使用场景
+数组应用场景：数据比较少；经常做的运算是按序号访问数据元素
+链表应用场景：对线性表的长度或者规模难以估计
 
 
-
-
-
-
-
-
+## 如何获取数组中最大的数
 

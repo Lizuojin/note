@@ -53,13 +53,24 @@ module.exports = {
             ]
         },
     ],
+    '/codeChunk/': [
+        {
+            title: "目录",
+            collapsable: false,
+            children: [
+                { title: '工具函数', path: '/codeChunk/tool/tool' },
+            ]
+        },
+    ],
     '/jobInterview/': [
         {
             title: "JavaScript相关",
             collapsable: false,
             children: [
                 { title: 'JavaScript基础面试题', path: '/jobInterview/js/jsBase' },
-                { title: 'JavaScript进阶面试题', path: '/jobInterview/js/jsAdvance' },
+                { title: 'JavaScript手写面试题', path: '/jobInterview/js/jsAdvance' },
+                { title: 'ES6', path: '/jobInterview/js/ES6' },
+
             ]
         },
         {
@@ -103,6 +114,13 @@ module.exports = {
             children: [
                 { title: '浏览器基础知识', path: '/jobInterview/borwser/browserBase' },
                 { title: '浏览器缓存机制', path: '/jobInterview/borwser/browserCache' },
+            ]
+        },
+        {
+            title: "算法相关",
+            collapsable: false,
+            children: [
+                { title: '排序算法', path: '/jobInterview/arithmetic/sort' },
             ]
         },
         {

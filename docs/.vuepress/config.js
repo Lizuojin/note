@@ -41,6 +41,7 @@ module.exports = {
         items: [
           { text: '面试收集', link: '/jobInterview/'},
           { text: '好文学习', link: '/article/'},
+          { text: '代码片段', link: '/codeChunk/tool/tool'},
         ]
       },
       { text: '资源工具', link: '/resource/resource/' }
