@@ -8,16 +8,7 @@ module.exports = {
         text: 'JavaScript', 
         items: [
           { text: 'JavaScript基础', link: '/JS/'},
-          { text: 'ECMAScript 6', link: '/ES6/导读' },
-          {
-            text: '看书取经', 
-            items: [
-              { text: '你不知道的JS(上)', link: '/book/你不知道的JS上/'},
-              { text: '你不知道的JS(中)', link: '/book/你不知道的JS中/'},
-              { text: '你不知道的JS(下)', link: '/book/你不知道的JS下/'}
-            ],
-          }
-
+          { text: 'ECMAScript 6', link: '/ES6/导读' }
         ]
       },
       { 
@@ -35,6 +26,25 @@ module.exports = {
         items: [
           { text: 'webpack', link: '/webpack/install'},
         ]
+      },
+      {
+        text: '看书取经', 
+        items: [
+            {
+                text: 'JavaScript', 
+                items: [
+                  { text: '你不知道的JS(上)', link: '/book/JavaScript/你不知道的JS上/'},
+                  { text: '你不知道的JS(中)', link: '/book/JavaScript/你不知道的JS中/'},
+                  { text: '你不知道的JS(下)', link: '/book/JavaScript/你不知道的JS下/'}
+                ],
+            },
+            {
+                text: 'HTTP', 
+                items: [
+                  { text: '图解HTTP', link: '/book/http/图解HTTP/'},
+                ],
+            }
+        ],
       },
       {
         text: '日积月累', 
