@@ -1,6 +1,6 @@
 ---
 sidebar: auto
-# sidebarDepth: 1
+# sidebarDepth: 3
 ---
 # 图解 HTTP
 ## Web 及网络基础
@@ -607,7 +607,7 @@ HTTP 首部字段将定义成缓存代理和非缓存代理的行为，分成 2 
 ### 3. HTTP/1.1 通用首部字段
 通用首部字段是指，请求报文和响应报文双方都会使用的首部
 
-#### Cache-Control
+#### ● Cache-Control
 通过指定首部字段 `Cache-Control` 的指令，就能操作缓存的工作机制。
 
 指令的参数是可选的，多个指令之间通过`,`分隔
@@ -622,7 +622,7 @@ Cache-Control: private, max-age=0, no-cache
 
 ![img](./image/cache-order-req.png)
 
-#### 表示缓存的指令
+#### ● 表示缓存的指令
 - public 指令
     - 当指定使用 public 指令时，则明确表明其他用户也可利用缓存
     ```http
@@ -643,14 +643,14 @@ Cache-Control: private, max-age=0, no-cache
     ```http
     Cache-Control: no-cache
     ```
-#### 控制可执行缓存的对象的指令
+#### ● 控制可执行缓存的对象的指令
 - no-store 指令
     - 当使用 no-store 指令时，暗示请求（和对应的响应）或响应中包含机密信息。该指令规定缓存不能在本地存储请求或响应的任一部分。
     ```http
     Cache-Control: no-store
     ```
 
-#### 指定缓存期限和认证的指令
+#### ● 指定缓存期限和认证的指令
 - s-maxage 指令
     - 指令只适用于供多位用户使用的公共缓存服务器(代理)。也就是说，对于向同一用户重复返回响应的服务器来说，这个指令没有任何作用。
     - 当使用 `s-maxage `指令后，则直接忽略对 `Expires` 首部字段及 `max-age` 指令的处理。
@@ -699,7 +699,7 @@ Cache-Control: private, max-age=0, no-cache
     Cache-Control: no-transform
     ```
 
-#### Cache-Control 扩展
+#### ● Cache-Control 扩展
 - cache-extension token
     - 通过 `cache-extension` 标记（token），可以扩展 `Cache-Control` 首部字段内的指令。
     > 如下例，`Cache-Control` 首部字段本身没有 `community` 这个指令。借助 `extension tokens` 实现了该指令的添加。如果缓存服务器不能理解 `community` 这个新指令，就会直接忽略。因此，`extension tokens` 仅对能理解它的缓存服务器来说是有意义的。
@@ -708,7 +708,7 @@ Cache-Control: private, max-age=0, no-cache
     ```
 
 
-#### Connection
+#### ● Connection
 该首部字段具备如下两个作用
 - 控制不再转发给代理的首部字段
     - 在客户端发送请求和服务器返回响应内，使用 Connection 首部字段，可控制不再转发给代理的首部字段（即 Hop-by-hop 首部）
@@ -734,6 +734,896 @@ Cache-Control: private, max-age=0, no-cache
     ```
     ![img](./image/connection-keep-alive.png)
 
-#### Date
+#### ● Date
+首部字段 `Date` 表明创建 `HTTP` 报文的日期和时间
+
+`HTTP/1.1` 协议使用在 `RFC1123` 中规定的日期时间的格式:
+```http
+Date: Tue, 03 Jul 2012 04:40:59 GMT
+```
+
+#### ● Pragma
+该首部字段属于通用首部字段，但只用在客户端发送的请求中。客户端会要求所有的中间服务器不返回缓存的资源。
+
+`Pragma` 是 `HTTP/1.1` 之前版本的历史遗留字段，仅作为与 `HTTP/1.0` 的向后兼容而定义。
+
+为了兼容大多数 HTTP 协议版本的中间服务器，发送请求会同时含有下面两个首部字段
+```http
+Cache-Control: no-cache
+Pragma: no-cache
+```
+
+#### ● Trailer
+首部字段 `Trailer` 会事先说明在报文主体后记录了哪些首部字段。该首部字段可应用在 `HTTP/1.1` 版本分块传输编码时。
+```http
+HTTP/1.1 200 OK
+Date: Tue, 03 Jul 2012 04:40:56 GMT
+Content-Type: text/html
+...
+Transfer-Encoding: chunked
+Trailer: Expires
+...(报文主体)...
+0
+Expires: Tue, 28 Sep 2004 23:59:59 GMT
+
+```
+以上用例中，指定首部字段 `Trailer` 的值为 `Expires`，在报文主体之后（分块长度 0 之后）出现了首部字段 `Expires`。
+
+#### ● Transfer-Encoding
+首部字段 `Transfer-Encoding` 规定了传输报文主体时采用的编码方式。
+
+`HTTP/1.1` 的传输编码方式仅对分块传输编码有效。
+```http
+HTTP/1.1 200 OK
+Date: Tue, 03 Jul 2012 04:40:56 GMT
+Cache-Control: public, max-age=604800
+Content-Type: text/javascript; charset=utf-8
+Expires: Tue, 10 Jul 2012 04:40:56 GMT
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+Content-Encoding: gzip
+Transfer-Encoding: chunked
+Connection: keep-alive
+cf0 ←16进制(10进制为3312)
+...3312字节分块数据...
+392 ←16进制(10进制为914)
+...914字节分块数据...
+0
+```
+以上用例中，正如在首部字段 `Transfer-Encoding` 中指定的那样，有效使用分块传输编码，且分别被分成 3312 字节和 914 字节大小的分块数据。
+
+#### ● Upgrade
+首部字段 `Upgrade` 用于检测 `HTTP` 协议及其他协议是否可使用更高的版本进行通信，其参数值可以用来指定一个完全不同的通信协议。
+
+![img](./image/upgrade.png)
+上图用例中，请注意此处两个字段首部字段的对应关系
+- `Upgrade` 指定的值为 `TLS/1.0`
+- `Cnnection` 的值被指定为 `Upgrade`
+    > `Upgrade` 首部字段产生作用的 `Upgrade` 对象仅限于客户端和邻接服务器之间。因此，使用首部字段 `Upgrade` 时，还需要额外指定 `Connection:Upgrade`。
+    > 对于附有首部字段 `Upgrade` 的请求，服务器可用 `101 Switching Protocols` 状态码作为响应返回。
+
+#### ● Via
+使用首部字段 `Via` 是为了追踪客户端与服务器之间的请求和响应报文的传输路径，还可避免请求回环的发生。所以必须在经过代理时附加该首部字段内容。
+![img](./image/via.png)
+
+#### ● Warning
+该首部通常会告知用户一些与缓存相关的问题的警告
+```http
+Warning: 113 gw.hackr.jp:8080 "Heuristic expiration" Tue, 03 Jul 2012 05:09:44 GMT
+```
+
+Warning 首部的格式如下。最后的日期时间部分可省略
+```http
+Warning: [警告码][警告的主机:端口号]“[警告内容]”([日期时间])
+```
+<br/>
+
+`HTTP/1.1` 中定义了 7 种警告。警告码对应的警告内容仅推荐参考。另外，警告码具备扩展性，今后有可能追加新的警告码
+
+![img](./image/warning.png)
+
+### 4. 请求首部字段
+请求首部字段是从客户端往服务器端发送请求报文中所使用的字段，用于补充请求的附加信息、客户端信息、对响应内容相关的优先级等内容。
+
+#### ● Accept
+`Accept` 首部字段可通知服务器，用户代理能够处理的媒体类型及媒体类型的相对优先级，可使用 `type/subtype` 这种形式，一次指定多种媒体类型。
+```http
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+```
+
+几个媒体类型的例子
+- 文本文件
+    - text/html, text/plain, text/css ...
+    - application/xhtml+xml, application/xml ...
+- 图片文件
+    - image/jpeg, image/gif, image/png ...
+- 视频文件
+    - video/mpeg, video/quicktime ...
+- 应用程序使用的二进制文件
+    - application/octet-stream, application/zip ...
+
+
+##### 给媒体类型增加优先级
+- 则使用 q= 来额外表示权重值
+- 用分号（;）进行分隔。
+- 权重值 q 的范围是 0~1（可精确到小数点后 3 位），且 1 为最大值。
+- 不指定权重 q 值时，默认权重为 q=1.0。
+
+#### ● Accept-Charset
+**该首部字段应用于内容协商机制的服务器驱动协商**
+
+`Accept-Charset` 首部字段可用来通知服务器用户代理支持的字符集及字符集的相对优先顺序
+
+另外，可一次性指定多种字符集。与首部字段 `Accept` 相同的是可用权重 `q` 值来表示相对优先级。
+```http
+Accept-Charset: iso-8859-5, unicode-1-1;q=0.8
+```
+
+#### ● Accept-Encoding
+`Accept-Encoding` 首部字段用来告知服务器用户代理支持的内容编码及内容编码的优先级顺序。可一次性指定多种内容编码。
+
+下面试举出几个内容编码的例子。
+1. **gzip**
+    - 由文件压缩程序 `gzip（GNU zip）` 生成的编码格式 `（RFC1952）`，采用 `Lempel-Ziv 算法（LZ77）` 及 `32 位循环冗余校验（Cyclic Redundancy Check，通称 CRC）`
+
+2. **compress**
+    - 由 `UNIX` 文件压缩程序 `compress` 生成的编码格式，采用 `Lempel￾Ziv-Welch 算法（LZW）`。
+3. **deflate**
+    - 组合使用 `zlib 格式（RFC1950）` 及由 `deflate 压缩算法（RFC1951）`生成 的编码格式。
+
+4. **identity**
+    - 不执行压缩或不会变化的默认编码格式
+
+*采用权重 `q` 值来表示相对优先级，可使用星号 `（*）` 作为通配符，指定任意的编码格式。*
+
+#### ● Accept-Language
+首部字段 Accept-Language 用来告知服务器用户代理能够处理的自然语言集（指中文或英文等），以及自然语言集的相对优先级。可一次指定多种自然语言集。
+
+```http
+Accept-Language: zh-cn,zh;q=0.7,en-us,en;q=0.3
+```
+
+#### ● Authorization
+首部字段 `Authorization` 是用来告知服务器，用户代理的认证信息（证书值）
+> 通常，想要通过服务器认证的用户代理会在接收到返回的 `401` 状态码响应后，把首部字段 `Authorization` 加入请求中。
+
+共用缓存在接收到含有 `Authorization` 首部字段的请求时的操作处理会略有差异。
+
+```http
+Authorization: Basic dWVub3NlbjpwYXNzd29yZA==
+```
+
+#### ● Expect
+客户端使用首部字段 `Expect` 来告知服务器，期望出现的某种特定行为。
+> 因服务器无法理解客户端的期望作出回应而发生错误时，会返回状态码 `417 Expectation Failed`
+```http
+Expect: 100-continue
+```
+
+#### ● From
+首部字段 `From` 用来告知服务器使用用户代理的用户的电子邮件地址
+> 通常，其使用目的就是为了显示搜索引擎等用户代理的负责人的电子邮件联系方式。使用代理时，应尽可能包含 From 首部字段（但可能会因代理不同，将电子邮件地址记录在 User-Agent 首部字段内）。
+
+#### ● Host
+首部字段 `Host` 会告知服务器，请求的资源所处的互联网主机名和端口号
+
+`Host` 首部字段在 `HTTP/1.1` 规范内是唯一一个必须被包含在请求内的首部字段。
+
+> 首部字段 `Host` 和以单台服务器分配多个域名的虚拟主机的工作机制有很密切的关联，这是首部字段 `Host` 必须存在的意义。
+```http
+Host: www.hackr.jp
+```
+
+#### ● If-Match
+形如 `If-xxx` 这种样式的请求首部字段，都可称为 **条件请求**
+
+- 服务器会比对 `If-Match` 的字段值和资源的 `ETag` 值，仅当两者一致时，才会执行请求。反之，则返回状态码 `412 Precondition Failed `的响应。
+- 还可以使用`星号（*）`指定 `If-Match` 的字段值。针对这种情况，服务器将会忽略 `ETag` 的值，只要资源存在就处理请求。
+
+![img](./image/If-Match.png)
+
+#### ● If-None-Match
+只有在 `If-None-Match` 的字段值与 `ETag` 值不一致时，可处理该请求。与 `If-Match` 首部字段的作用相反
+>在 `GET` 或 `HEAD` 方法中使用首部字段 `If-None-Match` 可获取最新的资源。因此，这与使用首部字段 `If-Modified-Since` 时有些类似。
+
+#### ● If-Modified-Since
+- 如果在 `If-Modified-Since` 字段指定的日期时间后，资源发生了更新，服务器会接受请求
+- 若 `If-Modified-Since` 字段值早于资源的更新时间，则希望能处理该请求
+- 在指定 `If-Modified-Since` 字段值的日期时间之后，如果请求的资源都没有过更新，则返回`状态码 304 Not Modified` 的响应。
+```http
+If-Modified-Since: Thu, 15 Apr 2004 00:00:00 GMT
+```
+#### ● If-Unmodified-Since
+首部字段 If-Unmodified-Since 和首部字段 If-Modified-Since 的作用相反
+- 如果在指定日期时间后发生了更新，则以状态码 `412 Precondition Failed` 作为响应返回。
+- 指定的请求资源只有在字段值内指定的日期时间之后，未发生更新的情况下，才能处理请求
+
+
+![img](./image/If-None-Match.png)
+
+#### ● If-Range
+首部字段 `If-Range` 属于附带条件之一。它告知服务器若指定的 If-Range 字段值（ETag 值或者时间）和请求资源的 ETag 值或时间相一致时，则作为范围请求处理。反之，则返回全体资源。
+
+![img](./image/if-range.png)
+
+#### ● Max-Forwards
+通过 `TRACE` 方法或 `OPTIONS` 方法，发送包含首部字段 `Max-Forwards` 的请求时，该字段以十进制整数形式指定可经过的服务器最大数目
+- 服务器在往下一个服务器转发请求之前，`Max-Forwards` 的值减 1 后重新赋值
+- 当服务器接收到 `Max-Forwards` 值为 `0` 的请求时，则不再进行转发，而是直接返回响应
+```http
+Max-Forwards: 10
+```
+
+#### ● Proxy-Authorization
+接收到从代理服务器发来的认证质询时，客户端会发送包含首部字段 `Proxy-Authorization` 的请求，以告知服务器认证所需要的信息。
+> 这个行为是与客户端和服务器之间的 HTTP 访问认证相类似的，不同之处在于，认证行为发生在客户端与代理之间。客户端与服务器之间的认证，使用首部字段 `Authorization` 可起到相同作用
+```http
+Proxy-Authorization: Basic dGlwOjkpNLAGfFY5
+```
+
+#### ● Range
+对于只需获取部分资源的范围请求，包含首部字段 `Range` 即可告知服务器资源的指定范围
+> 接收到附带 `Range` 首部字段请求的服务器，会在处理请求之后返回 `状态码为 206 Partial Content` 的响应。无法处理该范围请求时，则会返回 `状态码 200 OK` 的响应及全部资源。
+
+上面的示例表示请求获取从第 `5001` 字节至第 `10000` 字节的资源。
+```http
+Range: bytes=5001-10000
+```
+
+#### ● Referer
+首部字段 `Referer` 会告知服务器请求的原始资源的 `URI`
+> 客户端一般都会发送 Referer 首部字段给服务器。但当直接在浏览器的地址栏输入 `URI`，或出于安全性的考虑时，也可以不发送该首部字段。
+> 因为原始资源的 `URI` 中的查询字符串可能含有 `ID` 和密码等保密信息，要是写进 `Referer` 转发给其他服务器，则有可能导致保密信息的泄露。
+
+
+![img](./image/Referer.png)
+```http
+Referer: http://www.hackr.jp/index.htm
+```
+
+#### ● TE
+首部字段 `TE` 会告知服务器客户端能够处理响应的传输编码方式及相对优先级
+> 它和首部字段 `Accept-Encoding` 的功能很相像，但是用于传输编码
+```http
+TE: gzip, deflate;q=0.5
+```
+还可以指定伴随 `trailer` 字段的分块传输编码的方式
+```http
+TE: trailers
+```
+
+#### ● User-Agent
+首部字段 `User-Agent` 会将创建请求的浏览器和用户代理名称等信息传达给服务器。
+> 由网络爬虫发起请求时，有可能会在字段内添加爬虫作者的电子邮件地址。此外，如果请求经过代理，那么中间也很可能被添加上代理服务器的名称。
+
+### 5. 响应首部字段
+响应首部字段是由服务器端向客户端返回响应报文中所使用的字段，用于补充响应的附加信息、服务器信息，以及对客户端的附加要求等信息。
+
+#### ● Accept-Ranges
+首部字段 `Accept-Ranges` 是用来告知客户端服务器是否能处理范围请求，以指定获取服务器端某个部分的资源。
+- 可处理范围请求时指定其为 `bytes`，反之则指定其为 `none`
+```http
+Accept-Ranges: bytes
+```
+
+#### ● Age
+首部字段 `Age` 能告知客户端，源服务器在多久前创建了响应。字段值的单位为秒。
+> 若创建该响应的服务器是缓存服务器，`Age` 值是指缓存后的响应再次发起认证到认证完成的时间值。代理创建响应时必须加上首部字段`Age`。
+```http
+Age: 600
+```
+
+#### ● ETag
+首部字段 `ETag` 能告知客户端实体标识
+- 是一种可将资源以字符串形式做唯一性标识的方式。服务器会为每份资源分配对应的 `ETag` 值。
+- 当资源更新时，`ETag` 值也需要更新。生成 `ETag` 值时，并没有统一的算法规则，而仅仅是由服务器来分配。
+
+##### 强 ETag 值和弱 Tag 值
+`ETag` 中有 **强 ETag 值** 和 **弱 ETag** 值之分。
+- **强 ETag 值**
+    - `强 ETag 值` 不论实体发生多么细微的变化都会改变其值
+    ```http
+    ETag: "usagi-1234"
+    ```
+- **弱 ETag 值**
+    - `弱 ETag 值`只用于提示资源是否相同。只有资源发生了根本改变，产生差异时才会改变 `ETag` 值。这时，会在字段值最开始处附加 `W/`。
+    ```http
+    ETag: W/"usagi-1234"
+    ```
+#### ● Location
+使用首部字段 `Location` 可以将响应接收方引导至某个与请求 `URI` 位置不同的资源。
+- 基本上，该字段会配合 `3xx ：Redirection` 的响应，提供重定向的 `URI`。
+- 几乎所有的浏览器在接收到包含首部字段 `Location` 的响应后，都会强制性地尝试对已提示的重定向资源的访问。
+```http
+Location: http://www.usagidesign.jp/sample.html
+```
+![img](./image/location.png)
+
+#### ● Proxy-Authenticate
+首部字段 `Proxy-Authenticate` 会把由代理服务器所要求的认证信息发送给客户端
+> 它与客户端和服务器之间的 HTTP 访问认证的行为相似，不同之处在于其认证行为是在客户端与代理之间进行的。而客户端与服务器之间进行认证时，首部字段 `WWW-Authorization` 有着相同的作用
+
+#### ● Retry-After
+首部字段 Retry-After 告知客户端应该在多久之后再次发送请求。主要配合状态码 `503 Service Unavailable` 响应，或 `3xx Redirect` 响应一起使用
+```http
+Retry-After: 120
+```
+
+#### ● Server
+首部字段 `Server` 告知客户端当前服务器上安装的 `HTTP` 服务器应用程序的信息
+> 不单单会标出服务器上的软件应用名称，还有可能包括版本号和安装时启用的可选项
+```http
+Server: Apache/2.2.6 (Unix) PHP/5.2.5
+```
+
+#### ● Vary
+首部字段 `Vary` 可对缓存进行控制。源服务器会向代理服务器传达关于本地缓存使用方法的命令。
+```http
+Vary: Accept-Language
+```
+> 当代理服务器接收到带有 Vary 首部字段指定获取资源的请求时，如果使用的 `Accept-Language` 字段的值相同，那么就直接从缓存返回响应。反之，则需要先从源服务器端获取资源后才能作为
+
+![img](./image/vary.png)
+
+#### ● WWW-Authenticate
+首部字段 `WWW-Authenticate` 用于 `HTTP` 访问认证。它会告知客户端适用于访问请求 `URI` 所指定资源的认证方案（Basic 或是 Digest）和带参数提示的质询（challenge）
+> `状态码 401 Unauthorized` 响应中，肯定带有首部字段 `WWW-Authenticate`
+
+### 6. 实体首部字段
+实体首部字段是包含在请求报文和响应报文中的实体部分所使用的首部，用于补充内容的**更新时间**等与**实体相关的信息**。
+
+#### ● Allow
+首部字段 `Allow` 用于通知客户端能够支持 `Request-URI` 指定资源的所有 `HTTP` 方法
+> 当服务器接收到不支持的 `HTTP` 方法时，会以 `状态码405 Method Not Allowed` 作为响应返回。与此同时，还会把所有能支持的 `HTTP` 方法写入首部字段 `Allow` 后返回。
+```http
+Allow: GET, HEAD
+```
+![img](./image/allow.png)
+
+#### ● Content-Encoding
+首部字段 `Content-Encoding` 会告知客户端，服务器对实体的主体部分选用的内容编码方式。
+> 内容编码是指在不丢失实体信息的前提下所进行的压缩
+```http
+Content-Encoding: gzip
+```
+主要采用以下 4 种内容编码的方式：
+1. gzip
+2. compress
+3. deflate
+4. identity
+
+#### ● Content-Language
+首部字段 Content-Language 会告知客户端，实体主体使用的自然语言（指中文或英文等语言）。
+```http
+Content-Language: zh-CN
+```
+
+#### ● Content-Length
+首部字段 `Content-Length` 表明了实体主体部分的大小（单位是字节）
+> 对实体主体进行内容编码传输时，不能再使用 `Content-Length` 首部字段
+```http
+Content-Length: 15000
+```
+
+#### ● Content-Location
+首部字段 `Content-Location` 给出与报文主体部分相对应的 `URI` 和首部字段 `Location` 不同，`Content-Location` 表示的是报文主体返回资源对应的 `URI`
+```http
+Content-Location: http://www.hackr.jp/index-ja.html
+```
+
+#### ● Content-MD5
+首部字段 `Content-MD5` 是一串由 `MD5` 算法生成的值，其目的在于检查报文主体在传输过程中是否保持完整，以及确认传输到达。
+> 对报文主体执行 `MD5 算法`获得的 `128` 位二进制数，再通过 `Base64 编码` 后将结果写入 `Content-MD5` 字段值。由于 HTTP 首部无法记录二进制值，所以要通过 `Base64 编码` 处理。为确保报文的有效性，作为接收方的客户端会对报文主体再执行一次相同的 `MD5 算法`。计算出的值与字段值作比较后，即可判断出报文主体的准确性。
+
+```http
+Content-MD5: OGFkZDUwNGVhNGY3N2MxMDIwZmQ4NTBmY2IyTY==
+```
+
+![img](./image/MD5.png)
+
+#### ● Content-Range
+针对范围请求，返回响应时使用的首部字段 `Content-Range` 能告知客户端作为响应返回的实体的哪个部分符合范围请求
+```http
+Content-Range: bytes 5001-10000/10000
+```
+
+![img](./image/content-range.png)
+
+#### ● Content-Type
+首部字段 `Content-Type` 说明了实体主体内对象的媒体类型。和首部字段 `Accept` 一样，字段值用 `type/subtype` 形式赋值。
+```http
+Content-Type: text/html; charset=UTF-8
+```
+
+#### ● Expires
+首部字段 `Expires` 会将资源失效的日期告知客户端
+> 缓存服务器在接收到含有首部字段 `Expires` 的响应后，会以缓存来应答请求，在 `Expires` 字段值指定的时间之前，响应的副本会一直被保存。当超过指定的时间后，缓存服务器在请求发送过来时，会转向源服务器请求资源。
+```http
+Expires: Wed, 04 Jul 2012 08:26:05 GMT
+```
+#### ● Last-Modified
+首部字段 `Last-Modified` 指明资源最终修改的时间
+> 一般来说，这个值就是 `Request-URI` 指定资源被修改的时间。但类似使用 CGI 脚本进行动态数据处理时，该值有可能会变成数据最终修改时的时间。
+
+```http
+Last-Modified: Wed, 23 May 2012 09:59:55 GMT
+```
+
+### 7. 为 Cookie 服务的首部字段
+管理服务器与客户端之间状态的 `Cookie` 虽然没有被编入标准化 `HTTP/1.1` 的 `RFC2616` 中，但在 `Web` 网站方面得到了广泛的应用。
+
+**`Cookie` 的工作机制是用户识别及状态管理**。Web 网站为了管理用户的状态会通过 Web 浏览器，把一些数据临时写入用户的计算机内。接着当用户访问该 Web 网站时，可通过通信方式取回之前发放的 `Cookie`
+
+> 调用 `Cookie` 时，由于可校验 `Cookie` 的有效期，以及发送方的域、路径、协议等信息，所以正规发布的 `Cookie` 内的数据不会因来自其他Web 站点和攻击者的攻击而泄露
+
+目前使用最广泛的 `Cookie` 标准却不是 `RFC` 中定义的任何一个。而是在网景公司制定的标准上进行扩展后的产物。
+
+下面的表格内列举了与 Cookie 有关的首部字段:
+
+![img](./image/cookie2.png)
+
+#### ● Set-Cookie
+当服务器准备开始管理客户端的状态时，会事先告知各种信息
+```http
+Set-Cookie: status=enable; expires=Tue, 05 Jul 2011 07:26:31 GMT; path=/; domain=.hack
+```
+`Set-Cookie` 字段的属性: 
+
+![img](./image/set-cookie.png)
+
+1. expires 属性
+    `Cookie` 的 `expires` 属性指定浏览器可发送 `Cookie` 的有效期。
+
+    当省略 `expires` 属性时，其有效期仅限于维持浏览器会话（Session）时间段内。这通常限于浏览器应用程序被关闭之前。
+    > 另外，一旦 `Cookie` 从服务器端发送至客户端，服务器端就不存在可以显式删除 `Cookie` 的方法。但可通过覆盖已过期的 `Cookie` 实现对客户端 `Cookie` 的实质性删除操作。
+
+2. path 属性
+
+    `Cookie` 的 `path` 属性可用于限制指定 `Cookie` 的发送范围的文件目录。不过另有办法可避开这项限制，看来对其作为安全机制的效果不能抱有期待。
+
+3. domain 属性
+
+    通过 `Cookie` 的 `domain` 属性指定的域名可做到与结尾匹配一致
+    > 比如，当指定 `example.com` 后，除 `example.com` 以外，`www.example.com` 或 `www2.example.com` 等都可以发送 `Cookie`，因此，除了针对具体指定的多个域名发送 `Cookie` 之外，不指定 `domain` 属性显得更安全。
+
+4. secure 属性
+
+    `Cookie` 的 `secure` 属性用于限制 `Web` 页面仅在 `HTTPS` 安全连接时，才可以发送 `Cookie`
+    ```http
+    Set-Cookie: name=value; secure
+    ```
+    > 以上例子仅当在 https://www.example.com/（HTTPS）安全连接的情况下才会进行 `Cookie` 的回收。也就是说，即使域名相同，http://www.example.com/（HTTP）也不会发生 `Cookie` 回收行为。
+    > 当省略 `secure` 属性时，不论 `HTTP` 还是 `HTTPS`，都会对 `Cookie`进行回收。
+
+5. HttpOnly 属性
+    `Cookie` 的 `HttpOnly` 属性是 `Cookie` 的扩展功能，它使 `JavaScript` 脚本无法获得 `Cookie`。其主要目的**为防止跨站脚本攻击（Cross-sitescripting，XSS）对 Cookie 的信息窃取**。
+    ```http
+    Set-Cookie: name=value; HttpOnly
+    ```
+    > 通过上述设置，通常从 Web 页面内还可以对 Cookie 进行读取操作。但使用 JavaScript 的 document.cookie 就无法读取附加 HttpOnly 属性后的 Cookie 的内容了。因此，也就无法在 XSS 中利用 JavaScript 劫持Cookie 了。
+
+#### ● Cookie
+首部字段 `Cookie` 会告知服务器，当客户端想获得 `HTTP` 状态管理支持时，就会在请求中包含从服务器接收到的 `Cookie`。接收到多个`Cookie` 时，同样可以以多个 `Cookie` 形式发送。
+
+### 8. 其他首部字段
+HTTP 首部字段是可以自行扩展的。所以在 Web 服务器和浏览器的应用上，会出现各种非标准的首部字段。我们就一些最为常用的首部字段进行说明:
+- X-Frame-Options
+- X-XSS-Protection
+- DNT
+- P3P
+
+#### ● X-Frame-Options
+首部字段 `X-Frame-Options` 属于 `HTTP` 响应首部，用于控制网站内容在其他 `Web` 网站的 `Frame` 标签内的显示问题。其主要目的是为了**防止点击劫持（clickjacking）攻击**
+
+首部字段 X-Frame-Options 有以下两个可指定的字段值
+- DENY: 拒绝
+- SAMEORIGIN: 仅同源域名下的页面（Top-level-browsing-context）匹配时许可。
+    > 比如，当指定 http://hackr.jp/sample.html页面为 SAMEORIGIN 时，那么 hackr.jp 上所有页面的 frame 都被允许可加载该页面，而 example.com 等其他域名的页面就不行了
+```http
+X-Frame-Options: DENY
+```
+
+#### ● X-XSS-Protection
+首部字段 `X-XSS-Protection` 属于 `HTTP` 响应首部，它是针对`跨站脚本攻击（XSS）`的一种对策，用于控制浏览器 `XSS` 防护机制的开关。
+
+首部字段 `X-XSS-Protection` 可指定的字段值如下。
+- 0 ：将 XSS 过滤设置成无效状态
+- 1 ：将 XSS 过滤设置成有效状态
+```http
+X-XSS-Protection: 1
+```
+
+#### ● DNT
+首部字段 `DNT` 属于 `HTTP` 请求首部，其中 DNT 是 `Do Not Track` 的简称，意为拒绝个人信息被收集，是表示拒绝被精准广告追踪的一种方法
+
+首部字段 DNT 可指定的字段值如下:
+- 0 ：同意被追踪
+- 1 ：拒绝被追踪
+
+#### ● P3P
+首部字段 `P3P` 属于 HTTP 响应首部，通过利用 `P3P（The Platform forPrivacy Preferences，在线隐私偏好平台）技术`，可以让 Web 网站上的个人隐私变成一种仅供程序可理解的形式，以达到保护用户隐私的目的。
+
+要进行 P3P 的设定，需按以下操作步骤进行。
+- 步骤 1：创建 `P3P` 隐私
+- 步骤 2：创建 `P3P` 隐私对照文件后，保存命名在 `/w3c/p3p.xml`
+- 步骤 3：从 `P3P` 隐私中新建 `Compact policies` 后，输出到 `HTTP` 响应中
+
+[详情规范标准](http://www.w3.org/TR/P3P/)
+
+
+## 确保 Web 安全的 HTTPS
+在 `HTTP` 协议中有可能存在信息窃听或身份伪装等安全问题。使用 `HTTPS` 通信机制可以有效地防止这些问题
+
+### 1. HTTP 的缺点
+HTTP 主要有这些不足，例举如下
+- 通信使用明文(不加密)，内容可能会被窃听
+- 不验证通信方的身份，因此有可能遭遇伪装
+- 无法证明报文的完整性，所以有可能已遭篡改
+
+#### 1-1. 通信使用明文可能会被窃听
+由于 `HTTP` 本身不具备加密的功能，所以也无法做到对通信整体（使用 HTTP 协议通信的请求和响应的内容）进行加密，即，`HTTP` 报文使用明文（指未经过加密的报文）方式发送。
+
+- TCP/IP 是可能被窃听的网络
+    - `TCP/IP 协议族` 的工作机制，通信内容在所有的通信线路上都有可能遭到窥视。即使已经过加密处理的通信，也会被窥视到通信内容，
+
+#### 1-2. 加密处理防止被窃听
+
+##### 通信的加密
+- HTTP 协议中没有加密机制，但可以通过和 `SSL（Secure Socket Layer，安全套接层）` 或 `TLS（Transport Layer Security，安全层传输协议）` 的组合使用，加密 HTTP 的通信内容。
+- 用 `SSL` 建立安全通信线路之后，就可以在这条线路上进行 `HTTP` 通信了。**与 SSL 组合使用的 HTTP** 被称为 `HTTPS（HTTPSecure，超文本传输安全协议）` 或 `HTTP over SSL`。
+
+##### 内容的加密
+还有一种将参与通信的内容本身加密的方式，即把 HTTP 报文里所含的内容进行加密处理。
+> 为了做到有效的内容加密，前提是要求客户端和服务器同时具备加密和解密机制，还有就是由于该方式不同于 `SSL` 或 `TLS` 将整个通信线路加密处理，所以内容仍有被篡改的风险
+
+#### 1-3. 不验证通信方的身份就可能遭遇伪装
+`HTTP` 协议中的请求和响应不会对通信方进行确认
+> 也就是说存在**服务器是否就是发送请求中 URI 真正指定的主机，返回的响应是否真的返回到实际提出请求的客户端**等类似问题。
+
+##### 任何人都可发起请求
+在 HTTP 协议通信时，由于不存在确认通信方的处理步骤，任何人都可以发起请求，因此不确认通信方，会存在以下各种隐患:
+- 无法确定请求发送至目标的 Web 服务器是否是按真实意图返回响应的那台服务器。有可能是已伪装的 Web 服务器
+- 无法确定响应返回到的客户端是否是按真实意图接收响应的那个客户端。有可能是已伪装的客户端。
+- 无法确定正在通信的对方是否具备访问权限
+- 无法判定请求是来自何方、出自谁手。
+- 即使是无意义的请求也会照单全收。无法阻止海量请求下的 `DoS 攻击（Denial of Service，拒绝服务攻击）`
+
+##### 查明对手的证书
+虽然使用 HTTP 协议无法确定通信方，但如果使用 SSL则可以。SSL不仅提供加密处理，而且还使用了一种被称为证书的手段，可用于确定方。
+- 证书由值得信任的第三方机构颁发，用以证明服务器和客户端是实际存在的
+- 客户端持有证书即可完成个人身份的确认，也可用于对 Web 网站的认证环节。
+![img](./image/certificate.png)
+
+#### ● 无法证明报文完整性，可能已遭篡改
+所谓完整性是指信息的准确度。若无法证明其完整性，通常也就意味着无法判断信息是否准确
+
+##### 接收到的内容可能有误
+在请求或响应送出之后直到对方接收之前的这段时间内，即使请求或响应的内容遭到篡改，也没有办法获悉。
+
+请求或响应在传输途中，遭攻击者拦截并篡改内容的攻击称为 **中间人攻击（Man-in-the-Middle attack，MITM）**
+![img](./image/MITM.png)
+
+### 2. HTTP+ 加密 + 认证 + 完整性保护=HTTPS
+
+#### 2-1. HTTP 加上加密处理和认证以及完整性保护后即是HTTPS
+为了防止遭到篡改，在 HTTP 上加入加密处理和认证等机制，我们把添加了加密及认证机制的 HTTP 称为 HTTPS（HTTP Secure）。
+![img](./image/https.png)
+
+#### 2-2. HTTPS 是身披 SSL 外壳的 HTTP
+`HTTPS` 并非是应用层的一种新协议。只是 HTTP 通信接口部分用 `SSL（Secure Socket Layer）`和 `TLS（Transport Layer Security）`协议代替而已。
+> 通常，`HTTP` 直接和 `TCP` 通信。当使用 `SSL` 时，则演变成先和 `SSL` 通信，再由 `SSL` 和 `TCP` 通信了。
+> 在采用 `SSL` 后，`HTTP` 就拥有了 `HTTPS` 的加密、证书和完整性保护这些功能。
+
+#### 2-3. 相互交换密钥的公开密钥加密技术
+> SSL采用一种叫做公开密钥加密（Public-key cryptography）的加密处理方式。
+
+##### 2-3-1. 共享密钥加密
+加密和解密同用一个密钥的方式称为**共享密钥加密（Common keycrypto system）**，也被叫做 **对称密钥加密**
+
+在互联网上转发密钥时，如果通信被监听那么密钥就可会落入攻击者之手，同时也就失去了加密的意义。另外还得设法安全地保管接收到的密钥。
+
+![img](./image/Common-keycrypto-system.png)
+
+
+
+##### 2-3-2. 公开密钥加密
+公开密钥加密方式很好地解决了共享密钥加密的困难。
+
+- 公开密钥加密使用一对非对称的密钥。一把叫做私有密钥（private key），另一把叫做公开密钥（public key）。顾名思义，私有密钥不能让其他任何人知道，而公开密钥则可以随意发布，任何人都可以获得
+- **使用公开密钥加密方式**：发送密文的一方使用对方的公开密钥进行加密处理，对方收到被加密的信息后，再使用自己的私有密钥进行解密
+![img](./image/public-key.png)
+
+##### 2-3-3. HTTPS 采用混合加密机制
+`HTTPS` 采用共享密钥加密和公开密钥加密两者并用的混合加密机制
+![img](./image/https2.png)
+
+#### 2-4. 证明公开密钥正确性的证书
+数字证书认证机构的业务流程:
+- 首先，服务器的运营人员向数字证书认证机构提出公开密钥的申请
+- 数字证书认证机构在判明提出申请者的身份之后，会对已申请的公开密钥做数字签名
+- 然后分配这个已签名的公开密钥
+- 并将该公开密钥放入公钥证书后绑定在一起
+- 服务器会将这份由数字证书认证机构颁发的公钥证书发送给客户端
+
+> 数字证书认证机构处于客户端与服务器双方都可信赖的第三方机构的立场上。威瑞信（VeriSign）就是其中一家非常有名的数字证书认证机构
+
+接到证书的客户端可使用数字证书认证机构的公开密钥，对那张证书上的数字签名进行验证
+
+一旦验证通过，客户端便可明确两件事：
+- 认证服务器的公开密钥的是真实有效的数字证书认证机构
+- 服务器的公开密钥是值得信赖的
+![img](./image/certificate2.png)
+
+##### 2-4-1. 可证明组织真实性的 EV SSL 证书
+`EV SSL证书`：证书的一个作用是用来证明作为通信一方的服务器是否规范，另外一个作用是可确认对方服务器背后运营的企业是否真实存在
+
+##### 2-4-2. 用以确认客户端的客户端证书
+HTTPS 中还可以使用客户端证书。以客户端证书进行客户端认证，证明服务器正在通信的对方始终是预料之内的客户端，其作用跟服务器证书如出一辙。
+
+客户端证书仍存在几处问题点：
+- 客户端证书是要付费购买的
+- 会对用户安装证书充满挑战
+- 客户端证书毕竟只能用来证明客户端实际存在，而不能用来证明用户本人的真实有效性
+
+#### 2-5. HTTPS 的安全通信机制
+HTTPS 的通信步骤：
+1. 客户端通过发送 `Client Hello 报文 `开始 `SSL` 通信。报文中包含客户端支持的 `SSL` 的`指定版本`、`加密组件（Cipher Suite）列表`（所使用的加密算法及密钥长度等）
+2. 服务器可进行 `SSL` 通信时，会以 `Server Hello 报文` 作为应答
+    > 和客户端一样，在报文中包含 SSL版本以及加密组件。服务器的加密组件内容是从接收到的客户端加密组件内筛选出来的。
+3. 之后服务器发送 `Certificate 报文`。报文中包含公开密钥证书。
+4. 最后服务器发送 `Server Hello Done 报文` 通知客户端，最初阶段的 `SSL` 握手协商部分结束。
+5. SSL第一次握手结束之后，客户端以 `Client Key Exchange` 报文作为回应。报文中包含通信加密中使用的一种被称为 `Pre-master secret` 的随机密码串。该报文已用步骤 3 中的公开密钥进行加密。
+6. 接着客户端继续发送 `Change Cipher Spec` 报文。该报文会提示服务器，在此报文之后的通信会采用 `Pre-master secret`密钥加密。
+7. 客户端发送 `Finished` 报文。该报文包含连接至今全部报文的整体校验值。这次握手协商是否能够成功，要以服务器是否能够正确解密该报文作为判定标准。
+8. 服务器同样发送 `Change Cipher Spec` 报文。
+9. 服务器同样发送 `Finished` 报文。
+10. 服务器和客户端的 `Finished` 报文交换完毕之后，`SSL` 连接就算建立完成。当然，通信会受到 `SSL` 的保护。从此处开始进行应用层协议的通信，即发送 `HTTP` 请求。
+11. 应用层协议通信，即发送 `HTTP` 响应。
+12. 最后由客户端断开连接。断开连接时，发送 close_notify 报文
+
+> 在以上流程中，应用层发送数据时会附加一种叫做 MAC（MessageAuthentication Code）的报文摘要。MAC 能够查知报文是否遭到篡改，从而保护报文的完整性。
+
+![img](./image/https-communication.png)
+
+
+##### 2-5-1. SSL 和 TLS
+HTTPS 使用 SSL（Secure Socket Layer） 和 TLS（Transport Layer Security）这两个协议。
+- `SSL` 技术最初是由浏览器开发商网景通信公司率先倡导的，开发过 `SSL3.0` 之前的版本。目前主导权已转移到 `IETF（Internet Engineering Task Force，Internet 工程任务组）` 的手中。
+- `IETF` 以 `SSL3.0` 为基准，后又制定了 `TLS1.0`、`TLS1.1` 和 `TLS1.2`。TSL是以 `SSL` 为原型开发的协议，有时会统一称该协议为 `SSL`。当前**主流的版本是 `SSL3.0` 和 `TLS1.0`**
+
+##### 2-5-2. SSL 速度慢吗
+HTTPS 也存在一些问题，那就是当使用 SSL时，它的处理速度会变慢。
+- 通信慢
+    - 和使用 HTTP 相比，网络负载可能会变慢 2 到 100 倍。除去和 `TCP 连接`、`发送 HTTP 请求 • 响应`以外，还必须进行 `SSL 通信`，因此整体上处理通信量不可避免会增加。
+- 大量消耗 CPU 及内存等资源，导致处理速度变慢
+    - SSL必须进行加密处理。在服务器和客户端都需要进行加密和解密的运算处理。因此从结果上讲，比起 HTTP 会更多地消耗服务器和客户端的硬件资源，导致负载增强。
+
+![img](./image/https-slow.png)
+
+## 确认访问用户身份的认证
+
+### 1. 何为认证
+核对 `登录者本人才知道的信息`、`登录者本人才会有的信息`
+
+核对的信息通常是指以下这些。
+- 密码：只有本人才会知道的字符串信息。
+- 动态令牌：仅限本人持有的设备内显示的一次性密码。
+- 数字证书：仅限本人（终端）持有的信息。
+- 生物认证：指纹和虹膜等本人的生理信息。
+- IC 卡等：仅限本人持有的信息。
+
+**HTTP 使用的认证方式**:
+- BASIC 认证（基本认证）
+- DIGEST 认证（摘要认证）
+- SSL 客户端认证
+- FormBase 认证（基于表单认证）
+
+### 2. BASIC 认证
+是 Web 服务器与通信客户端之间进行的认证方式。
+
+**BASIC 认证的认证步骤**:
+1. 当请求的资源需要 BASIC 认证时，服务器会随状`态码 401 Authorization Required`，返回带 `WWW-Authenticate` 首部字段的响应。该字段内包含认证的方式 `BASIC` 及 `Request-URI 安全域字符串（realm）`。
+2. 接收到`状态码 401 `的客户端为了通过 `BASIC 认证`，需要将用户 `ID` 及 `密码` 发送给服务器。发送的字符串内容是：由用户 `ID` 和`密码`构成，两者中间以冒号 `:` 连接后，再经过 `Base64` 编码处理。
+3. 接收到包含首部字段 `Authorization` 请求的服务器，会对认证信息的正确性进行验证。如验证通过，则返回一条包含 `Request-URI` 资源的响应。
+
+> 假设用户 `ID` 为 `guest`，密码是 `guest`，连接起来就会形成 `guest:guest` 这样的字符串。然后经过 `Base64` 编码，最后的结果即是` Z3Vlc3Q6Z3Vlc3Q=`。把这串字符串写入首部字段 `Authorization` 后，发送请求。
+
+**问题点**：
+1. 在 `HTTP` 等非加密通信的线路上进行 `BASIC` 认证的过程中，如果被人窃听，被盗的可能性极高
+2. 除此之外想再进行一次 `BASIC` 认证时，一般的浏览器却无法实现认证注销操作
+> BASIC 认证使用上不够便捷灵活，且达不到多数 Web 网站期望的安全性等级，因此它并不常用。
+
+### 3. DIGEST 认证
+为弥补 `BASIC` 认证存在的弱点，从 `HTTP/1.1` 起就有了 `DIGEST` 认证
+
+`DIGEST` 认证同样使用 `质询 / 响应的方式（challenge/response）`，但不会像 `BASIC` 认证那样直接发送明文密码。
+
+:::tip 质询响应方式
+一开始一方会先发送认证要求给另一方，接着使用从另一方那接收到的质询码计算生成响应码。最后将响应码返回给对方进行认证的方式。
+![img](./image/challenge-response.png)
+:::
+
+**DIGEST 认证的认证步骤**：
+1. 请求需认证的资源时，服务器会随着 `状态码 401 Authorization Required`，返 回带 `WWW-Authenticate` 首部字段的响应。该字段内包含质问响应方式认证所需的临时质询码（随机数，nonce）。
+    > 首部字段 `WWW-Authenticate` 内必须包含 `realm` 和 `nonce` 这两个字段的信息。客户端就是依靠向服务器回送这两个值进行认证的。
+    > nonce 是一种每次随返回的 `401` 响应生成的任意随机字符串。该字符串通常推荐由 `Base64 编码` 的十六进制数的组成形式，但实际内容依赖服务器的具体实现。
+2. 接收到 `401 状态码` 的客户端，返回的响应中包含 `DIGEST 认证` 必须的首部字段 `Authorization` 信息。
+    > 首部字段 `Authorization` 内必须包含 `username`、`realm`、`nonce`、`uri` 和 `response` 的字段信息。其中，`realm` 和 `nonce` 就是之前从服务器接收到的响应中的字段。
+    > - `username` 是 `realm` 限定范围内可进行认证的用户名
+    > - `uri（digest-uri）`即 `Request-URI` 的值，但考虑到经代理转发后 `Request-URI` 的值可能被修改，因此事先会复制一份副本保存在 `uri` 内。
+    > - `response` 也可叫做 `Request-Digest`，存放经过 `MD5 运算` 后的密码字符串，形成响应码。
+3. 接收到包含首部字段 `Authorization` 请求的服务器，会确认认证信息的正确性。认证通过后则返回包含 `Request-URI` 资源的响应
+    > 并且这时会在首部字段 `Authentication-Info` 写入一些认证成功的相关信息。
+
+`DIGEST` 认证提供了高于 `BASIC` 认证的安全等级，但是和 `HTTPS` 的客户端认证相比仍旧很弱。**`DIGEST 认证`提供防止密码被窃听的保护机制，但并不存在防止用户伪装的保护机制**。
+
+### 4. SSL 客户端认证
+SSL 客户端认证是借由 `HTTPS` 的客户端证书完成认证的方式。凭借客户端证书（在 HTTPS 一章已讲解）认证，服务器可确认访问是否来自已登录的客户端。
+
+#### 4-1. SSL 客户端认证的认证步骤
+1. 接收到需要认证资源的请求，服务器会发送 `Certificate Request 报文`，要求客户端提供客户端证书
+2. 用户选择将发送的客户端证书后，客户端会把客户端证书信息以 `Client Certificate` 报文方式发送给服务器
+3. 服务器验证客户端证书验证通过后方可领取证书内客户端的公开密钥，然后开始 HTTPS 加密通信
+
+#### 4-2. SSL 客户端认证采用双因素认证
+在多数情况下，SSL客户端认证不会仅依靠证书完成认证，一般会和基于表单认证（稍后讲解）组合形成一种双因素认证（Two-factor authentication）来使用
+
+:::tip 双因素认证
+认证过程中不仅需要密码这一个因素，还需要申请认证者提供其他持有信息，从而作为另一个因素，与其组合使用的认证方式。
+:::
+
+### 5. 基于表单认证
+根据 Web 应用程序的实际安装，提供的用户界面及认证方式也各不相同
+
+#### 5-1. 认证多半为基于表单认证
+> 由于使用上的便利性及安全性问题，`HTTP` 协议标准提供的 `BASIC` 认证和 `DIGEST` 认证几乎不怎么使用。另外，`SSL` 客户端认证虽然具有高度的安全等级，但因为导入及维持费用等问题，还尚未普及。
+
+对于 Web 网站的认证功能，能够满足其安全使用级别的标准规范并不存在，所以只好使用由 Web 应用程序各自实现基于 **表单的认证方式**。
+
+#### 5-2. Session 管理及 Cookie 应用
+基于表单认证的标准规范尚未有定论，一般会使用 `Cookie` 来管理 `Session（会话）`。
+
+> 鉴于 `HTTP` 是无状态协议，之前已认证成功的用户状态无法通过协议层面保存下来，于是我们会使用 `Cookie` 来管理 `Session`，以弥补 `HTTP` 协议中不存在的状态管理功能
+
+![img](./image/session-cookie.png)
+1. 客户端把用户 `ID` 和 `密码` 等登录信息放入报文的实体部分，通常是以 `POST` 方法把请求发送给服务器
+2. 服务器会发放用以识别用户的 `Session ID` 通过验证从客户端发送过来的登录信息进行身份认证，然后把用户的认证状态与 `Session ID` 绑定后记录在服务器端。
+    > 向客户端返回响应时，会在首部字段 Set-Cookie 内写入 SessionID（如 PHPSESSID=028a8c…）
+    > 另外，为减轻 `跨站脚本攻击（XSS）` 造成的损失，建议事先在 `Cookie` 内加上 `httponly` 属性。
+3. 客户端接收到从服务器端发来的 `Session ID` 后，会将其作为 `Cookie` 保存在本地
+    > 下次向服务器发送请求时，浏览器会自动发送 `Cookie`，所以 `Session ID` 也随之发送到服务器。服务器端可通过验证接收到的 `Session ID` 识别用户和其认证状态。
+
+另外，不仅基于表单认证的登录信息及认证过程都无标准化的方法，服务器端应如何保存用户提交的密码等登录信息等也没有标准化。
+
+通常，一种安全的保存方法是，先利用给密码`加盐（salt）`的方式增加额外信息，再使用 `散列（hash）函数` 计算出散列值后保存
+:::tip 加盐
+其实就是由服务器随机生成的一个字符串，但是要保证长度足够长，并且是真正随机生成的。然后把它和密码字符串相连接（前后都可以）生成散列值。当两个用户使用了同一个密码时，由于随机生成的 salt 值不同，对应的散列值也将是不同的。这样一来，很大程度上减少了密码特征，攻击者也就很难利用自己手中的密码特征库进行破解
+:::
+
+## 基于 HTTP 的功能追加协议
+虽然 HTTP 协议既简单又简捷，但随着时代的发展，其功能使用上捉襟见肘的疲态已经凸显，下面讲解基于 HTTP 新增的功能的协议。
+
+### 1. 基于 HTTP 的协议
+在建立 HTTP 标准规范时，制订者主要想把 HTTP 当作传输 HTML文档的协议。随着时代的发展，Web 的用途更具多样性，比如演化成在线购物网站、SNS（Social Networking Service，社交网络服务）、企业或组织内部的各种管理工具，等等。
+
+而这些网站所追求的功能可通过 Web 应用和脚本程序实现。即使这些功能已经满足需求，在性能上却未必最优，这是因为 HTTP 协议上的限制以及自身性能有限。HTTP 功能上的不足可通过创建一套全新的协议来弥补。
+
+### 2. 消除 HTTP 瓶颈的 SPDY
+Google 在 2010 年发布了 SPDY（取自 SPeeDY，发音同 speedy）
+
+其开发目标：旨在解决 HTTP 的性能瓶颈，缩短 Web 页面的加载时间（50%）。
+
+#### 2-1. HTTP 的瓶颈
+HTTP 标准的瓶颈：
+- 一条连接上只可发送一个请求
+- 请求只能从客户端开始。客户端不可以接收除响应以外的指令
+- 请求 / 响应首部未经压缩就发送。首部信息越多延迟越大
+- 发送冗长的首部。每次互相发送相同的首部造成的浪费较多
+- 可任意选择数据压缩格式。非强制压缩发送
+
+##### 2-1-1. Ajax 的解决办法
+`Ajax`（Asynchronous JavaScript and XML， 异 步 JavaScript 与 XML技术） 是一种有效利用 `JavaScript` 和 `DOM`（Document Object Model，文档对象模型）的操作，以达到局部 Web 页面替换加载的异步通信手段
+- 和以前的同步通信相比，由于它只更新一部分页面，响应中传输的 `数据量会因此而减少`，这一优点显而易见
+- 能从已加载完毕的 Web 页面上发起请求，只更新局部页面
+
+> 利用 `Ajax` 实时地从服务器获取内容，有可能会导致大量请求产生。另外，`Ajax` 仍未解决 `HTTP` 协议本身存在的问题。
+
+![img](./image/ajax.png)
+
+##### 2-1-2. Comet 的解决方法
+`Comet` 会先将响应置于挂起状态，当服务器端有内容更新时，再返回该响应。因此，服务器端一旦有更新，就可以立即反馈给客户端。
+
+> 内容上虽然可以做到实时更新，但为了保留响应，一次连接的持续时间也变长了。期间，为了维持连接会消耗更多的资源。另外，`Comet` 也仍未解决 `HTTP` 协议本身存在的问题。
+
+![img](./image/comet.png)
+
+##### 2-1-3. SPDY的目标
+处于持续开发状态中的 SPDY 协议，正是为了在协议级别消除 `HTTP` 所遭遇的瓶颈。
+
+#### 2-2. SPDY 的设计与功能
+- `SPDY` 没有完全改写 `HTTP` 协议，而是在 `TCP/IP` 的应用层与运输层之间通过新加会话层的形式运作
+- 考虑到安全性问题，`SPDY` 规定通信中使用 `SSL`
+- `SPDY` 以会话层的形式加入，控制对数据的流动，但还是采用 `HTTP` 建立通信连接
+- 可照常使用 `HTTP` 的 `GET` 和 `POST` 等方 法、`Cookie` 以及 `HTTP` 报文等
+![img](./image/SPDY.png)
+
+##### 使用 SPDY 后，HTTP 协议额外获得以下功能
+- 多路复用流
+    - 通过单一的 `TCP` 连接，可以无限制处理多个 `HTTP` 请求。所有请求的处理都在一条 `TCP` 连接上完成，因此 `TCP` 的处理效率得到提高
+- 赋予请求优先级
+    - `SPDY` 不仅可以无限制地并发处理请求，还可以给请求逐个分配优先级顺序，这样主要是为了在发送多个请求时，解决因带宽低而导致响应变慢的问题
+- 压缩 HTTP 首部
+    - 压缩 `HTTP` 请求和响应的首部。这样一来，通信产生的数据包数量和发送的字节数就更少了
+- 推送功能
+    - 支持服务器主动向客户端推送数据的功能。这样，服务器可直接发送数据，而不必等待客户端的请求
+- 服务器提示功能
+    - 服务器可以主动提示客户端请求所需的资源。由于在客户端发现资源之前就可以获知资源的存在，因此在资源已缓存等情况下，可以避免发送不必要的请求
+
+#### 2-2. SPDY 消除 Web 瓶颈了吗
+- Web 浏览器已经针对 `SPDY` 做出了相应的调整，Web 服务器也进行了实验性质的应用，但把该技术导入实际的 Web 网站却进展不佳。
+- `SPDY` 基本上只是将单个域名（ IP 地址）的通信多路复用，所以当一个 Web 网站上使用多个域名下的资源，改善效果就会受到限制。
+
+### 3. 使用浏览器进行全双工通信的 WebSocket
+`WebSocket` 网络技术是为解决瓶颈问题而实现的一套新协议及 API
+
+#### 3-1. WebSocket 的设计与功能
+- `Web 浏览器` 与 `Web 服务器` 之间全双工通信标准
+- `WebSocket` 协议由 `IETF` 定为标准，`WebSocket API` 由 `W3C` 定为标准
+- 仍在开发中的 `WebSocket` 技术主要是为了解决 `Ajax` 和 `Comet` 里 `XMLHttpRequest` 附带的缺陷所引起的问题。
+
+#### 3-2. WebSocket 协议
+- 一旦 Web 服务器与客户端之间建立起 `WebSocket` 协议的通信连接，之后所有的通信都依靠这个专用协议进行
+- 通信过程中可互相发送 `JSON`、`XML`、`HTML` 或 `图片` 等任意格式的数据。
+- 由于是建立在 `HTTP` 基础上的协议，此连接的发起方仍是客户端，而一旦确立 `WebSocket` 通信连接
+- 服务器和客户端任意一方都可直接向对方发送报文
+
+下面我们列举一下 `WebSocket` 协议的主要特点：
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
