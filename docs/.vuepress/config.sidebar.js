@@ -16,8 +16,11 @@ module.exports = {
                 { title: '执行上下文栈', path: '/JS/执行上下文栈' },
                 { title: '变量对象', path: '/JS/变量对象' },
                 { title: '作用域链', path: '/JS/作用域链' },
-                { title: '事件循环机制', path: '/JS/事件循环机制' },
+                { title: 'this', path: '/JS/this' },
+                { title: '执行上下文', path: '/JS/执行上下文' },
                 { title: '闭包', path: '/JS/闭包' },
+                { title: '参数按值传递', path: '/JS/参数按值传递' },
+                { title: '事件循环机制', path: '/JS/事件循环机制' },
             ]
         },
         {
@@ -67,8 +70,8 @@ module.exports = {
             title: "JavaScript相关",
             collapsable: false,
             children: [
-                { title: 'JavaScript基础面试题', path: '/jobInterview/js/jsBase' },
-                { title: 'JavaScript手写面试题', path: '/jobInterview/js/jsAdvance' },
+                { title: '基础题', path: '/jobInterview/js/jsBase' },
+                { title: '手写题', path: '/jobInterview/js/jsAdvance' },
                 { title: 'ES6', path: '/jobInterview/js/ES6' },
 
             ]
@@ -145,9 +148,9 @@ module.exports = {
     "/vue3/": [
         {
             title: "目录",
-            collabsable: false,
+            collabsable: true,
             children: [
-                { title: '知识梳理', path: '/vue3/知识梳理' },
+                { collabsable: true, title: '新特性', path: '/vue3/newFeature' },
             ]
         },
     ],
@@ -179,6 +182,15 @@ module.exports = {
                 { title: '打包静态资源', path: '/webpack/static' },
                 { title: 'webpack 核心', path: '/webpack/core' },
                 { title: 'webpack 进阶', path: '/webpack/advanced' },
+            ]
+        },
+    ],
+    "/node/":[
+        {
+            title: "目录",
+            collapsable: false,
+            children: [
+                { title: 'Node简介', path: '/node/introduce' },
             ]
         },
     ]

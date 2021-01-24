@@ -1,4 +1,34 @@
 
+## ● 说说你对 Vue 的理解
+是一个用于创建用户界面的开源 `JavaScript` 框架，也是一个创建单页应用的 Web 应用框架。同时也是一款流行的 JavaScript 前端框架，旨在更好地组织与简化Web开发
+
+### Vue 核心特性
+#### 数据驱动（MVVM)
+MVVM表示的是 Model-View-ViewModel
+- Model：模型层，负责处理业务逻辑以及和服务器端进行交互
+- View：视图层：负责将数据模型转化为UI展示出来，可以简单的理解为HTML页面
+- ViewModel：视图模型层，用来连接Model和View，是Model和View之间的通信桥梁
+
+#### 组件化
+组件化：就是把图形、非图形的各种逻辑均抽象为一个统一的概念（组件）来实现开发的模式，在 `Vue` 中每一个 `.vue` 文件都可以视为一个组件
+
+组件化的优势:
+- 降低整个系统的耦合度，在保持接口不变的情况下，我们可以替换不同的组件快速完成需求，例如输入框，可以替换为日历、时间、范围等组件作具体的实现
+- 调试方便，由于整个系统是通过组件组合起来的，在出现问题的时候，可以用排除法直接移除组件，或者根据报错的组件快速定位问题，之所以能够快速定位，是因为每个组件之间低耦合，职责单一，所以逻辑会比分析整个系统要简单
+- 提高可维护性，由于每个组件的职责单一，并且组件在系统中是被复用的，所以对代码进行优化可获得系统的整体升级
+
+
+#### 指令系统
+解释：指令 (Directives) 是带有 v- 前缀的特殊属性
+
+作用：当表达式的值改变时，将其产生的连带影响，响应式地作用于 DOM
+- 常用的指令
+    - 条件渲染指令 `v-if`
+    - 列表渲染指令 `v-for`
+    - 属性绑定指令 `v-bind`
+    - 事件绑定指令 `v-on`
+    - 双向数据绑定指令 `v-model`
+
 ## ● 说说你对 SPA 单页面的理解，它的优缺点分别是什么？
 SPA（ single-page application ）仅在 Web 页面初始化时加载相应的 HTML、JavaScript 和 CSS。一旦页面加载完成，SPA 不会因为用户的操作而进行页面的重新加载或跳转；取而代之的是利用路由机制实现 HTML 内容的变换，用户与 UI 的交互，避免页面的重新加载。
 ### 优点
@@ -9,6 +39,135 @@ SPA（ single-page application ）仅在 Web 页面初始化时加载相应的 H
 - **初次加载耗时多：** 为实现单页 Web 应用功能及显示效果，需要在加载页面的时候将 JavaScript、CSS 统一加载，部分页面按需加载；
 - **前进后退路由管理：** 由于单页应用在一个页面中显示所有的内容，所以不能使用浏览器的前进后退功能，所有的页面切换需要自己建立堆栈管理；
 - **SEO 难度较大：** 由于所有的内容都在一个页面中动态替换显示，所以在 SEO 上其有着天然的弱势
+
+## ● SPA（单页应用）首屏加载速度慢怎么解决
+### 加载慢的原因
+在页面渲染的过程，导致加载速度慢的因素可能如下：
+- 网络延时问题
+- 资源文件体积是否过大
+- 资源是否重复发送请求去加载了
+- 加载脚本的时候，渲染内容堵塞了
+
+### 解决方案
+常见的几种SPA首屏优化方式
+- 减小入口文件积
+- 静态资源本地缓存
+- UI框架按需加载
+- 图片资源的压缩
+- 组件重复打包
+- 开启GZip压缩
+- 使用SSR
+
+#### 减小入口文件体积
+常用的手段是路由懒加载，把不同路由对应的组件分割成不同的代码块，在进行路由跳转时才会加载相应的组件，使得入口文件变小，加载速度大大增加
+
+在 vue-router 配置路由的时候，采用动态加载路由的形式：
+```js
+routes:[ 
+    path: 'Blogs',
+    name: 'ShowBlogs',
+    component: () => import('./components/ShowBlogs.vue')
+]
+```
+也可以把某个路由下的所有组件都打包在同个异步块 (chunk) 中。只需要使用命名 `chunk`
+```js
+const Foo = () => import(/* webpackChunkName: "group-foo" */ './Foo.vue')
+const Bar = () => import(/* webpackChunkName: "group-foo" */ './Bar.vue')
+const Baz = () => import(/* webpackChunkName: "group-foo" */ './Baz.vue')
+```
+
+#### 静态资源本地缓存
+后端返回资源问题：
+
+采用HTTP缓存，设置` Cache-Control`、`Last-Modified`、`Etag`等响应头
+
+采用 `Service Worker` 离线缓存
+
+前端合理利用 `localStorage`
+
+#### UI 框架按需加载
+在日常使用 UI 框架，例如 `element-UI`、或者`antd`，我们经常性直接饮用整个 UI 库
+```js
+import ElementUI from 'element-ui'
+Vue.use(ElementUI)
+```
+但实际上我用到的组件只有按钮，分页，表格，输入与警告 所以我们要按需引用
+```js
+import { Button, Input, Pagination, Table, TableColumn, MessageBox } from 'element-ui';
+Vue.use(Button)
+Vue.use(Input)
+Vue.use(Pagination)
+```
+
+#### 组件重复打包
+假设 `A.js` 文件是一个常用的库，现在有多个路由使用了 `A.js` 文件，这就造成了重复下载
+
+解决方案：在 `webpack` 的 `config` 文件中，修改 `CommonsChunkPlugin` 的配置
+```webpack
+minChunks: 3
+```
+`minChunks` 为 3 表示会把使用3次及以上的包抽离出来，放进公共依赖文件，避免了重复加载组件
+
+#### 图片资源的压缩
+图片资源虽然不在编码过程中，但它却是对页面性能影响最大的因素
+
+对于所有的图片资源，我们可以进行适当的压缩
+
+对页面上使用到的 icon，可以使用在线字体图标，或者雪碧图，将众多小图标合并到同一张图上，用以减轻http请求压力。
+
+#### 开启GZip压缩
+拆完包之后，我们再用 `gzip` 做一下压缩 安装 `compression-webpack-plugin`
+```js 
+cnmp i compression-webpack-plugin -D
+```
+
+在 `vue.congig.js` 中引入并修改 `webpack` 配置
+```js
+const CompressionPlugin = require('compression-webpack-plugin')
+
+configureWebpack: (config) => {
+    if (process.env.NODE_ENV === 'production') {
+        // 为生产环境修改配置...
+        config.mode = 'production'
+        return {
+            plugins: [new CompressionPlugin({
+                test: /\.js$|\.html$|\.css/, //匹配文件名
+                threshold: 10240, //对超过10k的数据进行压缩
+                deleteOriginalAssets: false //是否删除原文件
+            })]
+        }
+    }
+}
+```
+在服务器我们也要做相应的配置 如果发送请求的浏览器支持 gzip，就发送给它 `gzip` 格式的文件
+
+#### 使用 SSR
+**SSR**（Server side ），也就是服务端渲染，组件或页面通过服务器生成 `html` 字符串，再发送到浏览器
+
+从头搭建一个服务端渲染是很复杂的，`vue` 应用建议使用 `Nuxt.js` 实现服务端渲染
+
+## ● 单页面应用和多页面应用区别及优缺点
+![img](./image/SPAMPA.png)
+
+**单页面(SPA)**
+
+只有一个主页面的应用，所有的页面内容都包含在这个所谓的主页面中，用路由动态载入，单页面的页面跳转仅刷新局部资源
+
+- 优点
+  - 用户体验好，速度快，内容的改变不需要重新加载整个页面，SPA 对服务器压力较小
+- 缺点
+  - 不利于SEO
+  - 初次加载时相对耗时多
+
+**多页面MPA**
+
+一个应用中有多个页面，页面跳转时是整页刷新
+
+- 优点
+  - SEO 实现方法简单
+- 缺点
+  - 页面重复代码较多
+  - 初次加载时相对耗时多
 
 ## ● v-show 与 v-if 有什么区别？
 **v-if**：切换过程中条件块内的事件监听器和子组件适当地被销毁和重建
@@ -127,6 +286,50 @@ vm.items.splice(indexOfItem, 1, newValue)
 vm.items.splice(newLength)
 ```
 
+## ● vue 2.x 中如何检测数组的变化的
+使用函数劫持的方式，重写数组的方法，`Vue` 将 `data` 中的数组进行了原型链重写，指向了自己定义的数组原型方法，这样当调用数组 `api` 时，可以通知依赖更新，如果数组中包含引用类型，会对数组中的引用类型再次递归遍历进行监控，这样就实现了监测数组的变化
+
+## ● Vue中给对象添加新属性界面不刷新?
+`vue2` 是用过 `Object.defineProperty` 实现数据响应式，新添加的对象属性并没有通过 `Object.defineProperty` 设置成响应式数据
+### 解决方案
+若想实现数据与视图同步更新，可采取下面三种解决方案：
+- Vue.set()
+- Object.assign()
+- $forcecUpdated()
+
+#### Vue.set()
+Vue.set( target, propertyName/index, value )
+
+参数
+
+- `{Object | Array} target`
+- `{string | number} propertyName/index`
+- `{any} value`
+
+返回值：设置的值
+
+#### Object.assign()
+直接使用 `Object.assign()` 添加到对象的新属性不会触发更新
+
+应创建一个新的对象，合并原对象和混入对象的属性
+```js
+this.someObject = Object.assign({},this.someObject,{newProperty1:1,newProperty2:2 ...})
+```
+#### $forceUpdate
+如果你发现你自己需要在 Vue中做一次强制更新，`99.9%` 的情况，是你在某个地方做错了事
+
+`$forceUpdate`迫使 `Vue` 实例重新渲染
+
+PS：仅仅影响实例本身和插入插槽内容的子组件，而不是所有子组件。
+
+#### 小结
+- 如果为对象添加少量的新属性，可以直接采用`Vue.set()`
+
+- 如果需要为新对象添加大量的新属性，则通过`Object.assign()`创建新对象
+
+- 如果你需要进行强制刷新时，可采取`$forceUpdate()` (不建议)
+
+
 ## ● 谈谈你对 Vue 生命周期的理解？
 ### 1. 生命周期是什么？
 Vue 实例有一个完整的生命周期，也就是从开始创建、初始化数据、编译模版、挂载 Dom -> 渲染、更新 -> 渲染、卸载等一系列过程，我们称这是 Vue 的生命周期。
@@ -204,7 +407,8 @@ keep-alive 是 Vue 内置的一个组件，可以使被包含的组件保留状�
 - 对应两个钩子函数 `activated` 和 `deactivated` ，当组件被激活时，触发钩子函数 `activated`，当组件被移除时，触发钩子函数 `deactivated`
 
 ## ● 组件中 data 为什么是一个函数？
-> 为什么组件中的 data 必须是一个函数，然后 return 一个对象，而 new Vue 实例里，data 可以直接是一个对象？
+- 根实例对象 `data` 可以是对象也可以是函数（根实例是单例），不会产生数据污染情况
+- 组件实例对象 `data` 必须为函数，目的是为了防止多个组件实例对象之间共用一个 `data`，产生数据污染。采用函数的形式，`initData` 时会将其作为工厂函数都会返回全新 `data` 对象
 ```js
 // data
 data() {
@@ -308,9 +512,47 @@ Vue 主要通过以下 4 个步骤来实现数据双向绑定的：
 - 实现一个订阅器 Dep：订阅器采用 发布-订阅 的设计模式，用来收集 Watcher ，对监听器 Observer 和订阅者 Watcher 进行统一的管理
 
 ## ● vue 常用的修饰符
-- `.prevent`: 提交事件不再重载页面
-- `.stop`: 阻止单击事件冒泡
-- `.self`: 当事件发生在该元素本身而不是子元素的时候会触发
+在 `Vue` 中，修饰符处理了许多 `DOM` 事件的细节，让我们不再需要花大量的时间去处理这些烦恼的事情，而能有更多的精力专注于程序的逻辑处理
+vue中修饰符分为以下五种：
+- 表单修饰符
+- 事件修饰符
+- 鼠标按键修饰符
+- 键值修饰符
+- v-bind修饰符
+
+### 表单修饰符
+- `.lazy`：转为在 `change` 事件之后进行数据同步
+- `.trim`：自动过滤用户输入的首尾空格字符，而中间的空格不会过滤
+- `.number`：自动将用户的输入值转为数值类型
+
+### 事件修饰符
+- `.stop`：阻止了事件冒泡，相当于调用了 `event.stopPropagation` 方法
+- `.prevent`：提交事件不再重载页面，阻止了事件的默认行为，相当于调用了 `event.preventDefault` 方法
+- `.self`: 当事件发生在该元素本身的时候会触发
+- `.once`：点击事件将只会触发一次
+- `.capture`：使事件触发从包含这个元素的顶层开始往下触发
+- `.passive`：等待滚动事件完成才会触发事件
+
+### 鼠标按钮修饰符
+- `left`：左键点击
+- `right`：右键点击
+- `middle`：中键点击
+
+### 键盘修饰符
+- `.enter`
+- `.tab`
+- `.delete` (捕获“删除”和“退格”键)
+- `.esc`
+- `.space`
+- `.up`
+- `.down`
+- `.left`
+- `.right`
+
+### v-bind修饰符
+- `async`：能对 `props` 进行一个双向绑定
+- `prop`y
+- `camel`： 将 `kebab-case attribute` 名转换为 `camelCase`
 
 ## ● vue 中 key 值的作用
 vue 中 key 值的作用可以分为两种情况来考虑。
@@ -332,26 +574,16 @@ vue 中 key 值的作用可以分为两种情况来考虑。
 ### v-for 中使用 key
 用 `v-for` 更新已渲染过的元素列表时，它默认使用 **就地复用** 的策略。如果数据项的顺序发生了改变，`Vue` 不会移动 `DOM` 元素来匹配数据项的顺序，而是简单复用此处的每个元素。因此通过为每个列表项提供一个 `key` 值，来以便 `Vue` 跟踪元素，从而高效的实现复用。**这个时候 `key` 的作用是为了高效的更新渲染虚拟 DOM**
 ![img](./image/diff.png)
+:::tip 
+默认的模式是高效的，但是只适用于 `不依赖子组件状态或临时 DOM 状态 (例如：表单输入值) ` 的列表渲染输出
+:::
+
 
 ## ● vue 中，子组件为何不可以修改父组件传递的 `Prop`
 `Vue` 提倡单向数据流，即父级 `props` 的更新会流向子组件，但是反过来则不行，这是为了防止意外的改变父组件状态，使得应用的数据流变得难以理解，
 需要特别注意的是:
 - 当你从子组件修改的 `prop` 属于基础类型时会触发提示。这种情况下，你是无法修改父组件的数据源的，因为基础类型赋值时是值拷贝
 - 当你修改引用类型值(Object、Array)时不会触发提示，并且会修改父组件数据源的数据
-
-## ● vue 2.x 中如何检测数组的变化的
-使用函数劫持的方式，重写数组的方法，`Vue` 将 `data` 中的数组进行了原型链重写，指向了自己定义的数组原型方法，这样当调用数组 `api` 时，可以通知依赖更新，如果数组中包含引用类型，会对数组中的引用类型再次递归遍历进行监控，这样就实现了监测数组的变化
-
-## ● nextTick 的实现原理是什么
-在 `DOM` 更新结束之后执行回调，`nextTick` 主要使用了宏任务和微任务。
-
-`nextTick` 将传入的函数，push 到数组(callbacks)中，再根据执行环境分别尝试采用
-- Promise
-- MutationObserver
-- setImmediate
-- 如果以上都不行则采用 setTimeout
-
-遍历数组执行回调
 
 ## ● Vue 事件绑定原理说一下
 - 原生事件绑定是通过 `addEventListener` 绑定给真实元素的
@@ -381,29 +613,6 @@ vue 中 key 值的作用可以分为两种情况来考虑。
 ## ● 渐进式框架的理解
 **主张最少**：在不同的场景，使用 `vue` 中不同的功能
 框架做分层设计，每层都是可选，不同层可以灵活接入其他方案，当你都想用官方的实现时，会发现也早已准备好，各层之间包括配套工具都能比接入其他方案更便捷地协同工作。
-
-## ● 单页面应用和多页面应用区别及优缺点
-![img](./image/SPAMPA.png)
-
-**单页面(SPA)**
-
-只有一个主页面的应用，所有的页面内容都包含在这个所谓的主页面中，用路由动态载入，单页面的页面跳转仅刷新局部资源
-
-- 优点
-  - 用户体验好，速度快，内容的改变不需要重新加载整个页面，SPA 对服务器压力较小
-- 缺点
-  - 不利于SEO
-  - 初次加载时相对耗时多
-
-**多页面MPA**
-
-一个应用中有多个页面，页面跳转时是整页刷新
-
-- 优点
-  - SEO 实现方法简单
-- 缺点
-  - 页面重复代码较多
-  - 初次加载时相对耗时多
 
 ## ● assets 和 static 的区别
 区别：`webpack` 处理静态资源的方式不同
@@ -444,6 +653,1685 @@ vue 中 key 值的作用可以分为两种情况来考虑。
 1. `target(添加的数据)`为数组：利用数组的 `splice` 变异方法触发响应式
 2. `target(添加的数据)`为对象：判断属性存在，即为响应式，直接赋值
 3. `target(添加的数据)`本身就不是响应式，给`target`创建一个全新的属性，直接赋值，调用 defineReactive 方法进行响应式处理
+
+## ● 为什么Vue中的v-if和v-for不建议一起用
+因为 `v-for` 比 `v-if` 的优先级更高，`v-if` 和 `v-for` 同时用在同一个元素上，每次渲染都会先循环再进行条件判断，带来性能方面的浪费
+
+## ● Vue 中组件和插件有什么区别？
+**组件**：组件就是把图形、非图形的各种逻辑均抽象为一个统一的概念（组件）来实现开发的模式，在Vue中每一个.vue文件都可以视为一个组件
+
+**插件**：通常用来为 `Vue` 添加全局功能。插件的功能范围没有严格的限制——一般有下面几种：
+- 添加全局方法或者属性。如: `vue-custom-element`
+- 添加全局资源：指令/过滤器/过渡等。如 `vue-touch`
+- 通过全局混入来添加一些组件选项。如 `vue-router`
+- 添加 Vue 实例方法，通过把它们添加到 `Vue.prototype` 上实现。
+- 一个库，提供自己的 API，同时提供上面提到的一个或多个功能。如 `vue-router`
+
+两者的区别:
+### 1. 编写形式
+#### 编写组件
+编写一个组件，可以有很多方式，我们最常见的就是 `vue` 单文件的这种格式，每一个 `.vue` 文件我们都可以看成是一个组件
+```vue
+<template>
+</template>
+<script>
+export default{ 
+    ...
+}
+</script>
+<style>
+</style>
+```
+还可以通过 `template` 属性来编写一个组件
+```js
+<template id="testComponent">     // 组件显示的内容
+    <div>component!</div>   
+</template>
+
+Vue.component('componentA',{ 
+    template: `<div>component</div>`  // 组件内容少可以通过这种形式
+})
+```
+
+#### 编写插件
+`vue` 插件的实现应该暴露一个 `install` 方法。这个方法的第一个参数是 `Vue` 构造器，第二个参数是一个可选的选项对象
+```js
+MyPlugin.install = function (Vue, options) {
+  // 1. 添加全局方法或 property
+  Vue.myGlobalMethod = function () {
+    // 逻辑...
+  }
+
+  // 2. 添加全局资源
+  Vue.directive('my-directive', {
+    bind (el, binding, vnode, oldVnode) {
+      // 逻辑...
+    }
+    ...
+  })
+
+  // 3. 注入组件选项
+  Vue.mixin({
+    created: function () {
+      // 逻辑...
+    }
+    ...
+  })
+
+  // 4. 添加实例方法
+  Vue.prototype.$myMethod = function (methodOptions) {
+    // 逻辑...
+  }
+}
+```
+
+### 2. 注册形式
+#### 组件注册
+`vue` 组件注册主要分为全局注册与局部注册
+
+**全局注册**：通过 `Vue.component` 方法，第一个参数为组件的名称，第二个参数为传入的配置项
+```js
+Vue.component('my-component-name', { /* ... */ })
+```
+
+**局部注册**：只需在用到的地方通过 `components` 属性注册一个组件
+```js
+const component1 = {...} // 定义一个组件
+
+export default {
+ components:{
+  component1   // 局部注册
+ }
+}
+```
+
+#### 插件注册
+插件的注册通过 `Vue.use()` 的方式进行注册（安装），第一个参数为插件的名字，第二个参数是可选择的配置项
+```js
+Vue.use(插件名字,{ /* ... */} )
+```
+> 注册插件的时候，需要在调用 `new Vue()` 启动应用之前完成 `Vue.use` 会自动阻止多次注册相同插件，只会注册一次
+
+### 3. 使用场景
+**组件** (Component) 是用来构成应用的业务模块，它的目标是 `App.vue`
+
+**插件** (Plugin) 是用来增强你的技术栈的功能模块，它的目标是 `Vue` 本身，简单来说，插件就是指对 `Vue` 的功能的增强或补充
+
+## ● Vue中的 $nextTick 怎么理解?
+在下次 `DOM` 更新循环结束之后执行延迟回调。在修改数据之后立即使用这个方法，获取更新后的 `DOM`
+
+数据变化之后立即使用 `Vue.nextTick(callback)`。这样回调函数将在 `DOM` 更新完成后被调用
+
+> **异步更新队列**： `Vue` 在更新 `DOM` 时是异步执行的。当数据发生变化，`Vue` 将开启一个异步更新队列，视图需要等队列中所有数据变化完成之后，再统一进行更新
+
+
+
+### 实现原理
+1. 将传入实例方法 `$nextTick` 的回调函数，压入 `callbacks` 数组，也就是异步队列，然后执行 `timerFunc` 函数
+::: details 点击看源码
+```js
+export function nextTick (cb?: Function, ctx?: Object) {
+  let _resolve
+  callbacks.push(() => {
+    if (cb) {
+      try {
+        cb.call(ctx)
+      } catch (e) {
+        handleError(e, ctx, 'nextTick')
+      }
+    } else if (_resolve) {
+      _resolve(ctx)
+    }
+  })
+  if (!pending) {
+    pending = true
+    timerFunc()
+  }
+  // $flow-disable-line
+  if (!cb && typeof Promise !== 'undefined') {
+    return new Promise(resolve => {
+      _resolve = resolve
+    })
+  }
+}
+```
+:::
+
+2. `timerFunc` 函数定义，对异步队列尝试使用原生的 `Promise.then`、`MutationObserver` 和 `setImmediate`，如果执行环境不支持，则会采用 `setTimeout(fn, 0) `代替。
+::: details 点击看源码
+```js
+if (typeof Promise !== 'undefined' && isNative(Promise)) {
+  const p = Promise.resolve()
+  timerFunc = () => {
+    p.then(flushCallbacks)
+    // In problematic UIWebViews, Promise.then doesn't completely break, but
+    // it can get stuck in a weird state where callbacks are pushed into the
+    // microtask queue but the queue isn't being flushed, until the browser
+    // needs to do some other work, e.g. handle a timer. Therefore we can
+    // "force" the microtask queue to be flushed by adding an empty timer.
+    if (isIOS) setTimeout(noop)
+  }
+  isUsingMicroTask = true
+} else if (!isIE && typeof MutationObserver !== 'undefined' && (
+  isNative(MutationObserver) ||
+  // PhantomJS and iOS 7.x
+  MutationObserver.toString() === '[object MutationObserverConstructor]'
+)) {
+  // Use MutationObserver where native Promise is not available,
+  // e.g. PhantomJS, iOS7, Android 4.4
+  // (#6466 MutationObserver is unreliable in IE11)
+  let counter = 1
+  const observer = new MutationObserver(flushCallbacks)
+  const textNode = document.createTextNode(String(counter))
+  observer.observe(textNode, {
+    characterData: true
+  })
+  timerFunc = () => {
+    counter = (counter + 1) % 2
+    textNode.data = String(counter)
+  }
+  isUsingMicroTask = true
+} else if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
+  // Fallback to setImmediate.
+  // Technically it leverages the (macro) task queue,
+  // but it is still a better choice than setTimeout.
+  timerFunc = () => {
+    setImmediate(flushCallbacks)
+  }
+} else {
+  // Fallback to setTimeout.
+  timerFunc = () => {
+    setTimeout(flushCallbacks, 0)
+  }
+}
+```
+::: 
+
+3. 依次执行 `callbacks` 里面的函数
+::: details 点击看源码
+```js
+function flushCallbacks () {
+  pending = false
+  const copies = callbacks.slice(0)
+  callbacks.length = 0
+  for (let i = 0; i < copies.length; i++) {
+    copies[i]()
+  }
+}
+```
+:::
+
+## ● 说说你对 vue 的 mixin 的理解，有哪些应用场景？
+**mixin（混入）**，提供了一种非常灵活的方式，来分发 `Vue` 组件中的可复用功能。本质其实就是一个 `js` 对象，它可以包含我们组件中任意功能选项，如 `data`、`components`、`methods`、`created`、`computed`等等
+
+### 局部混入
+定义一个 `mixin` 对象，有组件 `options` 的`data`、`methods`属性
+```js
+var myMixin = {
+  created: function () {
+    this.hello()
+  },
+  methods: {
+    hello: function () {
+        console.log('hello from mixin!')
+    }
+  }
+}
+```
+组件通过 `mixins` 属性调用 `mixin` 对象
+```js
+Vue.component('componentA',{
+    mixins: [myMixin]
+})
+```
+该组件在使用的时候，混合了 `mixin` 里面的方法
+
+### 全局混入
+通过 `Vue.mixin()` 进行全局的混入
+```js
+Vue.mixin({
+  created: function () {
+      console.log("全局混入")
+    }
+})
+```
+使用全局混入需要特别注意，因为它会影响到每一个组件实例（包括第三方组件）
+>PS：全局混入常用于插件的编写
+
+### 源码分析
+首先从 `Vue.mixin` 入手
+
+源码位置：`src/core/global-api/mixin.js`
+::: details 点击看源码
+```js
+export function initMixin (Vue: GlobalAPI) {
+  Vue.mixin = function (mixin: Object) {
+    this.options = mergeOptions(this.options, mixin)
+    return this
+  }
+}
+```
+:::
+> 主要是调用 `merOptions` 方法
+
+`merOptions` 方法，源码位置：`src/core/util/options.js`
+::: details 点击看源码
+```js
+export function mergeOptions(
+    parent: Object,
+    child: Object,
+    vm?: Component
+): Object {
+    if (process.env.NODE_ENV !== 'production') {
+        // 如果有options.components，则判断是否组件名是否合法
+        checkComponents(child)
+    }
+
+    if (typeof child === 'function') {
+        child = child.options
+    }
+    // 格式化 child 的 props
+    normalizeProps(child, vm)
+
+    normalizeInject(child, vm)
+
+    // 格式化child的directives
+    normalizeDirectives(child)
+
+    // Apply extends and mixins on the child options,
+    // but only if it is a raw options object that isn't
+    // the result of another mergeOptions call.
+    // Only merged options has the _base property.
+    if (!child._base) {
+        if (child.extends) {
+            parent = mergeOptions(parent, child.extends, vm)
+        }
+        if (child.mixins) {
+            for (let i = 0, l = child.mixins.length; i < l; i++) {
+                parent = mergeOptions(parent, child.mixins[i], vm)
+            }
+        }
+    }
+
+    const options = {}
+    let key
+    for (key in parent) {
+        mergeField(key)
+    }
+    for (key in child) {
+        if (!hasOwn(parent, key)) {
+            mergeField(key)
+        }
+    }
+    function mergeField(key) {
+        const strat = strats[key] || defaultStrat
+        options[key] = strat(parent[key], child[key], vm, key)
+    }
+    return options
+}
+
+```
+:::
+从上面的源码，我们得到以下几点：
+- 优先递归处理 `mixins`
+- 先遍历合并 `parent` 中的 `key`，调用 `mergeField` 方法进行合并，然后保存在变量 `options`
+- 再遍历 `child`，合并补上 `parent` 中没有的 `key`，调用 `mergeField` 方法进行合并，保存在变量 `options`
+- 通过 `mergeField` 函数进行了合并
+
+## ● 说说你对 slot 的理解？slot 使用场景有哪些？
+`Vue` 实现了一套内容分发的 `API`，将 `<slot>` 元素作为承载分发内容的出口
+
+### 插槽的分类
+1. 默认插槽
+- 子组件用 `<slot>` 标签确定渲染的位置，
+- 当父组件在使用组件起始标签和结束标签之间添加内容时，就会显示该内容
+- 当父组件没有在使用组件起始标签和结束标签之间添加内容时，就显示 `<slot>` 标签内的默认内容
+
+```js
+// 子组件
+<template>
+    <div>
+        <slot>父组件没内容我就显示</slot>
+    </div>
+</template>
+```
+
+```html
+// 父组件
+<Child>
+  <div>默认插槽</div>  
+</Child>
+```
+
+### 具名插槽
+- 子组件用 `name` 属性来表示插槽的名字，不传为默认插槽
+- 父组件中在使用时在默认插槽的基础上使用 `v-slot` 指令，值为子组件插槽 `name` 属性值
+```js
+// 子组件
+<template>
+    <slot>插槽后备的内容</slot>
+    <slot name="content">插槽后备的内容</slot>
+</template>
+```
+```html
+<child>
+    <template v-slot:default>具名插槽</template>
+    <!-- 具名插槽⽤插槽名做参数 -->
+    <template v-slot:content>内容...</template>
+</child>
+```
+
+### 作用域插槽
+- 子组件在`<slot>`元素上绑定属性来将子组件的信息传给父组件使用，这些属性会被挂在父组件 `v-slot` 接受的对象上
+- 父组件使用时通过 `v-slot` 获取子组件的信息
+```js
+// 子组件
+<template>
+  <div id="item">
+    <slot name="head" v-bind:user="user"></slot>
+  </div>
+</template>
+```
+```html
+// 父组件
+<child>
+    <template v-slot:head="slotProps">
+        {{ slotProps.user.firstName }}
+    </template>
+</child>
+
+```
+
+### 小结：
+- `v-slot` 属性只能在 `<template>` 上使用，但在只有默认插槽时可以在组件标签上使用
+- 默认插槽名为`default`，可以省略`default`直接写`v-slot`
+- 缩写为#时不能不写参数，写成#default
+- 可以通过解构获取v-slot={user}，还可以重命名v-slot="{user: newName}"和定义默认值v-slot="{user = '默认值'}"
+
+## ● 自定义指令的应用场景有哪些？
+### 什么是指令
+在 `vue` 中提供了一套为数据驱动视图更为方便的操作，这些操作被称为指令系统
+
+### 如何实现
+注册一个自定义指令有全局注册与局部注册
+
+#### 全局注册
+主要是用过 `Vue.directive` 方法进行注册
+
+`Vue.directive` 第一个参数是指令的名字（不需要写上v-前缀），第二个参数可以是对象数据，也可以是一个指令函数
+```js
+// 注册一个全局自定义指令 `v-focus`
+Vue.directive('focus', {
+  // 当被绑定的元素插入到 DOM 中时……
+  inserted: function (el) {
+    // 聚焦元素
+    el.focus()  // 页面加载完成之后自动让输入框获取到焦点的小功能
+  }
+})
+```
+局部注册通过在组件 `options` 选项中设置 `directive` 属性
+```js
+directives: {
+  focus: {
+    // 指令的定义
+    inserted: function (el) {
+      el.focus() // 页面加载完成之后自动让输入框获取到焦点的小功能
+    }
+  }
+}
+```
+然后你可以在模板中任何元素上使用新的 `v-focus` property，如下：
+```js
+<input v-focus />
+```
+自定义指令也像组件那样存在钩子函数：
+- `bind`：只调用一次，指令第一次绑定到元素时调用。在这里可以进行一次性的初始化设置
+- `inserted`：被绑定元素插入父节点时调用 (仅保证父节点存在，但不一定已被插入文档中)
+- `update`：在组件的 `VNode` 更新时调用，但是可能发生在其子 `VNode` 更新之前。指令的值可能发生了改变，也可能没有。但是你可以通过比较更新前后的值来忽略不必要的模板更新
+- `componentUpdated`：指令所在组件的 `VNode` 及其子 `VNode` 全部更新后调用
+- `unbind`：只调用一次，指令与元素解绑时调用
+
+### 应用场景
+使用自定义组件组件可以满足我们日常一些场景，这里给出几个自定义组件的案例：
+- 防抖
+- 图片懒加载
+- 一键 Copy 的功能
+
+#### 输入框防抖
+::: details 点击看代码
+```js
+// 1.设置v-throttle自定义指令
+Vue.directive('throttle', {
+  bind: (el, binding) => {
+    let throttleTime = binding.value; // 防抖时间
+    if (!throttleTime) { // 用户若不设置防抖时间，则默认2s
+      throttleTime = 2000;
+    }
+    let cbFun;
+    el.addEventListener('click', event => {
+      if (!cbFun) { // 第一次执行
+        cbFun = setTimeout(() => {
+          cbFun = null;
+        }, throttleTime);
+      } else {
+        event && event.stopImmediatePropagation();
+      }
+    }, true);
+  },
+});
+// 2.为button标签设置v-throttle自定义指令
+<button @click="sayHello" v-throttle>提交</button>
+```
+:::
+#### 图片懒加载
+::: details 点击看代码
+```js
+const LazyLoad = {
+    // install方法
+    install(Vue,options){
+       // 代替图片的loading图
+        let defaultSrc = options.default;
+        Vue.directive('lazy',{
+            bind(el,binding){
+                LazyLoad.init(el,binding.value,defaultSrc);
+            },
+            inserted(el){
+                // 兼容处理
+                if('IntersectionObserver' in window){
+                    LazyLoad.observe(el);
+                }else{
+                    LazyLoad.listenerScroll(el);
+                }
+                
+            },
+        })
+    },
+    // 初始化
+    init(el,val,def){
+        // data-src 储存真实src
+        el.setAttribute('data-src',val);
+        // 设置src为loading图
+        el.setAttribute('src',def);
+    },
+    // 利用IntersectionObserver监听el
+    observe(el){
+        let io = new IntersectionObserver(entries => {
+            let realSrc = el.dataset.src;
+            if(entries[0].isIntersecting){
+                if(realSrc){
+                    el.src = realSrc;
+                    el.removeAttribute('data-src');
+                }
+            }
+        });
+        io.observe(el);
+    },
+    // 监听scroll事件
+    listenerScroll(el){
+        let handler = LazyLoad.throttle(LazyLoad.load,300);
+        LazyLoad.load(el);
+        window.addEventListener('scroll',() => {
+            handler(el);
+        });
+    },
+    // 加载真实图片
+    load(el){
+        let windowHeight = document.documentElement.clientHeight
+        let elTop = el.getBoundingClientRect().top;
+        let elBtm = el.getBoundingClientRect().bottom;
+        let realSrc = el.dataset.src;
+        if(elTop - windowHeight<0&&elBtm > 0){
+            if(realSrc){
+                el.src = realSrc;
+                el.removeAttribute('data-src');
+            }
+        }
+    },
+    // 节流
+    throttle(fn,delay){
+        let timer; 
+        let prevTime;
+        return function(...args){
+            let currTime = Date.now();
+            let context = this;
+            if(!prevTime) prevTime = currTime;
+            clearTimeout(timer);
+            
+            if(currTime - prevTime > delay){
+                prevTime = currTime;
+                fn.apply(context,args);
+                clearTimeout(timer);
+                return;
+            }
+
+            timer = setTimeout(function(){
+                prevTime = Date.now();
+                timer = null;
+                fn.apply(context,args);
+            },delay);
+        }
+    }
+
+}
+export default LazyLoad;
+```
+:::
+关于自定义组件还有很多应用场景，如：拖拽指令、页面水印、权限校验等等应用场景
+
+## ● 什么是虚拟DOM？如何实现一个虚拟DOM？
+### 什么是虚拟 DOM
+`虚拟DOM` 是真实 `DOM` 的抽象，以 JavaScript 对象 (VNode 节点) 作为基础的树，用对象的属性来描述节点，并且最少包含`标签名 (tag)`、`属性 (attrs)` 和`子元素对象 (children)` 三个属性，不同框架对这三个属性的名命可能会有差别，最终可以通过一系列操作使这课树映射到真实环境上
+
+### 为什么需要虚拟 DOM
+操作 `DOM` 是很慢的，其元素非常庞大，页面的性能问题，大部分都是由 `DOM` 操作引起的
+:::tip 
+很多人认为虚拟 `DOM` 最大的优势是 `diff` 算法，减少 `JavaScript` 操作真实 `DOM` 的带来的性能消耗。虽然这一个虚拟 `DOM` 带来的一个优势，但并不是全部。虚拟 `DOM` 最大的优势在于抽象了原本的渲染过程，实现了跨平台的能力，而不仅仅局限于浏览器的 DOM，可以是安卓和 IOS 的原生组件，可以是近期很火热的小程序，也可以是各种GUI
+:::
+
+### 如何实现虚拟 DOM
+首先可以看看 `vue` 中 `VNode` 的结构
+
+源码位置：`src/core/vdom/vnode.js`
+::: details 点击看源码
+```js
+export default class VNode {
+  tag: string | void;
+  data: VNodeData | void;
+  children: ?Array<VNode>;
+  text: string | void;
+  elm: Node | void;
+  ns: string | void;
+  context: Component | void; // rendered in this component's scope
+  functionalContext: Component | void; // only for functional component root nodes
+  key: string | number | void;
+  componentOptions: VNodeComponentOptions | void;
+  componentInstance: Component | void; // component instance
+  parent: VNode | void; // component placeholder node
+  raw: boolean; // contains raw HTML? (server only)
+  isStatic: boolean; // hoisted static node
+  isRootInsert: boolean; // necessary for enter transition check
+  isComment: boolean; // empty comment placeholder?
+  isCloned: boolean; // is a cloned node?
+  isOnce: boolean; // is a v-once node?
+
+  constructor (
+    tag?: string,
+    data?: VNodeData,
+    children?: ?Array<VNode>,
+    text?: string,
+    elm?: Node,
+    context?: Component,
+    componentOptions?: VNodeComponentOptions
+  ) {
+    /*当前节点的标签名*/
+    this.tag = tag
+    /*当前节点对应的对象，包含了具体的一些数据信息，是一个VNodeData类型，可以参考VNodeData类型中的数据信息*/
+    this.data = data
+    /*当前节点的子节点，是一个数组*/
+    this.children = children
+    /*当前节点的文本*/
+    this.text = text
+    /*当前虚拟节点对应的真实dom节点*/
+    this.elm = elm
+    /*当前节点的名字空间*/
+    this.ns = undefined
+    /*编译作用域*/
+    this.context = context
+    /*函数化组件作用域*/
+    this.functionalContext = undefined
+    /*节点的key属性，被当作节点的标志，用以优化*/
+    this.key = data && data.key
+    /*组件的option选项*/
+    this.componentOptions = componentOptions
+    /*当前节点对应的组件的实例*/
+    this.componentInstance = undefined
+    /*当前节点的父节点*/
+    this.parent = undefined
+    /*简而言之就是是否为原生HTML或只是普通文本，innerHTML的时候为true，textContent的时候为false*/
+    this.raw = false
+    /*静态节点标志*/
+    this.isStatic = false
+    /*是否作为跟节点插入*/
+    this.isRootInsert = true
+    /*是否为注释节点*/
+    this.isComment = false
+    /*是否为克隆节点*/
+    this.isCloned = false
+    /*是否有v-once指令*/
+    this.isOnce = false
+  }
+
+  // DEPRECATED: alias for componentInstance for backwards compat.
+  /* istanbul ignore next https://github.com/answershuto/learnVue*/
+  get child (): Component | void {
+    return this.componentInstance
+  }
+}
+```
+:::
+更新中...
+
+## ● 说说 vue 中的diff算法
+`diff` 算法是一种通过同层的树节点进行比较的高效算法，采用 **深度优先，同层比较**
+
+其中有两个特点：
+- 比较只会在同层级进行，不会垮层级比价
+- 在 `diff` 比较的过程中，循环从两边向中间比较
+
+## ● Vue项目中有封装过axios吗？怎么封装的？
+`axios` 是一个轻量的 `HTTP` 客户端
+
+基于 `XMLHttpRequest` 服务来执行 `HTTP` 请求，支持丰富的配置，支持 `Promise`，支持浏览器端和 `Node.js` 端
+
+### 封装
+将一些默认的配置进行二次封装，比如说超时时间、设置请求头、根据项目环境判断使用哪个请求地址、错误处理等等操作
+
+封装的同时，需要和后端协商好一些约定，请求头，状态码，请求超时时间
+- 设置接口请求前缀
+- 设置请求头与超时时间
+- 请求拦截器
+- 响应拦截器
+- 封装请求方法
+
+
+
+#### 设置接口请求前缀
+利用 `node` 环境变量来作判断，用来区分开发、测试、生产环境
+::: details 点击看代码
+```js
+if (process.env.NODE_ENV === 'development') {
+    axios.defaults.baseURL = 'http://dev.xxx.com'
+} else if (process.env.NODE_ENV === 'production') {
+    axios.defaults.baseURL = 'http://prod.xxx.com'
+}
+```
+在本地调试的时候，还需要在 `vue.config.js` 文件中配置 `devServer` 实现代理转发，从而实现跨域
+```js
+devServer: {
+    proxy: {
+      '/proxyApi': {
+        target: 'http://dev.xxx.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '/proxyApi': ''
+        }
+      }
+    }
+  }
+```
+:::
+
+#### 设置请求头与超时时间
+大部分情况下，请求头都是固定的，只有少部分情况下，会需要一些特殊的请求头，这里将普适性的请求头作为基础配置。当需要特殊请求头时，将特殊请求头作为参数传入，覆盖基础配置
+::: details 点击看代码
+```js
+const service = axios.create({
+    ...
+    timeout: 30000,  // 请求 30s 超时
+   headers: {
+        get: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+          // 在开发中，一般还需要单点登录或者其他功能的通用请求头，可以一并配置进来
+        },
+        post: {
+          'Content-Type': 'application/json;charset=utf-8'
+          // 在开发中，一般还需要单点登录或者其他功能的通用请求头，可以一并配置进来
+        }
+  },
+})
+```
+:::
+
+#### 请求拦截器
+请求拦截器可以在每个请求里加上 `token`，做了统一处理后维护起来也方便
+::: details 点击看代码
+```js
+// 请求拦截器
+axios.interceptors.request.use(
+  config => {
+    // 每次发送请求之前判断是否存在token
+    // 如果存在，则统一在http请求的header都加上token，这样后台根据token判断你的登录情况，此处token一般是用户完成登录后储存到localstorage里的
+    token && (config.headers.Authorization = token)
+    return config
+  },
+  error => {
+    return Promise.error(error)
+  })
+```
+:::
+
+#### 响应拦截器
+响应拦截器可以在接收到响应后先做一层操作，如根据状态码判断登录状态、授权
+::: details 点击看代码
+```js
+// 响应拦截器
+axios.interceptors.response.use(response => {
+  // 如果返回的状态码为200，说明接口请求成功，可以正常拿到数据
+  // 否则的话抛出错误
+  if (response.status === 200) {
+    if (response.data.code === 511) {
+      // 未授权调取授权接口
+    } else if (response.data.code === 510) {
+      // 未登录跳转登录页
+    } else {
+      return Promise.resolve(response)
+    }
+  } else {
+    return Promise.reject(response)
+  }
+}, error => {
+  // 我们可以在这里对异常状态作统一处理
+  if (error.response.status) {
+    // 处理请求失败的情况
+    // 对不同返回码对相应处理
+    return Promise.reject(error.response)
+  }
+})
+```
+:::
+
+#### 封装请求方法
+先引入封装好的方法，在要调用的接口重新封装成一个方法暴露出去
+::: details 点击看代码
+```js
+// get 请求
+export function httpGet({
+  url,
+  params = {}
+}) {
+  return new Promise((resolve, reject) => {
+    axios.get(url, {
+      params
+    }).then((res) => {
+      resolve(res.data)
+    }).catch(err => {
+      reject(err)
+    })
+  })
+}
+
+// post
+// post请求
+export function httpPost({
+  url,
+  data = {},
+  params = {}
+}) {
+  return new Promise((resolve, reject) => {
+    axios({
+      url,
+      method: 'post',
+      transformRequest: [function (data) {
+        let ret = ''
+        for (let it in data) {
+          ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+        }
+        return ret
+      }],
+      // 发送的数据
+      data,
+      // url参数
+      params
+
+    }).then(res => {
+      resolve(res.data)
+    })
+  })
+}
+```
+把封装的方法放在一个 `api.js` 文件中
+```js
+import { httpGet, httpPost } from './http'
+export const getorglist = (params = {}) => httpGet({ url: 'apps/api/org/list', params })
+```
+页面中就能直接调用
+```js
+// .vue
+import { getorglist } from '@/assets/js/api'
+
+getorglist({ id: 200 }).then(res => {
+  console.log(res)
+})
+```
+:::
+
+## ● 说说 Vue 项目的目录结构
+使用 `vue` 构建项目，项目结构清晰会提高开发效率，熟悉项目的各种配置同样会让开发效率更高
+
+在划分项目结构的时候，需要遵循一些基本的原则：
+- 文件夹和文件夹内部文件的语义一致性
+- 单一入口/出口
+- 就近原则，紧耦合的文件应该放到一起，且应以相对路径引用
+- 公共的文件应该以绝对路径的方式从根目录引用
+- `/src` 外的文件不应该被引入
+
+### 文件夹和文件夹内部文件的语义一致性
+我们的目录结构都会有一个文件夹是按照路由模块来划分的，如 `pages` 文件夹，这个文件夹里面应该包含我们项目所有的路由模块，并且仅应该包含路由模块，而不应该有别的其他的非路由模块的文件夹
+
+这样做的好处在于一眼就从 `pages` 文件夹看出这个项目的路由有哪些
+
+### 单一入口/出口
+举个例子，在 `pages文件夹` 里面存在一个`seller文件夹`，这时候seller 文件夹应该作为一个独立的模块由外部引入，并且 seller/index.js 应该作为外部引入 seller 模块的唯一入口
+```js
+// 错误用法
+import sellerReducer from 'src/pages/seller/reducer'
+
+// 正确用法
+import { reducer as sellerReducer } from 'src/pages/seller'
+```
+这样做的好处在于，无论你的模块文件夹内部有多乱，外部引用的时候，都是从一个入口文件引入，这样就很好的实现了隔离，如果后续有重构需求，你就会发现这种方式的优点
+
+### 就近原则，紧耦合的文件应该放到一起，且应以相对路径引用
+使用相对路径可以保证模块内部的独立性
+```js
+// 正确用法
+import styles from './index.module.scss'
+// 错误用法
+import styles from 'src/pages/seller/index.module.scss'
+```
+举个例子
+
+假设我们现在的 `seller` 目录是在 `src/pages/seller`，如果我们后续发生了路由变更，需要加一个层级，变成 `src/pages/user/seller`。
+
+如果我们采用第一种相对路径的方式，那就可以直接将整个文件夹拖过去就好，`seller` 文件夹内部不需要做任何变更。
+
+但是如果我们采用第二种绝对路径的方式，移动文件夹的同时，还需要对每个 `import` 的路径做修改
+
+### 公共的文件应该以绝对路径的方式从根目录引用
+公共指的是多个路由模块共用，如一些公共的组件，我们可以放在 `src/components` 下
+
+在使用到的页面中，采用绝对路径的形式引用
+
+```js
+// 错误用法
+import Input from '../../components/input'
+// 正确用法
+import Input from 'src/components/input'
+```
+同样的，如果我们需要对文件夹结构进行调整。将 `/src/components/input` 变成 `/src/components/new/input`，如果使用绝对路径，只需要全局搜索替换
+
+再加上绝对路径有全局的语义，相对路径有独立模块的语义
+
+### /src 外的文件不应该被引入
+`vue-cli` 脚手架已经帮我们做了相关的约束了，正常我们的前端项目都会有个 `src` 文件夹，里面放着所有的项目需要的资源，`js`, `css`, `png`, `svg` 等等。`src` 外会放一些项目配置，依赖，环境等文件
+
+这样的好处是方便划分项目代码文件和配置文件
+
+## ● Vue要做权限管理该怎么做？控制到按钮级别的权限怎么做？
+权限是对特定资源的访问许可，所谓权限控制，也就是确保用户只能访问到被分配的资源
+
+而前端权限归根结底是请求的发起权，请求的发起可能有下面两种形式触发
+- 页面加载触发
+- 页面上的控件触发
+
+所以我们可以从这两方面入手，对触发权限的源头进行控制，最终要实现的目标是：
+
+- 路由方面：用户登录后只能看到自己有权访问的导航菜单，也只能访问自己有权访问的路由地址，否则将跳转 4xx 提示页
+- 视图方面：用户只能看到自己有权浏览的内容和有权操作的控件
+- 最后再加上请求控制作为最后一道防线，路由可能配置失误，按钮可能忘了加权限，这种时候请求控制可以用来兜底，越权请求将在前端被拦截
+
+前端权限控制可以分为四个方面：
+
+- 接口权限
+- 按钮权限
+- 菜单权限
+- 路由权限
+
+
+### 接口权限
+接口权限目前一般采用 `jwt` 的形式来验证，没有通过的话一般返回401，跳转到登录页面重新进行登录
+
+登录完拿到`token`，将 `token` 存起来，通过 `axios` 请求拦截器进行拦截，每次请求的时候头部携带 `token`
+```js
+
+axios.interceptors.request.use(config => {
+    config.headers['token'] = cookie.get('token')
+    return config
+})
+axios.interceptors.response.use(res=>{},{response}=>{
+    if (response.data.code === 40099 || response.data.code === 40098) { //token过期或者错误
+        router.push('/login')
+    }
+})
+```
+
+### 路由权限控制
+#### 方案一
+初始化即挂载全部路由，并且在路由上标记相应的权限信息，每次路由跳转前做校验
+
+这种方式存在以下四种缺点：
+
+- 加载所有的路由，如果路由很多，而用户并不是所有的路由都有权限访问，对性能会有影响。
+- 全局路由守卫里，每次路由跳转都要做权限判断。
+- 菜单信息写死在前端，要改个显示文字或权限信息，需要重新编译
+- 菜单跟路由耦合在一起，定义路由的时候还有添加菜单显示标题，图标之类的信息，而且路由不一定作为菜单显示，还要多加字段进行标识
+
+#### 方案二
+初始化的时候先挂载不需要权限控制的路由，比如登录页，404 等错误页。如果用户通过URL进行强制访问，则会直接进入 404，相当于从源头上做了控制
+
+登录后，获取用户的权限信息，然后筛选有权限访问的路由，在全局路由守卫里进行调用 `addRoutes` 添加路由
+:::details 点击看代码
+```js
+import router from './router'
+import store from './store'
+import { Message } from 'element-ui'
+import NProgress from 'nprogress' // progress bar
+import 'nprogress/nprogress.css'// progress bar style
+import { getToken } from '@/utils/auth' // getToken from cookie
+
+NProgress.configure({ showSpinner: false })// NProgress Configuration
+
+function hasPermission(roles, permissionRoles) {
+  if (roles.indexOf('admin') >= 0) return true // admin permission passed directly
+  if (!permissionRoles) return true
+  return roles.some(role => permissionRoles.indexOf(role) >= 0)
+}
+
+const whiteList = ['/login', '/authredirect']// no redirect whitelist
+
+router.beforeEach((to, from, next) => {
+  NProgress.start() // start progress bar
+  if (getToken()) { // determine if there has token
+    /* has token*/
+    if (to.path === '/login') {
+      next({ path: '/' })
+      NProgress.done() // if current page is dashboard will not trigger afterEach hook, so manually handle it
+    } else {
+      if (store.getters.roles.length === 0) { // 判断当前用户是否已拉取完user_info信息
+        store.dispatch('GetUserInfo').then(res => { // 拉取user_info
+          const roles = res.data.roles // note: roles must be a array! such as: ['editor','develop']
+          store.dispatch('GenerateRoutes', { roles }).then(() => { // 根据roles权限生成可访问的路由表
+            router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
+            next({ ...to, replace: true }) // hack方法 确保addRoutes已完成 ,set the replace: true so the navigation will not leave a history record
+          })
+        }).catch((err) => {
+          store.dispatch('FedLogOut').then(() => {
+            Message.error(err || 'Verification failed, please login again')
+            next({ path: '/' })
+          })
+        })
+      } else {
+        // 没有动态改变权限的需求可直接next() 删除下方权限判断 ↓
+        if (hasPermission(store.getters.roles, to.meta.roles)) {
+          next()//
+        } else {
+          next({ path: '/401', replace: true, query: { noGoBack: true }})
+        }
+        // 可删 ↑
+      }
+    }
+  } else {
+    /* has no token*/
+    if (whiteList.indexOf(to.path) !== -1) { // 在免登录白名单，直接进入
+      next()
+    } else {
+      next('/login') // 否则全部重定向到登录页
+      NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
+    }
+  }
+})
+
+router.afterEach(() => {
+  NProgress.done() // finish progress bar
+})
+
+```
+:::
+
+### 菜单权限
+菜单权限可以理解成将页面与路由进行解耦
+
+#### 方案一
+菜单与路由分离，菜单由后端返回
+
+前端定义路由信息
+```js
+{
+    name: "login",
+    path: "/login",
+    component: () => import("@/pages/Login.vue")
+}
+```
+`name` 字段都不为空，需要根据此字段与后端返回菜单做关联，后端返回的菜单信息中必须要有 `name` 对应的字段，并且做唯一性校验
+
+全局路由守卫里做判断
+::: details 点击看代码
+```js
+function hasPermission(router, accessMenu) {
+  if (whiteList.indexOf(router.path) !== -1) {
+    return true;
+  }
+  let menu = Util.getMenuByName(router.name, accessMenu);
+  if (menu.name) {
+    return true;
+  }
+  return false;
+
+}
+
+Router.beforeEach(async (to, from, next) => {
+  if (getToken()) {
+    let userInfo = store.state.user.userInfo;
+    if (!userInfo.name) {
+      try {
+        await store.dispatch("GetUserInfo")
+        await store.dispatch('updateAccessMenu')
+        if (to.path === '/login') {
+          next({ name: 'home_index' })
+        } else {
+          //Util.toDefaultPage([...routers], to.name, router, next);
+          next({ ...to, replace: true })//菜单权限更新完成,重新进一次当前路由
+        }
+      }  
+      catch (e) {
+        if (whiteList.indexOf(to.path) !== -1) { // 在免登录白名单，直接进入
+          next()
+        } else {
+          next('/login')
+        }
+      }
+    } else {
+      if (to.path === '/login') {
+        next({ name: 'home_index' })
+      } else {
+        if (hasPermission(to, store.getters.accessMenu)) {
+          Util.toDefaultPage(store.getters.accessMenu,to, routes, next);
+        } else {
+          next({ path: '/403',replace:true })
+        }
+      }
+    }
+  } else {
+    if (whiteList.indexOf(to.path) !== -1) { // 在免登录白名单，直接进入
+      next()
+    } else {
+      next('/login')
+    }
+  }
+  let menu = Util.getMenuByName(to.name, store.getters.accessMenu);
+  Util.title(menu.title);
+});
+
+Router.afterEach((to) => {
+  window.scrollTo(0, 0);
+});
+```
+:::
+
+每次路由跳转的时候都要判断权限，这里的判断也很简单，因为菜单的name与路由的 `name` 是一一对应的，而后端返回的菜单就已经是经过权限过滤的
+
+如果根据路由 `name` 找不到对应的菜单，就表示用户有没权限访问
+
+如果路由很多，可以在应用初始化的时候，只挂载不需要权限控制的路由。取得后端返回的菜单后，根据菜单与路由的对应关系，筛选出可访问的路由，通过 `addRoutes` 动态挂载
+
+#### 方案二
+菜单和路由都由后端返回
+
+前端统一定义路由组件
+::: details 点击看代码
+```js
+const Home = () => import("../pages/Home.vue");
+const UserInfo = () => import("../pages/UserInfo.vue");
+export default {
+    home: Home,
+    userInfo: UserInfo
+};
+```
+后端路由组件返回以下格式
+```js
+[
+    {
+        name: "home",
+        path: "/",
+        component: "home"
+    },
+    {
+        name: "home",
+        path: "/userinfo",
+        component: "userInfo"
+    }
+]
+```
+:::
+在将后端返回路由通过 `addRoutes` 动态挂载之前，需要将数据处理一下，将 `component` 字段换为真正的组件
+
+如果有嵌套路由，后端功能设计的时候，要注意添加相应的字段，前端拿到数据也要做相应的处理
+
+### 按钮权限控制
+#### 方案一
+按钮权限也可以用 `v-if` 判断
+
+但是如果页面过多，每个页面页面都要获取用户权限 `role` 和路由表里的 `meta.btnPermissions` 然后再做判断
+
+这种方式就不展开举例了
+
+#### 方案二
+通过自定义指令进行按钮权限的判断
+
+
+::: details 点击看代码
+首先配置路由
+```js
+{
+    path: '/permission',
+    component: Layout,
+    name: '权限测试',
+    meta: {
+        btnPermissions: ['admin', 'supper', 'normal']
+    },
+    //页面需要的权限
+    children: [{
+        path: 'supper',
+        component: _import('system/supper'),
+        name: '权限测试页',
+        meta: {
+            btnPermissions: ['admin', 'supper']
+        } //页面需要的权限
+    },
+    {
+        path: 'normal',
+        component: _import('system/normal'),
+        name: '权限测试页',
+        meta: {
+            btnPermissions: ['admin']
+        } //页面需要的权限
+    }]
+}
+```
+自定义权限鉴定指令
+```js
+
+import Vue from 'vue'
+/**权限指令**/
+const has = Vue.directive('has', {
+    bind: function (el, binding, vnode) {
+        // 获取页面按钮权限
+        let btnPermissionsArr = [];
+        if(binding.value){
+            // 如果指令传值，获取指令参数，根据指令参数和当前登录人按钮权限做比较。
+            btnPermissionsArr = Array.of(binding.value);
+        }else{
+            // 否则获取路由中的参数，根据路由的btnPermissionsArr和当前登录人按钮权限做比较。
+            btnPermissionsArr = vnode.context.$route.meta.btnPermissions;
+        }
+        if (!Vue.prototype.$_has(btnPermissionsArr)) {
+            el.parentNode.removeChild(el);
+        }
+    }
+});
+// 权限检查方法
+Vue.prototype.$_has = function (value) {
+    let isExist = false;
+    // 获取用户按钮权限
+    let btnPermissionsStr = sessionStorage.getItem("btnPermissions");
+    if (btnPermissionsStr == undefined || btnPermissionsStr == null) {
+        return false;
+    }
+    if (value.indexOf(btnPermissionsStr) > -1) {
+        isExist = true;
+    }
+    return isExist;
+};
+export {has}
+```
+在使用的按钮中只需要引用 `v-has` 指令
+```js
+<el-button @click='editClick' type="primary" v-has>编辑</el-button>
+```
+:::
+
+## ● 跨域是什么？Vue项目中你是如何解决跨域的呢？
+
+### 跨域是什么
+跨域本质是浏览器基于同源策略的一种安全手段
+
+同源策略（Sameoriginpolicy），是一种约定，它是浏览器最核心也最基本的安全功能
+
+所谓同源（即指在同一个域）具有以下三个相同点
+
+- 协议相同（protocol）
+- 主机相同（host）
+- 端口相同（port）
+
+反之非同源请求，也就是协议、端口、主机其中一项不相同的时候，这时候就会产生跨域
+
+### 如何解决
+解决跨域的方法有很多，下面列举了三种：
+
+- JSONP
+- CORS
+- Proxy
+
+#### CORS
+`CORS`（Cross-Origin Resource Sharing，跨域资源共享）是一个系统，它由一系列传输的 `HTTP` 头组成，这些 `HTTP` 头决定浏览器是否阻止前端 `JavaScript` 代码获取跨域请求的响应
+
+`CORS` 实现起来非常方便，只需要增加一些 `HTTP` 头，让服务器能声明允许的访问来源
+
+只要后端实现了 `CORS`，就实现了跨域
+
+#### Proxy
+代理（Proxy）也称网络代理，是一种特殊的网络服务，允许客户端通过这个服务与另一个网络终端（一般为服务器）进行非直接的连接
+
+##### 方案一
+
+如果是通过 `vue-cli` 脚手架工具搭建项目，我们可以通过 `webpack` 为我们起一个本地服务器作为请求的代理对象
+
+通过该服务器转发请求至目标服务器，得到结果再转发给前端，但是最终发布上线时如果web应用和接口服务器不在一起仍会跨域
+
+在 `vue.config.js` 文件，新增以下代码
+```js
+amodule.exports = {
+    devServer: {
+        host: '127.0.0.1',
+        port: 8084,
+        open: true,// vue项目启动时自动打开浏览器
+        proxy: {
+            '/api': { // '/api'是代理标识，用于告诉node，url前面是/api的就是使用代理的
+                target: "http://xxx.xxx.xx.xx:8080", //目标地址，一般是指后台服务器地址
+                changeOrigin: true, //是否跨域
+                pathRewrite: { // pathRewrite 的作用是把实际Request Url中的'/api'用""代替
+                    '^/api': "" 
+                }
+            }
+        }
+    }
+}
+```
+
+##### 方案二
+
+此外，还可通过服务端实现代理请求转发
+
+以 `express` 框架为例
+```js
+var express = require('express');
+const proxy = require('http-proxy-middleware')
+const app = express()
+app.use(express.static(__dirname + '/'))
+app.use('/api', proxy({ target: 'http://localhost:4000', changeOrigin: false}));
+module.exports = app
+```
+
+##### 方案三
+
+通过配置 `nginx` 实现代理
+```js
+server {
+    listen    80;
+    # server_name xxx.xxx.com;
+    location / {
+        root  /var/www/html;
+        index  index.html index.htm;
+        try_files $uri $uri/ /index.html;
+    }
+    location /api {
+        proxy_pass  http://127.0.0.1:3000;
+        proxy_redirect   off;
+        proxy_set_header  Host       $host;
+        proxy_set_header  X-Real-IP     $remote_addr;
+        proxy_set_header  X-Forwarded-For  $proxy_add_x_forwarded_for;
+    }
+}
+```
+
+## ● 怎么处理vue项目中的错误的？
+主要的错误来源包括：
+
+- 后端接口错误
+- 代码中本身逻辑错误
+
+
+### 后端接口错误
+通过 `axios` 的 `interceptor` 对响应 `response` 先进行一层拦截
+```js
+apiClient.interceptors.response.use(
+  response => {
+    return response;
+  },
+  error => {
+    if (error.response.status == 401) {
+      router.push({ name: "Login" });
+    } else {
+      message.error("出错了");
+      return Promise.reject(error);
+    }
+  }
+);
+```
+
+### 代码逻辑问题
+#### 全局设置错误处理
+```js
+Vue.config.errorHandler = function (err, vm, info) {
+  // handle error
+  // `info` 是 Vue 特定的错误信息，比如错误所在的生命周期钩子
+  // 只在 2.2.0+ 可用
+}
+```
+
+#### 生命周期钩子
+`errorCaptured` 是 2.5.0 新增的一个生命钩子函数，当捕获到一个来自子孙组件的错误时被调用
+
+- 默认情况下，如果全局的 `config.errorHandler` 被定义，所有的错误仍会发送它，因此这些错误仍然会向单一的分析服务的地方进行汇报
+- 如果一个组件的继承或父级从属链路中存在多个 `errorCaptured` 钩子，则它们将会被相同的错误逐个唤起。
+- 如果此 `errorCaptured` 钩子自身抛出了一个错误，则这个新错误和原本被捕获的错误都会发送给全局的 `config.errorHandler`
+- 一个 `errorCaptured` 钩子能够返回 `false` 以阻止错误继续向上传播。本质上是说“这个错误已经被搞定了且应该被忽略”。它会阻止其它任何会被这个错误唤起的 `errorCaptured` 钩子和全局的 `config.errorHandler`
+
+::: details 看看例子
+定义一个父组件cat
+```js
+Vue.component('cat', {
+    template:`
+        <div>
+            <h1>Cat: </h1>
+            <slot></slot>
+        </div>`,
+    props:{
+        name:{
+            required:true,
+            type:String
+        }
+    },
+    errorCaptured(err,vm,info) {
+        console.log(`cat EC: ${err.toString()}\ninfo: ${info}`); 
+        return false;
+    }
+
+});
+```
+定义一个子组件`kitten`，其中`dontexist()`并没有定义，存在错误
+```js
+Vue.component('kitten', {
+    template:'<div><h1>Kitten: {{ dontexist() }}</h1></div>',
+    props:{
+        name:{
+            required:true,
+            type:String
+        }
+    }
+});
+```
+页面中使用组件
+```js
+<div id="app" v-cloak>
+    <cat name="my cat">
+        <kitten></kitten>
+    </cat>
+</div>
+```
+在父组件的 `errorCaptured` 则能够捕获到信息
+```js
+cat EC: TypeError: dontexist is not a function
+info: render
+```
+:::
+
+:::details 源码分析
+异常处理源码
+
+源码位置：`src/core/util/error.js`
+```js
+/* @flow */
+
+import config from '../config'
+import { warn } from './debug'
+// 判断环境
+import { inBrowser, inWeex } from './env'
+// 判断是否是 Promise   
+import { isPromise } from 'shared/util'
+// 当错误函数处理错误时，停用deps跟踪以避免可能出现的infinite rendering
+// 解决以下出现的问题https://github.com/vuejs/vuex/issues/1505的问题
+import { pushTarget, popTarget } from '../observer/dep'
+
+export function handleError(err: Error, vm: any, info: string) {
+    // Deactivate deps tracking while processing error handler to avoid possible infinite rendering.
+    // See: https://github.com/vuejs/vuex/issues/1505
+    pushTarget()
+    try {
+        // vm指当前报错的组件实例
+        if (vm) {
+            let cur = vm
+            //首先获取到报错的组件，之后递归查找当前组件的父组件，依次调用errorCaptured 方法。
+            // 在遍历调用完所有 errorCaptured 方法、或 errorCaptured 方法有报错时，调用 globalHandleError 方法
+            while ((cur = cur.$parent)) {
+                const hooks = cur.$options.errorCaptured
+                // 判断是否存在errorCaptured钩子函数
+                if (hooks) {
+                    // 选项合并的策略，钩子函数会被保存在一个数组中
+                    for (let i = 0; i < hooks.length; i++) {
+                        // 如果errorCaptured 钩子执行自身抛出了错误，
+                        // 则用try{}catch{}捕获错误，将这个新错误和原本被捕获的错误都会发送给全局的config.errorHandler
+                        // 调用globalHandleError方法
+                        try {
+                            // 当前errorCaptured执行，根据返回是否是false值
+                            // 是false，capture = true，阻止其它任何会被这个错误唤起的 errorCaptured 钩子和全局的 config.errorHandler
+                            // 是true capture = fale，组件的继承或父级从属链路中存在的多个 errorCaptured 钩子，会被相同的错误逐个唤起
+                            // 调用对应的钩子函数，处理错误
+                            const capture = hooks[i].call(cur, err, vm, info) === false
+                            if (capture) return
+                        } catch (e) {
+                            globalHandleError(e, cur, 'errorCaptured hook')
+                        }
+                    }
+                }
+            }
+        }
+        // 除非禁止错误向上传播，否则都会调用全局的错误处理函数
+        globalHandleError(err, vm, info)
+    } finally {
+        popTarget()
+    }
+}
+
+// 异步错误处理函数
+export function invokeWithErrorHandling(
+    handler: Function,
+    context: any,
+    args: null | any[],
+    vm: any,
+    info: string
+) {
+    let res
+    try {
+        // 根据参数选择不同的handle执行方式
+        res = args ? handler.apply(context, args) : handler.call(context)
+        // handle返回结果存在
+        // res._isVue an flag to avoid this being observed，如果传入值的_isVue为ture时(即传入的值是Vue实例本身)不会新建observer实例
+        // isPromise(res) 判断val.then === 'function' && val.catch === 'function', val ！=== null && val !== undefined
+        // !res._handled  _handle是Promise 实例的内部变量之一，默认是false，代表onFulfilled,onRejected是否被处理
+        if (res && !res._isVue && isPromise(res) && !res._handled) {
+            res.catch(e => handleError(e, vm, info + ` (Promise/async)`))
+            // issue #9511
+            // avoid catch triggering multiple times when nested calls
+            // 避免嵌套调用时catch多次的触发
+            res._handled = true
+        }
+    } catch (e) {
+        handleError(e, vm, info)
+    }
+    return res
+}
+
+//全局错误处理
+function globalHandleError(err, vm, info) {
+    // 获取全局配置，判断是否设置处理函数，默认undefined
+    // 已配置
+    if (config.errorHandler) {
+        try {
+            return config.errorHandler.call(null, err, vm, info)
+        } catch (e) {
+            // if the user intentionally throws the original error in the handler,
+            // do not log it twice
+            // 判断err信息是否相等，避免log两次
+            // 如果抛出新的错误信息throw err Error('你好毒')，将会一起log输出
+            if (e !== err) {
+                logError(e, null, 'config.errorHandler')
+            }
+        }
+    }
+    // 未配置常规log输出
+    logError(err, vm, info)
+}
+
+// 错误输出函数
+function logError(err, vm, info) {
+    if (process.env.NODE_ENV !== 'production') {
+        warn(`Error in ${info}: "${err.toString()}"`, vm)
+    }
+    /* istanbul ignore else */
+    if ((inBrowser || inWeex) && typeof console !== 'undefined') {
+        console.error(err)
+    } else {
+        throw err
+    }
+}
+
+```
+:::
+
+## ● Vue3有了解过吗？能说说跟Vue2的区别吗？
+### 速度更快
+vue3相比vue2
+- 重写了虚拟Dom实现
+- 编译模板的优化
+- 更高效的组件初始化
+- `undate` 性能提高1.3~2倍
+- `SSR` 速度提高了2~3倍
+
+### 体积更小
+通过 `webpack` 的 `tree-shaking` 功能，可以将无用模块“剪辑”，仅打包需要的能够 `tree-shaking` 有两大好处：
+- 对开发人员，能够对vue实现更多其他的功能，而不必担忧整体体积过大
+- 对使用者，打包出来的包体积变小了
+
+### 更易维护
+`composition Api`
+- 可与现有的 `Options API` 一起使用
+- 灵活的逻辑组合与复用
+- `Vue3` 模块可以和其他框架搭配使用
+
+### 更好的Typescript支持
+`Vue3` 是基于 `typescipt` 编写的，可以享受到自动的类型定义提示
+
+### 更接近原生
+可以自定义渲染 API
+
+### 更易使用
+响应式 Api 暴露出来
+
+### Vue3新增特性
+#### framents
+在 Vue3.x 中，组件现在支持有多个根节点
+```js
+<!-- Layout.vue -->
+<template>
+  <header>...</header>
+  <main v-bind="$attrs">...</main>
+  <footer>...</footer>
+</template>
+```
+
+#### Teleport
+`Teleport` 是一种能够将我们的模板移动到 `DOM` 中 `Vue app` 之外的其他位置的技术，就有点像哆啦A梦的“任意门”
+```js
+const app = Vue.createApp({});
+
+app.component('modal-button', {
+  template: `
+    <button @click="modalOpen = true">
+        Open full screen modal! (With teleport!)
+    </button>
+
+    <teleport to="body">
+      <div v-if="modalOpen" class="modal">
+        <div>
+          I'm a teleported modal! 
+          (My parent is "body")
+          <button @click="modalOpen = false">
+            Close
+          </button>
+        </div>
+      </div>
+    </teleport>
+  `,
+  data() {
+    return { 
+      modalOpen: false
+    }
+  }
+})
+
+app.mount('#app')
+```
+
+#### createRenderer
+通过 `createRenderer`，我们能够构建自定义渲染器，我们能够将 vue 的开发模型扩展到其他平台
+
+我们可以将其生成在`canvas`画布上
+
+### 非兼容变更
+- Global API
+    - 全局 `Vue API` 已更改为使用应用程序实例
+    - 全局和内部 `API` 已经被重构为可 `tree-shakable`
+
+- 模板指令
+    - 组件上 `v-model` 用法已更改
+    - `<template v-for>` 和 非 `v-for`节点上 `key` 用法已更改
+    - 在同一元素上使用的 `v-if` 和 `v-for` 优先级已更改
+    - `v-bind="object"` 现在排序敏感
+    - `v-for` 中的 `ref` 不再注册 `ref` 数组
+
+- 组件
+    - 只能使用普通函数创建功能组件
+    - `functional` 属性在单文件组件 (SFC)
+    - 异步组件现在需要 `defineAsyncComponent` 方法来创建
+
+- 渲染函数
+    - 渲染函数 `API` 改变
+    - `$scopedSlots property` 已删除，所有插槽都通过 `$slots` 作为函数暴露
+    - 一些转换 `class` 被重命名了：
+    - `v-enter` -> `v-enter-from`
+    - `v-leave` -> `v-leave-from`
+    - 组件 `watch` 选项和实例方法 `$watch` 不再支持点分隔字符串路径，请改用计算函数作为参数
+
+### 其他小改变
+- `destroyed` 生命周期选项被重命名为 `unmounted`
+- `beforeDestroy` 生命周期选项被重命名为 `beforeUnmount`
+- `prop default`工厂函数不再有权访问 `this` 是上下文
+- 自定义指令 `API` 已更改为与组件生命周期一致
+- `data` 应始终声明为函数
+- 来自 `mixin` 的 `data` 选项现在可简单地合并
+- `attribute` 强制策略已更改
+- 一些过渡 `class` 被重命名
+- 组建 `watch` 选项和实例方法 $watch不再支持以点分隔的字符串路径。请改用计算属性函数作为参数。
+- `<template>` 没有特殊指令的标记 (v-if/else-if/else、v-for 或 v-slot) 现在被视为普通元素，并将生成原生的 `<template>` 元素，而不是渲染其内部内容。
+- 在Vue 2.x 中，应用根容器的 outerHTML 将替换为根组件模板 (如果根组件没有模板/渲染选项，则最终编译为模板)。Vue 3.x 现在使用应用容器的 innerHTML，这意味着容器本身不再被视为模板的一部分。
+
+### 移除 API
+- `keyCode` 支持作为 `v-on` 的修饰符
+- `$on`，`$off`和 `$once` 实例方法
+- 过滤 `filter`
+- 内联模板 `attribute`
+- $destroy 实例方法。用户不应再手动管理单个Vue 组件的生命周期。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

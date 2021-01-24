@@ -97,6 +97,17 @@ jsonp(
 );
 ```
 
+## ● 两个数组找重复的值
+使用 `filter()` 遍历方法结合 `indexOf()` 
+```js
+var array1 = [1, 2];
+var array2 = [2, 3];
+
+var newArr = array1.filter(function(n) {
+    return array2.indexOf(n) != -1
+});
+console.log(newArr); // [2]
+```
 
 
 

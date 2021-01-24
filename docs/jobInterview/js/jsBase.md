@@ -4,6 +4,59 @@ sidebarDepth: 1
 ---
 # JavaScript 基础知识面试题
 
+## ● 数据类型和数据结构
+
+最新的 `ECMAScript` 标准定义了 `8` 种数据类型:
+- 7 种原始类型:
+    - Boolean：布尔表示一个逻辑实体，可以有两个值：`true` 和 `false`
+    - Null：
+    - Undefined
+    - Number
+    - BigInt
+    - String
+    - Symbol 
+-  Object
+
+## ● typeof 原理探究
+javaScript 最初版本使用低位存储了变量的类型信息
+- 000：对象
+- 1：整数
+- 100：字符串
+- 110：布尔值
+- undefined：用 - (-2^30) 表示
+- null 对应机器码的 NULL 指针，一般是全零
+    ```js
+    typeof null === 'object'  // true
+    ```
+typeof 可能的返回值：
+- 基础类型：除了 `null` 返回 `object`，其他的都返回自身
+- 引用类型
+    - 引用类型中的函数
+    ::: details 点击看代码
+    ```js
+    typeof Function; // 'function'
+    typeof new Function(); // 'function'
+    typeof function() {}; // 'function'
+    ```
+    :::
+    - 引用类型的子类型
+    ::: details 点击看代码
+    ```js
+    typeof Array; // 'function'
+    typeof Array(); // 'object'，构造函数 Array(..) 不要求必须带 new 关键字。不带时，它会被自动补上，构造出来的结果是个数组，自然属于引用类型，所以也就打印出了‘object’
+    typeof new Array(); // 'object'
+    typeof []; // 'object'
+    ```
+    :::
+    - 引用类型中的基本包装类型
+    ::: details 点击看代码
+    ```js
+    typeof Boolean; // "function"
+    typeof Boolean(); // "boolean"
+    typeof new Boolean(); // "object"，通过构造函数创建出来的是封装了基本类型值的封装对象
+    ```
+    :::
+
 ## ● 对象类型
 :::tip
 在 `JavaScript` 中，除了原始类型，其他的都是对象类型，对象类型存储的是地址，而原始类型存储的是值。
@@ -944,7 +997,7 @@ function test(ele) {
 ### 4. ES6 方案
 - 使用 `import` 和 `export` 的形式来导入导出模块 
 
-## AMD 和 CMD 规范的区别？
+## ● AMD 和 CMD 规范的区别？
 - 依赖的处理不同
   - **AMD** 是依赖前置，在定义模块的时候就要声明其依赖的模块；
   - **CMD** 是依赖后置，只有在用到某个模块的时候在去 `require`；
@@ -1341,21 +1394,205 @@ Object.prototype.toString.call(window) ;            // [object global] window �
 
 - 原因，除了加法运算符 `+` 有可能把运算值转为字符串，其他运算符都会把运算值自动转成数值
 
-## JavaScript 两个数组找重复的值
-使用 `filter()` 遍历方法结合 `indexOf()` 
+## ● 举例说明 js 如何实现继承
+继承的方式有：
+- 原型链继承
+- 构造继承
+- 组合继承
+- 寄生组合继承
+- 原型式继承
+- 寄生继承
+- 混入式继承
+- class中的extends继承
+
+
+### 1. 原型继承
+将子类的原型对象指向父类的实例
 ```js
-var array1 = [1, 2];
-var array2 = [2, 3];
+function Parent () {
+    this.name = 'Parent'
+    this.sex = 'boy'
+}
+Parent.prototype.getName = function () {
+    console.log(this.name)
+}
+function Child () {
+    this.name = 'child'
+}
 
-var newArr = array1.filter(function(n) {
-    return array2.indexOf(n) != -1
-});
-console.log(newArr); // [2]
+Child.prototype = new Parent()  // 子类的原型对象指向父类的实例
+
+var child1 = new Child()
+child1.getName()
+console.log(child1)
+
 ```
-## 数组和链表的使用场景
-数组应用场景：数据比较少；经常做的运算是按序号访问数据元素
-链表应用场景：对线性表的长度或者规模难以估计
+缺点：
+1. 由于所有 `Child` 创建的实例的原型对象都指向同一个 `Parent` 实例，因此某个 `Child` 实例的父类引用类型变量修改会影响所有的 `Child` 实例
+
+### 2. 构造继承
+在子类构造函数内部调用父类构造函数，并使用 `apply` 和 `call` 为父类绑定子类的 `this`
+```js
+function Parent (name) {
+    this.name = name
+}
+function Child () {
+    this.sex = 'boy'
+    Parent.call(this, 'child')
+}
+var child1 = new Child()
+console.log(child1)
+```
+> 解决了：原型链继承中子类实例共享父类引用对象的问题，实现多继承，创建子类实例时，可以向父类传递参数
+> 缺点：构造继承只能继承父类的实例属性和方法，不能继承父类原型的属性和方法
+
+### 3. 组合式继承
+- 使用原型链实现对原型属性和方法的继承
+- 通过构造函数来实现对实例属性的继承
+```js
+function Parent(name) {
+    this.name = name;
+    this.colors = ['red', 'blue', 'green'];
+}
+
+Parent.prototype.sayName = function() {
+    console.log(this.name);
+}
+
+function Child(name, age) {
+    // 继承属性
+    Parent.call(this, name);    // 第二次调用
+    this.age = age
+}
+
+Child.prototype = new Parent(); // 第一次调用
+Child.prototype.constructor = Child;
+Child.prototype.sayAge = function() {
+    console.log(this.age);
+}
+
+var instance1 = new Child('instance1', 29)
+instance1.colors.push("black"); 
+console.log(instance1.colors); // ["red,blue,green,black"] 
+instance1.sayName(); // "instance1"; 
+instance1.sayAge(); // 29 
+
+var instance2 = new Child("instance2", 27); 
+console.log(instance2.colors); // ["red,blue,green"]
+instance2.sayName(); // "Greg"; 
+instance2.sayAge(); // 27 
+
+```
+> 缺点：使用组合继承时，父类构造函数会被调用两次，一次是在创建子类型原型的时候，另一次是在子类型构造函数内部，这样父类中的属性和方法会有两组，一组在实例上，一组在子构造函数的原型中
+
+### 4. 原型式继承
+该方法的原理是创建一个构造函数，构造函数的原型指向对象，然后调用 new 操作符创建实例，并返回这个实例
+
+```js
+function object(o) {
+    function F() {};
+    F.prototype = o;
+    return new F();
+}
+
+var person = { 
+ name: "Nicholas", 
+ friends: ["Shelby", "Court", "Van"] 
+}; 
+var child1 = object(person); 
+child1.name = "Greg"; 
+child1.friends.push("Rob"); 
+var child2 = object(person); 
+child2.name = "Linda"; 
+child2.friends.push("Barbie"); 
+alert(person.friends); //"Shelby,Court,Van,Rob,Barbie" 
 
 
-## 如何获取数组中最大的数
+```
+使用 Object.create() 方法的写法
+```js
+var person = { 
+    name: "Nicholas", 
+    friends: ["Shelby", "Court", "Van"] 
+}; 
+var child1 = Object.create(person); 
+child1.name = "Greg"; 
+child1.friends.push("Rob"); 
+ 
+var child2 = Object.create(person); 
+child2.name = "Linda"; 
+child2.friends.push("Barbie"); 
+alert(person.friends); //"Shelby,Court,Van,Rob,Barbie" 
+```
+
+### 5. 寄生式继承
+就是在原型式继承的基础上再封装一层，来增强对象，之后将这个对象返回。
+```js
+var person = { 
+    name: "Nicholas", 
+    friends: ["Shelby", "Court", "Van"] 
+}; 
+
+function createAnother (original) {
+    var clone = Object.create(original);; // 通过调用 Object.create() 函数创建一个新对象
+    // 以某种方式来增强对象
+    clone.sayHi = function () {
+        console.log('hi')
+    }; 
+    return clone; // 返回这个对象
+}
+
+var anotherPerson = createAnother(person); 
+anotherPerson.sayHi(); //"hi" 
+```
+
+### 6. 寄生组合式继承
+通过借用构造函数来继承属性，通过原型链的混成形式来继承方法
+
+寄生组合式继承的基本思路：不必为了指定子类型的原型而调用超类型的构造函数，而是将子类的原型指向父类原型的副本
+```js
+function inheritPrototype(Child, Parent){ 
+    var prototype = Object.create(Parent.prototype); //创建对象
+    prototype.constructor = Child; //增强对象
+    Child.prototype = prototype; //指定对象
+} 
+
+
+function Parent(name) {
+    this.name = name;
+    this.colors = ['red', 'blue', 'green'];
+}
+Parent.prototype.sayName = function() {
+    console.log(this.name)
+}
+function Child(name, age) {
+    Parent.call(this, name); 
+    this.age = age; 
+
+}
+inheritPrototype(Child, Parent)
+
+
+Child.prototype.sayAge = function(){ 
+    console.log(this.age); 
+}; 
+var instance1 = new Child('instance1', 29)
+console.log(instance1.name)
+console.log(instance1.colors)
+
+var instance1 = new Child('instance1', 29)
+console.log(instance1.name)
+console.log(instance1.colors)
+```
+
+
+
+
+
+
+
+
+
+
+
 

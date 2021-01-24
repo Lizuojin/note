@@ -11,5 +11,5 @@ features:
   details: 记录前端一个个知识点，走进不一样的前端世界
 - title: 乐此不疲
   details: 难知识重复重复再重复学，新知识一个接一个补
-footer: MIT Licensed | Copyright © 2019-present lizuojin. ICP许可证号 粤ICP备2020105694号
+footer: © 2020-present lizuojin.tech 版权所有 ICP许可证号 粤ICP备2020105694号-1
 ---

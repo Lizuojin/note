@@ -4,13 +4,11 @@ sidebarDepth: 2
 
 # ECMAScript 新特性
 
-## 一、let 和 const 命令
+## ● let 和 const 命令
 
 ### 1. 不存在变量提升
-:::tip 变量提升现象
-变量在声明之前使用，值为 `undefined`，这种现象为**变量提升现象**
-- `var` 存在这种现象，而 `let` 和 `const` 改变了语法行为，不存在这种想象，变量一定要在声明后使用，否则报错
-:::
+变量在声明之前使用，值为 `undefined`，这种现象为**变量提升现象**而 `let` 和 `const` 改变了语法行为，不存在这种想象，变量一定要在声明后使用，否则报错
+
 ```js
 // var 的情况
 console.log(foo); // 输出undefined
@@ -92,7 +90,7 @@ console.log(foo.prop) // 123
 foo = {}; // TypeError: Assignment to constant variable.
 ```
 
-## 二、变量的结构赋值
+## ● 变量的结构赋值
 从数组和对象中提取值，对变量进行赋值，这被称为解构
 
 ### 1. 数组的解构赋值
@@ -390,7 +388,7 @@ jQuery.ajax = function (url, {
 const { SourceMapConsumer, SourceNode } = require("source-map");
 ```
 
-## 三、字符串的扩展与新增的方法
+## ● 字符串的扩展与新增的方法
 ### 1. 模板字符串
 模板字符串（template string）是增强版的字符串，用 **反引号（`）** 标识
 
@@ -423,7 +421,7 @@ function fn() {
 `foo ${fn()} bar`
 ```
 
-## 四、函数的扩展
+## ● 函数的扩展
 ### 1. 默认值
 **ES5 的写法：**
 ```js
@@ -481,6 +479,374 @@ function f(a, ...b, c) {
   // ...
 }
 ```
+
+### 3. 严格模式
+`ES2016` 做了一点修改，规定只要函数参数使用了`默认值`、`解构赋值`、或者`扩展运算符`，那么函数内部就不能显式设定为严格模式，否则会报错。
+
+### 4. name 属性
+`name` 属性会返回实际的函数名
+```js
+function foo() {}
+foo.name // "foo"
+```
+```js
+// 匿名函数赋值给一个变量，name 的返回值情况
+var f = function () {};
+// ES5
+f.name // ""
+// ES6
+f.name // "f"
+
+
+// 具名函数赋值给一个变量，name 的返回值情况
+const bar = function baz() {};
+// ES5
+bar.name // "baz"
+// ES6
+bar.name // "baz"
+
+// Function 构造函数返回的函数实例
+(new Function).name // "anonymous"
+
+// bind返回的函数，name属性值会加上bound前缀。
+function foo() {};
+foo.bind({}).name // "bound foo"
+(function(){}).bind({}).name // "bound "
+```
+
+### 5. 箭头函数
+ES6 允许使用箭头 `=>` 定义函数
+```js
+var f = v => v;
+
+// 等同于
+var f = function (v) {
+    return v;
+};
+```
+
+#### 无参数或多个参数
+使用圆括号代表参数部分
+```js
+var f = () => 5;
+// 等同于
+var f = function () { return 5 };
+
+var sum = (num1, num2) => num1 + num2;
+// 等同于
+var sum = function(num1, num2) {
+    return num1 + num2;
+};
+```
+
+#### 箭头函数和变量解构结合使用
+```js
+const full = ({ first, last }) => first + ' ' + last;
+
+// 等同于
+function full(person) {
+    return person.first + ' ' + person.last;
+}
+```
+
+####  rest 参数与箭头函数结合使用
+```js
+const numbers = (...nums) => nums;
+
+numbers(1, 2, 3, 4, 5)
+// [1,2,3,4,5]
+
+const headAndTail = (head, ...tail) => [head, tail];
+
+headAndTail(1, 2, 3, 4, 5)
+// [1,[2,3,4,5]]
+```
+
+#### 使用注意点
+1. 函数体内的 `this` 对象，就是定义时所在的对象，而不是使用时所在的对象。
+
+2. 不可以当作构造函数，也就是说，不可以使用 `new` 命令，否则会抛出一个错误。
+
+3. 不可以使用 `arguments` 对象，该对象在函数体内不存在。如果要用，可以用 `rest` 参数代替。
+
+4. 不可以使用 `yield` 命令，因此箭头函数不能用作 `Generator` 函数。
+
+#### 箭头函数的 this
+箭头函数根本没有自己的 `this`，导致内部的 `this` 就是外层代码块的 `this`
+
+- 因为没 this，所以不能用`call()`、`apply()`、`bind()` 这些方法改变 `this` 指向 
+    ```js
+    (function() {
+        return [
+            (() => this.x).bind({ x: 'inner' })()
+        ];
+    }).call({ x: 'outer' });    // ['outer']
+    ```
+- 箭头函数使用 `arguments` 变量是指向外层函数
+    ```js
+    function foo() {
+    setTimeout(() => {
+        console.log('args:', arguments);
+    }, 100);
+    }
+
+    foo(2, 4, 6, 8) // args: [2, 4, 6, 8]
+    ```
+- 箭头函数定义对象的方法
+    - `JavaScript` 引擎的处理方法是，先在全局空间生成这个箭头函数，然后赋值给对象的方法，这导致箭头函数内部的 `this` 指向全局对象
+    ```js
+    globalThis.s = 21;
+
+    const obj = {
+    s: 42,
+    m: () => console.log(this.s)
+    };
+
+    obj.m() // 21
+
+    //等同于下面的代码。
+    globalThis.s = 21;
+    globalThis.m = () => console.log(this.s);
+
+    const obj = {
+    s: 42,
+    m: globalThis.m
+    };
+
+    obj.m() // 21
+    ```
+
+## ● 数组的扩展
+
+### 1. 扩展运算符
+扩展运算符（spread）是三个点`...` ，它好比 `rest 参数` 的逆运算，将一个数组转为用逗号分隔的参数序列。
+```js
+console.log(...[1, 2, 3])
+// 1 2 3
+
+console.log(1, ...[2, 3, 4], 5)
+// 1 2 3 4 5
+```
+
+#### 主要用于函数调用
+只有函数调用时，扩展运算符才可以放在圆括号中，否则会报错。
+```js
+// 正常使用
+function push(array, ...items) {
+  array.push(...items);
+}
+
+function add(x, y) {
+  return x + y;
+}
+
+const numbers = [4, 38];
+add(...numbers) // 42
+```
+```js
+// 错误使用
+(...[1, 2])
+// Uncaught SyntaxError: Unexpected number
+
+console.log((...[1, 2]))
+// Uncaught SyntaxError: Unexpected number
+
+console.log(...[1, 2])
+// 1 2
+```
+
+
+#### 扩展运算符后面可以使用表达式
+```js
+const arr = [
+    ...(x > 0 ? ['a'] : []),
+    'b',
+];
+```
+
+#### 替代函数的 apply 方法
+由于扩展运算符可以展开数组，所以不再需要 `apply` 方法，将数组转为函数的参数了。
+```js
+// ES5的 写法
+var arr1 = [0, 1, 2];
+var arr2 = [3, 4, 5];
+Array.prototype.push.apply(arr1, arr2);
+
+// ES6 的写法
+let arr1 = [0, 1, 2];
+let arr2 = [3, 4, 5];
+arr1.push(...arr2);
+```
+
+#### 扩展运算符的应用
+- 复制数组(只是浅拷贝)
+    ```js
+    // ES5 通用方法
+    const a1 = [1, 2];
+    const a2 = a1.concat();
+
+    a2[0] = 2;
+    a1 // [1, 2]
+
+    // ES6 写法
+    const a1 = [1, 2];
+    // 写法一
+    const a2 = [...a1];
+    // 写法二
+    const [...a2] = a1;
+    ```
+
+- 合并数组(浅拷贝)
+    ```js
+    const arr1 = ['a', 'b'];
+    const arr2 = ['c'];
+    const arr3 = ['d', 'e'];
+
+    // ES5 的合并数组
+    arr1.concat(arr2, arr3);
+    // [ 'a', 'b', 'c', 'd', 'e' ]
+
+    // ES6 的合并数组
+    [...arr1, ...arr2, ...arr3]
+    // [ 'a', 'b', 'c', 'd', 'e' ]
+    ```
+
+- 与解构赋值结合
+    ```js
+    const [first, ...rest] = [1, 2, 3, 4, 5];
+    first // 1
+    rest  // [2, 3, 4, 5]
+
+    const [first, ...rest] = [];
+    first // undefined
+    rest  // []
+
+    const [first, ...rest] = ["foo"];
+    first  // "foo"
+    rest   // []
+
+    // 扩展运算符用于数组赋值，只能放在参数的最后一位
+    const [...butLast, last] = [1, 2, 3, 4, 5];
+    // 报错
+
+    const [first, ...middle, last] = [1, 2, 3, 4, 5];
+    // 报错
+    ```
+
+- 字符串
+    ```js
+    // 扩展运算符还可以将字符串转为真正的数组。
+    [...'hello']    // [ "h", "e", "l", "l", "o" ]
+    ```
+
+- 实现了 Iterator 接口的对象
+    - `uerySelectorAll` 方法返回的是一个 `NodeList` 对象。它不是数组，而是一个类似数组的对象。这时，扩展运算符可以将其转为真正的数组，原因就在于 `NodeList` 对象实现了 `Iterator`
+    ```js
+    let nodeList = document.querySelectorAll('div');
+    let array = [...nodeList];
+    ```
+
+- Map 和 Set 结构，Generator 函数
+    ```js
+    // Map
+    let map = new Map([
+        [1, 'one'],
+        [2, 'two'],
+        [3, 'three'],
+    ]);
+
+    let arr = [...map.keys()]; // [1, 2, 3]
+
+    // Generator 函数
+    const go = function*(){
+        yield 1;
+        yield 2;
+        yield 3;
+    };
+
+    [...go()] // [1, 2, 3]
+    ```
+
+### 2. Array.from()
+
+
+
+## ● Class
+### 1. 类的由来
+`JavaScript` 语言中，生成实例对象的传统方法是通过构造函数
+
+`ES6` 提供了更接近传统语言的写法，引入了 `Class`（类）这个概念，作为对象的模板。通过 `class``关键字，可以定义类。
+```js
+// 传统方法定义类
+function Point(x, y) {
+    this.x = x;
+    this.y = y;
+}
+
+Point.prototype.toString = function () {
+    return '(' + this.x + ', ' + this.y + ')';
+};
+
+var p = new Point(1, 2);
+
+// ES6 的 class
+class Point {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    toString() {
+        return '(' + this.x + ', ' + this.y + ')';
+    }
+}
+```
+`ES6` 的 `class` 定义了一个类：
+- `constructor()` 方法是构造方法
+- `this` 代表实例对象，
+- `toString()` 方法可以使用简写，方法与方法之间不需要逗号分隔
+
+
+#### 类可以看作构造函数的另一种写法
+- 类的数据类型就是函数，类本身就指向构造函数。
+- 对类使用 `new` 命令创建实例对象
+- 类必须使用 `new` 调用，否则会报错
+- 类的所有方法都定义在类的 `prototype` 属性上面
+- 类的内部所有定义的方法，都是不可枚举的
+
+```js
+class Point {
+    doStuff() {
+        console.log('stuff');
+    }
+}
+
+typeof Point // "function"
+Point === Point.prototype.constructor // true
+
+const instance = new Point();
+instance.doStuff(); // stuff
+```
+
+#### constructor 方法
+- `constructor()` 方法是类的默认方法，通过 `new` 命令生成对象实例时，自动调用该方法
+- 类必须有 `constructor()` 方法，如果没有显式定义，一个空的 `constructor()` 方法会被默认添加
+
+#### 取值函数（getter）和存值函数（setter）
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## **持续更新中...**
 
