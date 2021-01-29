@@ -3,7 +3,7 @@
 sidebarDepth: 1
 ---
 # JavaScript 基础知识面试题
-
+[[toc]]
 ## ● 数据类型和数据结构
 
 最新的 `ECMAScript` 标准定义了 `8` 种数据类型:
@@ -1585,14 +1585,46 @@ console.log(instance1.name)
 console.log(instance1.colors)
 ```
 
+## ● 浏览器 和 Node 事件循环的区别
+[浏览器事件循环](../../JS/事件循环机制.md)
+
+看下面的代码看两者的区别
+```js
+setTimeout(()=>{
+    console.log('timer1')
+    Promise.resolve().then(function() {
+        console.log('promise1')
+    })
+}, 0)
+setTimeout(()=>{
+    console.log('timer2')
+    Promise.resolve().then(function() {
+        console.log('promise2')
+    })
+}, 0)
+```
+### 浏览器处理过程：
+浏览器的事件循环可以看这里 [事件循环](../../JS/事件循环机制.md)
+
+![img](./image/browser-event-loop.gif)
+
+### Node处理过程：
+
+![img](./image/node-event-loop.gif)
 
 
+## 异步编程的解决方案
 
+### 1. 回调函数(Callback)
 
+```js
+ajax(url, () => {
+    // 处理逻辑
+})
+```
 
+### 2. promise
 
+### 3. Generator 生成器
 
-
-
-
-
+### 4. Async/Await

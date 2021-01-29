@@ -77,6 +77,11 @@ module.exports = {
             ]
         },
         {
+            title: "DOM相关",
+            collapsable: true,
+            path: '/jobInterview/dom/dom'
+        },
+        {
             title: "Vue全家桶相关",
             collapsable: false,
             children: [
@@ -86,7 +91,7 @@ module.exports = {
         },
         {
             title: "CSS相关",
-            collapsable: false,
+            collapsable: true,
             path: '/jobInterview/css/css'
         },
         {

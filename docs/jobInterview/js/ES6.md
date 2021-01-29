@@ -2,6 +2,7 @@
 sidebarDepth: 1
 ---
 # ES6 面试题
+[[toc]]
 
 ## ● var、let 和 const 的区别
 :::tip

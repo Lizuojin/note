@@ -1,7 +1,14 @@
 const slidebar = require('./config.sidebar')
+
 module.exports = {
     title: '前端知识梳理',
     base: '/',
+    head: [
+        [
+            'link',
+            {rel: 'icon', href: 'logo.png'}
+        ]
+    ],
     themeConfig: {
         nav: [
             {
@@ -60,6 +67,7 @@ module.exports = {
         sidebar: slidebar,
     },
     markdown: {
-        lineNumbers: true
+        lineNumbers: true,
+        extractHeaders: ['h2']
     }
 }
