@@ -9,3 +9,5 @@ JavaScript 的标准是 ECMAScript
 - 2015年6月17日，ECMA国际组织发布了 `ECMAScript` 的第六版，该版本正式名称为 `ECMAScript 2015`，但通常被称为 `ECMAScript 6` 或者 `ES6`。
 - 自此，`ECMAScript` 每年发布一次新标准。
 - 本文档将要覆盖了最新 `ECMAScript` 的草案，也就是 `ECMAScript2020`
+
+

@@ -3,7 +3,7 @@ sidebarDepth: 2
 ---
 
 # ECMAScript 新特性
-
+[[toc]]
 ## ● let 和 const 命令
 
 ### 1. 不存在变量提升

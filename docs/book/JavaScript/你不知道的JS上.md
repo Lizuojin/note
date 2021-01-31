@@ -1,6 +1,6 @@
 ---
 sidebar: auto
-# sidebarDepth: 1
+# sidebarDepth: 2
 ---
 # 你不知道的JS(上)
 ## 作用域和闭包

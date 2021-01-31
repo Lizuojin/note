@@ -3,7 +3,7 @@ sidebarDepth: 2
 ---
 
 # 新特性
-
+[[toc]]
 
 ## 组合式 API
 - **组合式 API**

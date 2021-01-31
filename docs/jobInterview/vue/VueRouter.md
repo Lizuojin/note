@@ -1,4 +1,5 @@
 # VueRouter 面试题
+[[toc]]
 ## ● vue-router 路由模式有几种？
 vue-router 有 3 种路由模式：hash、history、abstract
 - **hash**：使用 URL hash值作为路由

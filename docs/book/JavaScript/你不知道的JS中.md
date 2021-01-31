@@ -1,6 +1,6 @@
 ---
 sidebar: auto
-# sidebarDepth: 4
+# sidebarDepth: 2
 ---
 # 你不知道的JS(中)
 ## 类型和语法

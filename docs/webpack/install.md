@@ -3,7 +3,7 @@ sidebarDepth: 1
 ---
 
 # 安装
-
+[[toc]]
 ## 全局安装
 ```sh
 $ npm install webpack webpack-cli -g

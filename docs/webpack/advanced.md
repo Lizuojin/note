@@ -1,5 +1,5 @@
 # 进阶
-
+[[toc]]
 ## Tree Shaking
 :::tip 知识点
 - `Tree Shaking` 是一种术语，用于描述移除 `JavaScript` 上下文中的未引用代码

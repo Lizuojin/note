@@ -31,7 +31,7 @@ module.exports = {
             {
                 text: '大前端',
                 items: [
-                    { text: 'webpack', link: '/webpack/install' },
+                    { text: 'webpack', link: '/webpack/' },
                     { text: 'Node', link: '/node/introduce'},
                 ]
             },
@@ -68,6 +68,5 @@ module.exports = {
     },
     markdown: {
         lineNumbers: true,
-        extractHeaders: ['h2']
     }
 }

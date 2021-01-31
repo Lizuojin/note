@@ -1,5 +1,5 @@
 # HTTP 相关面试题
-
+[[toc]]
 ## HTTP 协议
 HTTP (Hyper Text Transfer Protocol) 是应用层上的客户端与服务端的通信协议，它由请求和响应构成，且是无状态的，是基于TCP/IP通信协议来传递数据的协议
 
@@ -33,9 +33,16 @@ HTTP (Hyper Text Transfer Protocol) 是应用层上的客户端与服务端的�
 该种方式主要用来提交 XML 格式的数据
 
 
+## 你知道哪些http头部
+HTTP 首部字段类型: 
+1. 通用首部字段（General Header Fields）
+2. 请求首部字段（Request Header Fields）
+3. 响应首部字段（Response Header Fields）
+4. 实体首部字段（Entity Header Fields)
 
+详细请看：[HTTP 首部字段](../../book/http/图解HTTP.html#_2-http-首部字段)
 
-
+## 说⼀下 HTTP 缓存策略，有什么区别，分别解决了什么问题
 
 
 

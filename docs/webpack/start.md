@@ -3,7 +3,7 @@ sidebarDepth: 1
 ---
 
 # 起步
-
+[[toc]]
 ## 基本安装
 ```sh
 mkdir webpack-demo && cd webpack-demo

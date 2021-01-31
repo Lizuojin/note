@@ -52,7 +52,13 @@ module.exports = {
             collapsable: false,
             children: [
                 { title: '你应该知道的一些JS数组技巧', path: '/article/JavaScript/arraySkill' },
-
+            ]
+        },
+        {
+            title: "浏览器相关",
+            collapsable: false,
+            children: [
+                { title: '聊聊cookie', path: '/article/browser/cookie' },
             ]
         },
     ],
@@ -86,7 +92,7 @@ module.exports = {
             collapsable: false,
             children: [
                 { title: 'Vue', path: '/jobInterview/vue/vue' },
-                { title: 'VueRouter', path: '/jobInterview/vue/VueRouter' },
+                { title: 'VueRouter', path: '/jobInterview/vue/vueRouter' },
             ]
         },
         {
@@ -106,7 +112,8 @@ module.exports = {
             title: "网络相关",
             collapsable: false,
             children: [
-                { title: 'HTTP', path: '/jobInterview/http/http' },
+                { title: 'HTTP', path: '/jobInterview/network/http' },
+                { title: 'TCP', path: '/jobInterview/network/tcp' },
             ]
         },
         {
@@ -120,8 +127,7 @@ module.exports = {
             title: "浏览器相关",
             collapsable: false,
             children: [
-                { title: '浏览器基础知识', path: '/jobInterview/borwser/browserBase' },
-                { title: '浏览器缓存机制', path: '/jobInterview/borwser/browserCache' },
+                { title: '浏览器基础', path: '/jobInterview/browser/browserBase' },
             ]
         },
         {

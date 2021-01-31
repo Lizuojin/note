@@ -3,7 +3,7 @@
 sidebarDepth: 1
 ---
 # JavaScript 进阶知识面试题
-
+[[toc]]
 ## ● new 的实现原理
 1. 创建一个新对象
 2. 新对象的 `__proto__` 指向构造函数的 prototype 原型对象上，并继承原型上的属性和方法
@@ -37,7 +37,7 @@ window.onresize = debounce(function() {
 }, 1000)
 ```
 
-## 函数节流
+## ● 函数节流
 一定时间内执行的操作只会执行一次，间隔执行
 ```js
 function throttle(fn, delay) {

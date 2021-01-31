@@ -1,5 +1,6 @@
 ---
 home: true
+heroImage: /index.png
 # actionText: Get Started →
 actionLink: /node/
 heroText: 前端知识梳理
