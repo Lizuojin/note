@@ -114,6 +114,7 @@ module.exports = {
             children: [
                 { title: 'HTTP', path: '/jobInterview/network/http' },
                 { title: 'TCP', path: '/jobInterview/network/tcp' },
+                { title: 'CDN', path: '/jobInterview/network/cdn' },
             ]
         },
         {
