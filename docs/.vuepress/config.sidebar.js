@@ -55,10 +55,11 @@ module.exports = {
             ]
         },
         {
-            title: "浏览器相关",
+            title: "其他",
             collapsable: false,
             children: [
-                { title: '聊聊cookie', path: '/article/browser/cookie' },
+                { title: '聊聊cookie', path: '/article/other/cookie' },
+                { title: '记记这200条git命令', path: '/article/other/git' },
             ]
         },
     ],
@@ -93,12 +94,8 @@ module.exports = {
             children: [
                 { title: 'Vue', path: '/jobInterview/vue/vue' },
                 { title: 'VueRouter', path: '/jobInterview/vue/vueRouter' },
+                { title: 'Vuex', path: '/jobInterview/vue/vuex' },
             ]
-        },
-        {
-            title: "CSS相关",
-            collapsable: true,
-            path: '/jobInterview/css/css'
         },
         {
             title: "性能优化相关",
@@ -115,6 +112,13 @@ module.exports = {
                 { title: 'HTTP', path: '/jobInterview/network/http' },
                 { title: 'TCP', path: '/jobInterview/network/tcp' },
                 { title: 'CDN', path: '/jobInterview/network/cdn' },
+            ]
+        },
+        {
+            title: "工程化相关",
+            collapsable: false,
+            children: [
+                { title: '构建工具', path: '/jobInterview/engineer/build' },
             ]
         },
         {
@@ -137,6 +141,11 @@ module.exports = {
             children: [
                 { title: '排序算法', path: '/jobInterview/arithmetic/sort' },
             ]
+        },
+        {
+            title: "CSS相关",
+            collapsable: true,
+            path: '/jobInterview/css/css'
         },
         {
             title: "实战相关",

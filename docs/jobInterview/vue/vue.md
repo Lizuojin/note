@@ -55,7 +55,7 @@ SPA（ single-page application ）仅在 Web 页面初始化时加载相应的 H
 
 ### 解决方案
 常见的几种SPA首屏优化方式
-- 减小入口文件积
+- 减小入口文件体积
 - 静态资源本地缓存
 - UI框架按需加载
 - 图片资源的压缩
@@ -91,7 +91,7 @@ const Baz = () => import(/* webpackChunkName: "group-foo" */ './Baz.vue')
 前端合理利用 `localStorage`
 
 #### UI 框架按需加载
-在日常使用 UI 框架，例如 `element-UI`、或者`antd`，我们经常性直接饮用整个 UI 库
+在日常使用 UI 框架，例如 `element-UI`、或者`antd`，我们经常性直接引用整个 UI 库
 ```js
 import ElementUI from 'element-ui'
 Vue.use(ElementUI)
@@ -455,18 +455,6 @@ new Vue({
 
 ### 5. $parent/$children
 `$parent` 可以访问父组件的实例，`children` 可以访问子组件的实例
-
-<!-- ## 16、你使用过 Vuex 吗？
-`Vuex` 是一个专为 Vue 应用程序开发的状态管理模式，每一个 `Vuex` 应用的核心就是 `store` (仓库)，`store` 基本上就是一个容器，它包含着你的应用中大部分的状态 ( state )
-- `Vuex` 的状态存储是响应式的。当 `Vue` 组件从 `store` 中读取状态的时候，若 `store` 中的状态发生变化，那么相应的组件也会相应地得到高效更新
-- 改变 `store` 中的状态的唯一途径就是显式地提交 (commit) mutation。这样使得我们可以方便地跟踪每一个状态的变化
-
-主要包括以下几个模块：
-- State：定义了应用状态的数据结构，可以在这里设置默认的初始状态
-- Getter：可以依赖 state 中的数据计算出一些状态，类似 vue 中的计算属性
-- Mutation：是唯一更改 store 中状态的方法，且必须是同步函数
-- Action：用于提交 mutation，不可以直接变更 state，可以包含任意异步操作
-- Module：允许将单一的 Store 拆分为多个 store 且同时保存在单一的状态树中 -->
 
 ## ● 使用过 Vue SSR 吗？说说 SSR？
 SSR大致的意思就是 vue 在客户端将标签渲染成的整个 html 片段的工作在服务端完成，服务端形成的html 片段直接返回给客户端这个过程就叫做服务端渲染。

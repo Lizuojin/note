@@ -1806,7 +1806,7 @@ for (task of doStuff()) {
 }
 ```
 
-## async 函数
+## ● async 函数
 ### 1. 含义
 `async` 函数就是 `Generator` 函数的语法糖。
 ```js
@@ -2107,6 +2107,431 @@ function spawn(genF) {
 ```
 
 ### 5. 与其他异步处理方法的比较
+
+
+## ● Proxy
+### 1. 概述
+`Proxy` 用于修改某些操作的默认行为，等同于在语言层面做出修改，所以属于一种“元编程”（meta programming），即对编程语言进行编程
+
+`Proxy` 可以理解成，在目标对象之前架设一层`拦截`，外界对该对象的访问，都必须先通过这层拦截，因此提供了一种机制，可以对外界的访问进行过滤和改
+
+先看看下面的代码
+```js
+var obj = new Proxy({}, {
+    get: function (target, propKey, receiver) {
+        console.log(`getting ${propKey}!`);
+        return Reflect.get(target, propKey, receiver);
+    },
+    set: function (target, propKey, value, receiver) {
+        console.log(`setting ${propKey}!`);
+        return Reflect.set(target, propKey, value, receiver);
+    }
+});
+```
+```js
+obj.count = 1
+//  setting count!
+
+++obj.count
+//  getting count!
+//  setting count!
+//  2
+```
+上面代码对一个空对象架设了一层拦截，重定义了属性的读取（`get`）和设置（`set`）行为
+
+`Proxy` 实际上重载（overload）了点运算符，即用自己的定义覆盖了语言的原始定义。
+
+#### Proxy 构造函数
+`ES6` 原生提供 `Proxy` 构造函数，用来生成 `Proxy` 实例
+
+`new Proxy()`表示生成一个`Proxy`实例
+- `target` 参数表示所要拦截的目标对象
+- `handler` 参数也是一个对象，用来定制拦截行为
+
+#### get 方法可以继承
+根据原型链读取 Proxy 实例对象上的属性也会被拦截
+```js
+var proxy = new Proxy({}, {
+    get: function(target, propKey) {
+        return 35;
+    }
+});
+
+let obj = Object.create(proxy);
+obj.time // 35
+```
+上面代码中，`proxy` 对象是 `obj` 对象的原型，`obj` 对象本身并没有 `time` 属性，所以根据原型链，会在 `proxy` 对象上读取该属性，导致被拦截。
+
+#### 同一个拦截器函数，可以设置拦截多个操作
+```js
+var handler = {
+    get: function(target, name) {
+        if (name === 'prototype') {
+            return Object.prototype;
+        }
+        return 'Hello, ' + name;
+    },
+
+    apply: function(target, thisBinding, args) {
+        return args[0];
+    },
+
+    construct: function(target, args) {
+        return {value: args[1]};
+    }
+};
+
+var fproxy = new Proxy(function(x, y) {
+    return x + y;
+}, handler);
+
+fproxy(1, 2) // 1
+new fproxy(1, 2) // {value: 2}
+fproxy.prototype === Object.prototype // true
+fproxy.foo === "Hello, foo" // true
+```
+### 2. Proxy 实例方法
+
+Proxy 的拦截操作共 13 种:
+- **get(target, propKey, receiver)**：拦截对象属性的读取，比如 `proxy.foo` 和 `proxy['foo']`
+    ::: details 点击看详细
+    get(target, propKey, receiver)接受3个参数：
+    - `target`：目标对象
+    - `propKey`：属性名
+    - `receiver`：proxy 实例本身
+    ```js
+    var person = {
+        name: "张三"
+    };
+
+    var proxy = new Proxy(person, {
+        get: function(target, propKey) {
+            if (propKey in target) {
+                return target[propKey];
+            } else {
+                throw new ReferenceError("Prop name \"" + propKey + "\" does not exist.");
+            }
+        }
+    });
+
+    proxy.name // "张三"
+    proxy.age // 抛出一个错误
+    ```
+    上面代码表示，如果访问目标对象不存在的属性，会抛出一个错误。如果没有这个拦截函数，访问不存在的属性，只会返回 `undefined`。
+    :::
+
+- **set(target, propKey, value, receiver)**：拦截对象属性的设置，比如 `proxy.foo = v` 或 `proxy['foo'] = v`，返回一个布尔值
+    ::: details 点击看详细
+    set(target, propKey, value, receiver)接受4个参数:
+    - `target`：目标对象
+    - `propKey`：属性名
+    - `value`：属性值
+    - `receiver`：Proxy 实例本身
+    ```js
+    let validator = {
+    set: function(obj, prop, value) {
+        if (prop === 'age') {
+        if (!Number.isInteger(value)) {
+            throw new TypeError('The age is not an integer');
+        }
+        if (value > 200) {
+            throw new RangeError('The age seems invalid');
+        }
+        }
+
+        // 对于满足条件的 age 属性以及其他属性，直接保存
+        obj[prop] = value;
+    }
+    };
+
+    let person = new Proxy({}, validator);
+
+    person.age = 100;
+
+    person.age // 100
+    person.age = 'young' // 报错
+    person.age = 300 // 报错
+    ```
+    上面代码中，由于设置了存值函数`set`，任何不符合要求的age属性赋值，都会抛出一个错误，这是数据验证的一种实现方法
+    :::
+
+- **has(target, key)**：拦截 `key in proxy` 的操作，即判断对象是否具有某个属性时，返回一个布尔值
+    ::: details 点击看详情
+    has(target, key)接受2个参数:
+    - `target`：目标对象
+    - `key`：需查询的属性名
+    ```js
+    var handler = {
+        has(target, key) {
+            if (key[0] === '_') {
+                return false;
+            }
+            return key in target;
+        }
+    };
+    var target = { _prop: 'foo', prop: 'foo' };
+    var proxy = new Proxy(target, handler);
+    '_prop' in proxy // false
+    ```
+    上面代码中，如果原对象的属性名的第一个字符是下划线，`proxy.has()`就会返回 `false`，从而不会被`in`运算符发现。
+    :::
+- **deleteProperty(target, propKey)**：拦截 `delete proxy[propKey]` 的操作，返回一个布尔值
+    ::: details 点击看详情
+    这个方法抛出错误或者返回`false`，当前属性就无法被`delete`命令删除。
+
+    deleteProperty(target, key)接受2个参数:
+    - `target`：目标对象
+    - `key`：需删除的属性名
+    ```js
+    var handler = {
+        deleteProperty (target, key) {
+            invariant(key, 'delete');
+            delete target[key];
+            return true;
+        }
+    };
+    function invariant (key, action) {
+        if (key[0] === '_') {
+            throw new Error(`Invalid attempt to ${action} private "${key}" property`);
+        }
+    }
+
+    var target = { _prop: 'foo' };
+    var proxy = new Proxy(target, handler);
+    delete proxy._prop
+    // Error: Invalid attempt to delete private "_prop" property
+    ```
+    上面代码中，`deleteProperty` 方法拦截了 `delete` 操作符，删除第一个字符为下划线的属性会报错。
+    :::
+
+- **ownKeys(target)**：拦截`Object.getOwnPropertyNames(proxy)`、`Object.getOwnPropertySymbols(proxy)`、`Object.keys(proxy)`、`for...in`循环，返回一个数组。该方法返回目标对象所有自身的属性的属性名，而 `Object.keys()` 的返回结果仅包括目标对象自身的可遍历属性。
+    ::: details 点击看详情
+    ownKeys(target)接受1个参数:
+    - `target`：目标对象
+    ```js
+    let target = {
+        a: 1,
+        b: 2,
+        c: 3
+    };
+
+    let handler = {
+        ownKeys(target) {
+            return ['a'];
+        }
+    };
+
+    let proxy = new Proxy(target, handler);
+
+    Object.keys(proxy)
+    // [ 'a' ]
+    ```
+    上面代码拦截了对于 `target` 对象的`Object.keys()`操作，只返回a、b、c三个属性之中的a属性。
+    :::
+
+- **getOwnPropertyDescriptor(target, propKey)**：拦截`Object.getOwnPropertyDescriptor(proxy, propKey)`，返回属性的描述对象或者 `undefined`。
+    ::: details 点击看详情
+    getOwnPropertyDescriptor(target, key)接受2个参数:
+    - `target`：目标对象
+    - `key`：属性名
+    ```js
+    var handler = {
+        getOwnPropertyDescriptor (target, key) {
+            if (key[0] === '_') {
+                return;
+            }
+            return Object.getOwnPropertyDescriptor(target, key);
+        }
+    };
+    var target = { _foo: 'bar', baz: 'tar' };
+    var proxy = new Proxy(target, handler);
+    Object.getOwnPropertyDescriptor(proxy, 'wat')
+    // undefined
+    Object.getOwnPropertyDescriptor(proxy, '_foo')
+    // undefined
+    Object.getOwnPropertyDescriptor(proxy, 'baz')
+    // { value: 'tar', writable: true, enumerable: true, configurable: true }
+    ```
+    上面代码中，`handler.getOwnPropertyDescriptor()`方法对于第一个字符为下划线的属性名会返回 `undefined`
+    :::
+
+- **defineProperty(target, propKey, propDesc)**：拦截`Object.defineProperty(proxy, propKey, propDesc）`、`Object.defineProperties(proxy, propDescs)`，返回一个布尔值。
+    ::: details 点击看详情
+    defineProperty(target, key, propDesc)接受3个参数:
+    - `target`：目标对象
+    - `key`：属性名
+    - `propDesc`：属性的描述
+    ```js
+    var handler = {
+        defineProperty (target, key, propDesc) {
+            return false;
+        }
+    };
+    var target = {};
+    var proxy = new Proxy(target, handler);
+    proxy.foo = 'bar' // 不会生效
+    ```
+    上面代码中，`defineProperty()` 方法内部没有任何操作，只返回`false`，导致添加新属性总是无效
+    :::
+
+- **preventExtensions(target)**：拦截`Object.preventExtensions(proxy)`，返回一个布尔值。
+    ::: details 点击看详情
+    这个方法有一个限制，只有目标对象不可扩展时（即`Object.isExtensible(proxy)为false`），`proxy.preventExtensions`才能返回 `true`，否则会报错。
+
+    preventExtensions(target)接受1个参数:
+    - `target`：目标对象
+    ```js
+    var proxy = new Proxy({}, {
+        preventExtensions: function(target) {
+            return true;
+        }
+    });
+
+    Object.preventExtensions(proxy)
+    // Uncaught TypeError: 'preventExtensions' on proxy: trap returned truish but the proxy target is extensible
+    ```
+    上面代码中，`defineProperty()` 方法内部没有任何操作，只返回`false`，导致添加新属性总是无效
+    :::
+
+- **getPrototypeOf(target)**：拦截`Object.getPrototypeOf(proxy)`，返回一个对象。
+    ::: details 点击看详情
+    方法主要用来拦截获取对象原型。具体来说，拦截下面这些操作
+    - `Object.prototype.__proto__`
+    - `Object.prototype.isPrototypeOf()`
+    - `Object.getPrototypeOf()`
+    - `Reflect.getPrototypeOf()`
+    - `instanceof`
+
+    getPrototypeOf(target)接受1个参数:
+    - `target`：目标对象
+    ```js
+    var proto = {};
+    var p = new Proxy({}, {
+        getPrototypeOf(target) {
+            return proto;
+        }
+    });
+    Object.getPrototypeOf(p) === proto // true
+    ```
+    :::
+
+- **isExtensible(target)**：拦截`Object.isExtensible(proxy)`，返回一个布尔值。
+    ::: details 点击看详情
+    isExtensible(target)接受1个参数:
+    - `target`：目标对象
+    ```js
+    var p = new Proxy({}, {
+        isExtensible: function(target) {
+            console.log("called");
+            return true;
+        }
+    });
+
+    Object.isExtensible(p)
+    // "called"
+    // true
+    ```
+    :::
+
+- **setPrototypeOf(target, proto)**：拦截`Object.setPrototypeOf(proxy, proto)`，返回一个布尔值。如果目标对象是函数，那么还有两种额外操作可以拦截。
+    ::: details 点击看详情
+    setPrototypeOf(target)接受1个参数:
+    - `target`：目标对象
+    ```js
+    var handler = {
+        setPrototypeOf (target, proto) {
+            throw new Error('Changing the prototype is forbidden');
+        }
+    };
+    var proto = {};
+    var target = function () {};
+    var proxy = new Proxy(target, handler);
+    Object.setPrototypeOf(proxy, proto);
+    // Error: Changing the prototype is forbidden
+    ```
+    上面代码中，只要修改target的原型对象，就会报错。
+    :::
+
+- **apply(target, ctx, args)**：拦截 Proxy 实例作为函数调用的操作，比如`proxy(...args)、proxy.call(object, ...args)`、`proxy.apply(...)`
+    ::: details 点击看详情
+    apply(target, ctx, args)接受3个参数:
+    - `target`：目标对象
+    - `ctx`：目标对象的上下文对象`this`
+    - `args`：目标对象的参数数组
+    ```js
+    var twice = {
+        apply (target, ctx, args) {
+            return Reflect.apply(...arguments) * 2;
+        }
+    };
+    function sum (left, right) {
+        return left + right;
+    };
+    var proxy = new Proxy(sum, twice);
+    proxy(1, 2) // 6
+    proxy.call(null, 5, 6) // 22
+    proxy.apply(null, [7, 8]) // 30
+    ```
+    :::
+
+- **construct(target, args)**：拦截 Proxy 实例作为构造函数调用的操作，比如`new proxy(...args)`。
+    ::: details 点击看详情
+    construct(target, args, newTarget)接受3个参数:
+    - `target`：目标对象
+    - `args`：构造函数的参数数组
+    - `newTarget`：创造实例对象时，new命令作用的构造函数（下面例子的p）
+    ```js
+    const p = new Proxy(function () {}, {
+    construct: function(target, args) {
+        console.log('called: ' + args.join(', '));
+        return { value: args[0] * 10 };
+    }
+    });
+
+    (new p(1)).value
+    // "called: 1"
+    // 10
+    ```
+    :::
+
+### 3. Proxy.revocable()
+`Proxy.revocable()` 方法返回一个可取消的 `Proxy` 实例
+```js
+let target = {};
+let handler = {};
+
+let {proxy, revoke} = Proxy.revocable(target, handler);
+
+proxy.foo = 123;
+proxy.foo // 123
+
+revoke();
+proxy.foo // TypeError: Revoked
+```
+`Proxy.revocable()` 方法返回一个对象，该对象的 `proxy` 属性是 `Proxy` 实例，`revoke` 属性是一个函数，可以取消 `Proxy` 实例。上面代码中，当执行 `revoke` 函数之后，再访问`Proxy`实例，就会抛出一个错误。
+
+`Proxy.revocable()` 的一个使用场景是，目标对象不允许直接访问，必须通过代理访问，一旦访问结束，就收回代理权，不允许再次访问。
+
+### 4. this 问题
+在 `Proxy` 代理的情况下，目标对象内部的 `this` 关键字会指向 `Proxy` 代理
+```js
+const target = {
+    m: function () {
+        console.log(this === proxy);
+    }
+};
+const handler = {};
+
+const proxy = new Proxy(target, handler);
+
+target.m() // false
+proxy.m()  // true
+```
+上面代码中，一旦 `proxy` 代理`target`，`target.m()`内部的 `this` 就是指向 `proxy`，而不是`target`
+
+
+
+
 
 
 
