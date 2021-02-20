@@ -45,6 +45,7 @@ module.exports = {
             collapsable: false,
             children: [
                 { title: 'Vue 源码的一些函数', path: '/article/vue/vueSoundCodeFun' },
+                { title: 'Vue3.0里为什么要用 Proxy API 替代 defineProperty API', path: '/article/vue/proxyDefineProtype' },
             ]
         },
         {
@@ -52,6 +53,7 @@ module.exports = {
             collapsable: false,
             children: [
                 { title: '你应该知道的一些JS数组技巧', path: '/article/JavaScript/arraySkill' },
+                { title: 'ES 2021 新特性提前知', path: '/article/JavaScript/ES2021' },
             ]
         },
         {
@@ -80,13 +82,8 @@ module.exports = {
                 { title: '基础题', path: '/jobInterview/js/jsBase' },
                 { title: '手写题', path: '/jobInterview/js/jsAdvance' },
                 { title: 'ES6', path: '/jobInterview/js/ES6' },
-
+                { title: 'DOM', path: '/jobInterview/js/dom' },
             ]
-        },
-        {
-            title: "DOM相关",
-            collapsable: true,
-            path: '/jobInterview/dom/dom'
         },
         {
             title: "Vue全家桶相关",
@@ -160,7 +157,7 @@ module.exports = {
             children: [
                 { title: 'Vue基础梳理', path: '/vue2/Vue基础梳理' },
                 { title: 'Vue性能优化', path: '/vue2/Vue性能优化' },
-                { title: '应该知道的Vue', path: '/vue2/应该知道的Vue' },
+                // { title: '应该知道的Vue', path: '/vue2/应该知道的Vue' },
                 { title: 'Vue源码阅读准备', path: '/vue2/Vue源码阅读准备' },
                 { title: 'Vue源码', path: '/vue2/Vue源码' }
             ]
@@ -212,6 +209,15 @@ module.exports = {
             collapsable: false,
             children: [
                 { title: 'Node简介', path: '/node/introduce' },
+            ]
+        },
+    ],
+    "/ts/":[
+        {
+            title: "目录",
+            collapsable: false,
+            children: [
+                { title: '学习笔记', path: '/ts/ts' },
             ]
         },
     ]

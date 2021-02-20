@@ -3,6 +3,7 @@ sidebar: auto
 # sidebarDepth: 2
 ---
 # 你不知道的JS(上)
+[[toc]]
 ## 作用域和闭包
 ### 作用域是什么
 ---

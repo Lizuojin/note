@@ -3,6 +3,8 @@
 sidebarDepth: 2
 ---
 # Vue
+[[toc]]
+
 ## Vue 基础知识
 ### Vue实例
 - 每一个Vue应用都会通过new Vue()的方式构造一个Vue实例

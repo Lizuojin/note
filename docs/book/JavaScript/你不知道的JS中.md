@@ -3,6 +3,7 @@ sidebar: auto
 # sidebarDepth: 2
 ---
 # 你不知道的JS(中)
+[[toc]]
 ## 类型和语法
 ### 类型
 ---

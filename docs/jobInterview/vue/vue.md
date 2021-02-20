@@ -5,7 +5,7 @@ sidebarDepath: 1
 # Vue 相关面试题
 [[toc]]
 ## ● 说说你对 Vue 的理解
-是一个用于创建用户界面的开源 `JavaScript` 框架，也是一个创建单页应用的 Web 应用框架。同时也是一款流行的 JavaScript 前端框架，旨在更好地组织与简化Web开发
+Vue 是一套用于构建用户界面的**渐进式框架**，Vue 的核心库只关注视图层
 
 ### Vue 核心特性
 #### 数据驱动（MVVM)
@@ -15,7 +15,7 @@ MVVM表示的是 Model-View-ViewModel
 - ViewModel：视图模型层，用来连接Model和View，是Model和View之间的通信桥梁
 
 #### 组件化
-组件化：就是把图形、非图形的各种逻辑均抽象为一个统一的概念（组件）来实现开发的模式，在 `Vue` 中每一个 `.vue` 文件都可以视为一个组件
+组件化：就是把各种逻辑抽象为一个统一的概念（组件）来实现开发的模式，在 `Vue` 中每一个 `.vue` 文件都可以视为一个组件
 
 组件化的优势:
 - 降低整个系统的耦合度，在保持接口不变的情况下，我们可以替换不同的组件快速完成需求，例如输入框，可以替换为日历、时间、范围等组件作具体的实现
@@ -33,6 +33,24 @@ MVVM表示的是 Model-View-ViewModel
     - 属性绑定指令 `v-bind`
     - 事件绑定指令 `v-on`
     - 双向数据绑定指令 `v-model`
+
+## ● 什么是 MVVM？
+Model–View–ViewModel （MVVM） 是一个软件架构设计模式，由微软 WPF 和 Silverlight 的架构师 Ken Cooper 和 Ted Peters 开发，是一种简化用户界面的事件驱动编程方式。由 John Gossman（同样也是 WPF 和 Silverlight 的架构师）于2005年在他的博客上发表
+
+MVVM源于经典的 MVC (Model-view-controller) 模式，MVVM的出现促进了前端开发和后端业务逻辑的分离，极大地提高了前端的开发效率，MVVM 的核心是 ViewModel 层，它就是一个中转站(value converter)，该层向上与view层进行双向数据绑定，向下与 model 层通过接口请求进行数据交互，起到承上启下的作用
+
+ `Model` 表示数据模型层。 `view` 表示视图层， `ViewModel` 是 `View` 和 `Model` 层的桥梁，数据绑定到 `viewModel` 层并自动渲染到页面中，视图变化通知 `viewModel` 层更新数据。
+
+![img](./image/MVVM.png)
+
+### view 层
+View 是视图层，也就是用户界面，前端主要用 HTML 和 css 构建
+
+### Model 层
+Model 是指数据模型，泛指后端进行的各种业务逻辑处理和数据操控，对于前端来说就是后端提供的 API 接口
+
+### ViewModel 层
+ViewModel 是由前端开发人员组织生成和维护的视图数据层，在这一层，前端开发人员从后端获取到 Model 数据进行转换处理，做二次封装，生成 View 层预期使用的视图数据模型，ViewModel 所封装出来的数据模型包括了视图的状态和行为，而 Model 层的数据模型只包含了视图的状态，比如页面的这一块展示什么，而页面加载进来发生什么，点击发生什么，滚动发生什么，这些都属于视图的行为(交互)，视图的状态和行为都封装在了 ViewModel 层，这样的封装让 ViewModel 可以完整地描述 View 层
 
 ## ● 说说你对 SPA 单页面的理解，它的优缺点分别是什么？
 SPA（ single-page application ）仅在 Web 页面初始化时加载相应的 HTML、JavaScript 和 CSS。一旦页面加载完成，SPA 不会因为用户的操作而进行页面的重新加载或跳转；取而代之的是利用路由机制实现 HTML 内容的变换，用户与 UI 的交互，避免页面的重新加载。
@@ -272,28 +290,6 @@ computed: {
 - **computed**：当我们需要数值计算、依赖于其他数据时，应该使用computed，因为可以利用 computed 的缓存特性，避免每次获取值时，都要重新计算；
 - **watch**：当我们需要在数据变化时执行异步或开销较大的操作时，应该使用 watch，使用 watch 选项允许我们执行异步操作
 
-## ● 直接给一个数组项赋值，Vue 能检测到变化吗？
-Vue 不能检测到以下数组的变动：
-- 当你利用索引直接设置一个数组项时，例如：`vm.items[indexOfItem] = newValue`
-- 当你修改数组的长度时，例如：`vm.items.length = newLength`
-为了解决第一个问题，Vue 提供了以下操作方法：
-```js
-// Vue.set
-Vue.set(vm.items, indexOfItem, newValue)
-// vm.$set，Vue.set的一个别名
-vm.$set(vm.items, indexOfItem, newValue)
-// Array.prototype.splice
-vm.items.splice(indexOfItem, 1, newValue)
-```
-为了解决第二个问题，Vue 提供了以下操作方法：
-```js
-// Array.prototype.splice
-vm.items.splice(newLength)
-```
-
-## ● vue 2.x 中如何检测数组的变化的
-使用函数劫持的方式，重写数组的方法，`Vue` 将 `data` 中的数组进行了原型链重写，指向了自己定义的数组原型方法，这样当调用数组 `api` 时，可以通知依赖更新，如果数组中包含引用类型，会对数组中的引用类型再次递归遍历进行监控，这样就实现了监测数组的变化
-
 ## ● Vue中给对象添加新属性界面不刷新?
 `vue2` 是用过 `Object.defineProperty` 实现数据响应式，新添加的对象属性并没有通过 `Object.defineProperty` 设置成响应式数据
 ### 解决方案
@@ -435,10 +431,10 @@ new Vue({
 因为组件是用来复用的，且 JS 里对象是引用关系，如果组件中 data 是一个对象，那么这样作用域没有隔离，子组件中的 data 属性值会相互影响，如果组件中 data 选项是一个函数，那么每个实例可以维护一份独立的对象拷贝，组件实例之间的 data 属性不会互相影响；而 new Vue 的实例，是不会被复用的，因此不存在引用对象的问题
 
 ## ● v-model 的原理？
-我们在 vue 项目中使用 v-model 在表单元素`input`、`textarea`、`select`实现双向数据绑定，可以看成是 `value + input` 方法的语法糖，v-model 在内部对不同的元素使用不同的属性并抛出不同的事件 
+`v-model` 指令在表单元素 `<input>`、`<textarea>`、`<select>` 实现双向数据绑定，可以看成是 `value + input` 方法的语法糖，`v-model` 在内部对不同的元素使用不同的属性并抛出不同的事件 
+- `input` 的 `type` 为 `checkbox` 和 `radio` 使用 `check` 属性 和 `change` 事件
 - `text` 和 `textarea` 元素使用 `value` 属性 和 `input` 事件
-- `checkbox` 和 `radio` 使用 `check` 属性 和 `change` 事件
-- `select` 字段将 `value` 作为 `prop` 并将 `change` 作为事件
+- `select` 元素将 `value` 作为 `prop` 并将 `change` 作为事件
 
 ## ● Vue 组件间通信有哪几种方式？
 ### 1. props/$emit
@@ -446,15 +442,233 @@ new Vue({
 
 ### 2. $emit/$on
 通过创建一个空的vue实例作为事件中心，用来触发监听事件和触发事件，$on监听事件；$emit触发事件
+::: details 点击看例子
+创建一个空的 Vue 实例作为事件总线
+```js
+// main.js
+Vue.prototype.$player = new Vue();
+```
+在父组件中监听事件
+```vue
+<!-- parent.vue -->
+<template>
+    <div class="home">
+        <child></child>
+    </div>
+</template>
+
+<script>
+import child from "./child";
+
+export default {
+    name: "Home",
+    data() {
+        return {
+        };
+    },
+    components: {
+        child,
+    },
+    created() {
+        this.$player.$on('test', res => {
+            console.log(res)
+        });
+    },
+
+};
+</script>
+```
+在子组件中触发事件
+```vue
+<!--child.vue-->
+<template>
+    <div id="child">
+        <button @click="add">按钮</button>
+    </div>
+</template>
+
+<script>
+export default {
+    name: "child",
+    data() {
+        return {
+            msg: 'hello'
+        };
+    },
+    methods: {
+        add() {
+            this.$player.$emit("test", this.msg);
+        },
+    },
+
+};
+</script>
+```
+:::
 
 ### 3. $attrs/$listeners
-`$attrs` 里存放的是父组件中绑定的非 props 属性，`$listeners` 存放的是父组件中绑定的非原生事件，一般配合inheritAttrs
+`$attrs` 里存放的是父组件中绑定的非 `props` 属性，`$listeners` 存放的是父组件中绑定的非原生事件，一般配合`inheritAttrs`
+::: details 点击看例子
+
+```vue
+<!-- 父组件 -->
+<template>
+    <div class="home">
+        <child 
+            :childInfo="childData" 
+            :grandsonInfo="grandsonData" 
+            :msg="msg" 
+            v-on:test1="onTest1" 
+            v-on:test2="onTest2"
+        ></child>
+    </div>
+</template>
+
+<script>
+import child from "./child";
+
+export default {
+    name: "Home",
+    data() {
+        return {
+            childData:"我是子组件的数据",
+            grandsonData:"我是孙子组件的数据",
+            msg: "hollo"
+        };
+    },
+    components: {
+        child,
+    },
+    methods: {
+        onTest1(param) {
+            console.log('test1 running',param);
+        },
+        onTest2(param) {
+            console.log('test2 running',param);
+        }
+    },
+};
+</script>
+```
+```vue
+<!-- 子组件 -->
+<template>
+    <div id="child">
+        <p>在子组件当中:</p>
+        <p>props-childInfo: {{childInfo}}</p>
+        <p>$attrs: {{$attrs}}</p>
+        <button @click="add">按钮</button>
+        <hr>
+        <grandson v-bind="$attrs" v-on="$listeners"></grandson>
+    </div>
+</template>
+
+<script>
+import grandson from "./grandson";
+export default {
+    name: "child",
+    components: {
+        grandson
+    },
+    props: ['childInfo'],
+    data() {
+        return {
+        };
+    },
+    methods: {
+        add() {
+            this.$listeners.test1('我是子组件')
+        },
+    },
+};
+</script>
+```
+```vue
+<!-- 孙子组件 -->
+<template>
+    <div id="child">
+        <p>在最里层组件当中child2:</p>
+        <p>props-grandsonInfo: {{grandsonInfo}}</p>
+        <p> $attrs 的值: {{$attrs}}</p>
+        <button @click="btnLog">按钮</button>
+        <hr>
+    </div>
+</template>
+
+<script>
+export default {
+    name: "child",
+    props: ['grandsonInfo'],
+    data() {
+        return {
+            msg: 'hello'
+        };
+    },
+    methods: {
+        btnLog() {
+            this.$listeners.test2('我是孙子组件');
+        }
+    },
+    mounted() {
+    }
+};
+</script>
+```
+运行结果：
+
+![img](./image/attrs-listeners.png)
+
+上面的例子中，`$attrs` 里存放的是父组件中绑定的非 `props` 属性，可以通过 `v-bind` 绑定 `$attrs` 继续向下传递，`$listeners` 存放的是父组件中绑定的非原生事件，也可以通过 `v-on="$listeners"`，将事件监听器继续向下传递
+:::
+
 
 ### 4. provide/inject
-父组件通过 provide 提供变量，子组件 通过 inject 注入变量
+这对选项需要一起使用，以允许一个祖先组件向其所有子孙后代注入一个依赖，不论组件层次有多深
+
+祖先组件通过 `provide` 提供变量，子孙组件通过 `inject` 注入变量
+
+::: details
+```vue
+<!--父组件-->
+<template>
+    <div id="parent">
+        <child></child>
+    </div>
+</template>
+
+<script>
+import Child from './child.vue';
+export default {
+    name: "parent",
+    components: {
+        Child
+    },
+    provide: {
+        foo: "bar",
+    }
+};
+</script>
+```
+```vue
+<!-- 子组件 -->
+<template>
+  <div id="child">
+      <h1>{{foo}}</h1>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "child",
+  inject:['foo']
+}
+</script>
+```
+:::
+
 
 ### 5. $parent/$children
-`$parent` 可以访问父组件的实例，`children` 可以访问子组件的实例
+`$parent` 可以访问父组件的实例，`$children` 可以访问子组件的实例
 
 ## ● 使用过 Vue SSR 吗？说说 SSR？
 SSR大致的意思就是 vue 在客户端将标签渲染成的整个 html 片段的工作在服务端完成，服务端形成的html 片段直接返回给客户端这个过程就叫做服务端渲染。
@@ -467,22 +681,6 @@ SSR大致的意思就是 vue 在客户端将标签渲染成的整个 html 片段
 - **服务器负载问题**：在 Node.js 中渲染完整的应用程序，显然会比仅仅提供静态文件的 server 更加大量占用 CPU 资源，因此如果应用是在高流量环境下使用，需要准备相应的服务器负载
 
 如果没有 SSR 开发经验的同学，可以参考本文作者的另一篇 SSR 的实践文章[《Vue SSR 踩坑之旅》](https://juejin.im/post/6844903824956588040)，里面 SSR 项目搭建以及附有项目源码。
-
-
-## ● 什么是 MVVM？
-Model–View–ViewModel （MVVM） 是一个软件架构设计模式，由微软 WPF 和 Silverlight 的架构师 Ken Cooper 和 Ted Peters 开发，是一种简化用户界面的事件驱动编程方式。由 John Gossman（同样也是 WPF 和 Silverlight 的架构师）于2005年在他的博客上发表
-
-MVVM源于经典的 MVC (Model-view-controller) 模式，MVVM的出现促进了前端开发和后端业务逻辑的分离，极大地提高了前端的开发效率，MVVM 的核心是 ViewModel 层，它就是一个中转站(value converter)，该层向上与view层进行双向数据绑定，向下与 model 层通过接口请求进行数据交互，起到承上启下的作用
-![img](./image/MVVM.png)
-
-### view 层
-View 是视图层，也就是用户界面，前端主要用 HTML 和 css 构建
-
-### Model 层
-Model 是指数据模型，泛指后端进行的各种业务逻辑处理和数据操控，对于前端来说就是后端提供的 API 接口
-
-### ViewModel 层
-ViewModel 是由前端开发人员组织生成和维护的视图数据层，在这一层，前端开发人员从后端获取到 Model 数据进行转换处理，做二次封装，生成 View 层预期使用的视图数据模型，ViewModel 所封装出来的数据模型包括了视图的状态和行为，而 Model 层的数据模型只包含了视图的状态，比如页面的这一块展示什么，而页面加载进来发生什么，点击发生什么，滚动发生什么，这些都属于视图的行为(交互)，视图的状态和行为都封装在了 ViewModel 层，这样的封装让 ViewModel 可以完整地描述 View 层
 
 ## ● 说说 vue 的组件封装
 在我用 vue 开发项目的时候，一般我都会用到组件封装，采用组件化的思想进行项目开发，我会创建不同的目录来放不同的组件
@@ -503,6 +701,38 @@ Vue 主要通过以下 4 个步骤来实现数据双向绑定的：
 - 实现一个订阅者 Watcher：Watcher 订阅者是 Observer 和 Complie 之间的桥梁，主要的任务是订阅 Observer 中的数据变化的消息，当收到数据变化的消息时，触发 Complie 中的对应的更新函数
 
 - 实现一个订阅器 Dep：订阅器采用 发布-订阅 的设计模式，用来收集 Watcher ，对监听器 Observer 和订阅者 Watcher 进行统一的管理
+
+## ● vue 是如何实现响应式数据
+遍历对象为每个属性使用 `object.definProperty` 定义 `get` 和 `set` 方法对数据进行拦截， `get` 方法拦截属性的获取操作，进行依赖收集，`set` 方法拦截属性的更新操作，通知更新
+
+### 具体过程
+初始化 `data` 数据时，使用 `new Observer` 对数据进行的观测，如果数据是一个对象，会使用 `walk` 方法进行处理，这个方法会循环对象属性，并调用 `definReactive` 方法，为每个属性使用 `object.definProperty` 定义 `get` 和 `set` 方法
+- `get` 方法使用 `Dep` 类的 `depend` 方法进行依赖收集 
+- `set` 方法使用 `Dep` 类的 `notify` 方法进行通知更新
+
+## ● 直接给一个数组项赋值，Vue 能检测到变化吗？
+Vue 不能检测到以下数组的变动：
+- 当你利用索引直接设置一个数组项时，例如：`vm.items[indexOfItem] = newValue`
+- 当你修改数组的长度时，例如：`vm.items.length = newLength`
+为了解决第一个问题，Vue 提供了以下操作方法：
+```js
+// Vue.set
+Vue.set(vm.items, indexOfItem, newValue)
+// vm.$set，Vue.set的一个别名
+vm.$set(vm.items, indexOfItem, newValue)
+// Array.prototype.splice
+vm.items.splice(indexOfItem, 1, newValue)
+```
+为了解决第二个问题，Vue 提供了以下操作方法：
+```js
+// Array.prototype.splice
+vm.items.splice(newLength)
+```
+
+## ● vue 2.x 中如何检测数组的变化的
+使用函数劫持的方式，将数组原型上的方法指向自己定义的方法，这样当调用数组 `api` 时，可以通知依赖更新
+
+使用函数劫持的方式，重写数组的方法，`Vue` 将 `data` 中的数组进行了原型链重写，指向了自己定义的数组原型方法，这样当调用数组 `api` 时，可以通知依赖更新，如果数组中包含引用类型，会对数组中的引用类型再次递归遍历进行监控，这样就实现了监测数组的变化
 
 ## ● vue 常用的修饰符
 在 `Vue` 中，修饰符处理了许多 `DOM` 事件的细节，让我们不再需要花大量的时间去处理这些烦恼的事情，而能有更多的精力专注于程序的逻辑处理
@@ -751,12 +981,12 @@ Vue.use(插件名字,{ /* ... */} )
 **插件** (Plugin) 是用来增强你的技术栈的功能模块，它的目标是 `Vue` 本身，简单来说，插件就是指对 `Vue` 的功能的增强或补充
 
 ## ● Vue中的 $nextTick 怎么理解?
-在下次 `DOM` 更新循环结束之后执行延迟回调。在修改数据之后立即使用这个方法，获取更新后的 `DOM`
+在下次 DOM 更新循环结束之后执行延迟回调。`nextTick` 主要使用了宏任务和微任务。根据执行环境分别尝试采用
 
-数据变化之后立即使用 `Vue.nextTick(callback)`。这样回调函数将在 `DOM` 更新完成后被调用
-
-> **异步更新队列**： `Vue` 在更新 `DOM` 时是异步执行的。当数据发生变化，`Vue` 将开启一个异步更新队列，视图需要等队列中所有数据变化完成之后，再统一进行更新
-
+- Promise
+- MutationObserver
+- setImmediate
+-如果以上都不行则采用setTimeout
 
 
 ### 实现原理
@@ -2306,12 +2536,92 @@ app.mount('#app')
 - 内联模板 `attribute`
 - $destroy 实例方法。用户不应再手动管理单个Vue 组件的生命周期。
 
+## ● Vue3.0 里为什么要用 Proxy API 替代 defineProperty API
 
+### 1. 对象的劫持
+- `Object.defineProperty` 只能遍历对象属性进行劫持
+    ::: details 点击看详情
+    ```js
+    function observe(obj) {
+        if (typeof obj !== 'object' || obj == null) {
+            return
+        }
+        Object.keys(obj).forEach(key => {
+            defineReactive(obj, key, obj[key])
+        })
+    }
+    ```
+    :::
+- `Proxy` 直接可以劫持整个对象，并返回一个新对象，我们可以只操作新的对象达到响应式目的
+    ::: details 点击看详情
+    ```js
+    function reactive(obj) {
+        if (typeof obj !== 'object' && obj != null) {
+            return obj
+        }
+        // Proxy相当于在对象外层加拦截
+        const observed = new Proxy(obj, {
+            get(target, key, receiver) {
+                const res = Reflect.get(target, key, receiver)
+                console.log(`获取${key}:${res}`)
+                return res
+            },
+            set(target, key, value, receiver) {
+                const res = Reflect.set(target, key, value, receiver)
+                console.log(`设置${key}:${value}`)
+                return res
+            },
+            deleteProperty(target, key) {
+                const res = Reflect.deleteProperty(target, key)
+                console.log(`删除${key}:${res}`)
+                return res
+            }
+        })
+        return observed
+    }
+    ```
+    :::
 
+### 2. 简单数据操作的劫持
+- `Object.defineProperty` 需要增加额外的 `$set` `$delete` 方法进行对象简单数据的操作，才能响应更新视图
+    ::: details 点击看详情
+    ```js
+    // set、delete
+    Vue.set(obj,'bar','newbar')
+    Vue.delete(obj),'bar')
+    ```
+    :::
 
+- `Proxy` 简单数据的操作，都能劫持
+    ::: details 点击看详情
+    ```js
+    const state = reactive({
+        foo: 'foo'
+    })
+    // 1.获取
+    state.foo // ok
+    // 2.设置已存在属性
+    state.foo = 'fooooooo' // ok
+    // 3.设置不存在属性
+    state.dong = 'dong' // ok
+    // 4.删除属性
+    delete state.dong // ok
+    ```
+    :::
 
+### 3. 监听数组的变化
+- `Proxy` 可以直接监听数组的变化
+    ::: details 点击看详情
+    ```js
+    const obj = [1,2,3]
+    const proxtObj = reactive(obj)
+    obj.psuh(4) // ok
+    ```
+    :::
 
+- `Object.defineProperty` 需要重写数组方法，才能监听到数组的变化
 
+**Proxy有多达13种拦截方法,不限于apply、ownKeys、deleteProperty、has等等，这是Object.defineProperty不具备的**
 
 
 

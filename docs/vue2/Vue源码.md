@@ -1,6 +1,6 @@
 
 # Vue源码功能的实现
-
+[[toc]]
 ## Vue 的入口
 `Vue.js` 构建过程，在 web 应⽤下，我们来分析 `Runtime + Compiler` 构建出来的 `Vue.js`
 
