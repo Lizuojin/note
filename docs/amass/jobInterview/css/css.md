@@ -322,8 +322,78 @@ BFC常见应用例子：
 - **避免频繁读取会引发回流/重绘的属性**，如果确实需要多次使用，就用一个变量缓存起来。
 - **对具有复杂动画的元素使用绝对定位**，使它脱离文档流，否则会引起父元素及后续元素频繁回流。
 
+## ● display:none 和 visibility:hidden 的区别
+- `display: none`: 隐藏对应的元素，在文档布局中不再给它分配空间，
+- `visibility: hidden`: 隐藏对应的元素，但在文档布局中仍保留原来的空间
+
+## CSS 中 link 和@import 的区别是
+- `link` 属于 `HTML` 标签，而 `@import` 是 `CSS` 提供的; 
+- 页面被加载的时，`link` 会同时被加载，而 `@import` 引用的 `CSS` 会等到页面被加载完再加载;
+- `import` 只在 `IE5` 以上才能识别，而 `link` 是 `HTML` 标签，无兼容问题; 
+- `link` 方式的样式的权重 高于 `@import` 的权重.
+
+## ● position:absolute和float属性的异同
+### 共同点
+对内联元素设置`float`和`absolute`属性，可以让元素脱离文档流，并且可以设置其宽高
+
+### 不同点
+`float` 仍会占据位置，`position` 会覆盖文档流中的其他元素
+
+## ● 介绍一下box-sizing属性？
+`box-sizing` 属性主要用来控制元素的盒模型的解析模式。默认值是 `content-box`
+- content-box: 让元素维持 W3C 的标准盒模型
+- border-box：让元素维持 IE 传统盒模型
+
+## ● CSS 选择符有哪些？哪些属性可以继承？优先级算法如何计算？CSS3新增伪类有那些？
+
+### 选择符
+1. id选择器（ # myid）
+2. 类选择器（.myclassname）
+3. 标签选择器（div, h1, p）
+4. 相邻选择器（h1 + p）
+5. 子选择器（ul > li）
+6. 后代选择器（li a）
+7. 通配符选择器（ * ）
+8. 属性选择器（a[rel = "external"]）
+9. 伪类选择器（a: hover, li:nth-child）
+
+### 样式继承
+- 可继承的样式
+`font-size` `font-family` `color` `text-indent`
+
+- 不可继承的样式
+`border` `padding` `margin` `width` `height` 
+
+### 优先级
+载入样式以最后载入的定位为准
+
+优先级为：!important > id > class > tag
+
+### CSS3 新增伪类
+- p:first-of-type 选择属于其父元素的首个 `<p>` 元素的每个 `<p>` 元素。
+- p:last-of-type  选择属于其父元素的最后 `<p>` 元素的每个 `<p>` 元素。
+- p:only-of-type  选择属于其父元素唯一的 `<p>` 元素的每个 `<p>` 元素。
+- p:only-child    选择属于其父元素的唯一子元素的每个 `<p>` 元素。
+- p:nth-child(2)  选择属于其父元素的第二个子元素的每个 `<p>` 元素。
+- :enabled  :disabled 控制表单控件的禁用状态。
+- :checked        单选框或复选框被选中。
 
 
+## position的值， relative和absolute分别是相对于谁进行定位的？
+- absolute：生成绝对定位的元素，相对于最近一级的定位不是 `static` 的父元素来进行定位
+- relative：生成相对定位的元素，相对于其在普通流中的位置进行定位
+- fixed：生成固定定位的元素，相对于浏览器窗口进行定位。
+- static：默认值。没有定位，元素出现在正常的流中
+
+## CSS3有哪些新特性？
+- 圆角：border-radius
+- 阴影：box-shadow
+- 文字特效：text-shadow
+- 线性渐变：gradient
+- 旋转：transform
+- border-image
+- 媒体查询
+- 
 
 
 

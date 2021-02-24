@@ -37,9 +37,9 @@ MVVM表示的是 Model-View-ViewModel
 ## ● 什么是 MVVM？
 Model–View–ViewModel （MVVM） 是一个软件架构设计模式，由微软 WPF 和 Silverlight 的架构师 Ken Cooper 和 Ted Peters 开发，是一种简化用户界面的事件驱动编程方式。由 John Gossman（同样也是 WPF 和 Silverlight 的架构师）于2005年在他的博客上发表
 
-MVVM源于经典的 MVC (Model-view-controller) 模式，MVVM的出现促进了前端开发和后端业务逻辑的分离，极大地提高了前端的开发效率，MVVM 的核心是 ViewModel 层，它就是一个中转站(value converter)，该层向上与view层进行双向数据绑定，向下与 model 层通过接口请求进行数据交互，起到承上启下的作用
+**MVVM源于经典的 MVC (Model-view-controller) 模式，`MVVM` 的出现促进了前端开发和后端业务逻辑的分离**，极大地提高了前端的开发效率，MVVM 的核心是 ViewModel 层，它就是一个中转站(value converter)，该层向上与view层进行双向数据绑定，向下与 model 层通过接口请求进行数据交互，起到承上启下的作用
 
- `Model` 表示数据模型层。 `view` 表示视图层， `ViewModel` 是 `View` 和 `Model` 层的桥梁，数据绑定到 `viewModel` 层并自动渲染到页面中，视图变化通知 `viewModel` 层更新数据。
+**`Model` 表示数据模型层。 `view` 表示视图层， `ViewModel` 是 `View` 和 `Model` 层的桥梁，数据绑定到 `viewModel` 层并自动渲染到页面中，视图变化通知 `viewModel` 层更新数据。**
 
 ![img](./image/MVVM.png)
 
@@ -77,7 +77,7 @@ SPA（ single-page application ）仅在 Web 页面初始化时加载相应的 H
 - 静态资源本地缓存
 - UI框架按需加载
 - 图片资源的压缩
-- 组件重复打包
+- 重复组件打包
 - 开启GZip压缩
 - 使用SSR
 
@@ -168,6 +168,9 @@ configureWebpack: (config) => {
 **SSR**（Server side ），也就是服务端渲染，组件或页面通过服务器生成 `html` 字符串，再发送到浏览器
 
 从头搭建一个服务端渲染是很复杂的，`vue` 应用建议使用 `Nuxt.js` 实现服务端渲染
+
+## 说说 Vue 的事件绑定原理
+
 
 ## ● 单页面应用和多页面应用区别及优缺点
 ![img](./image/SPAMPA.png)
@@ -362,12 +365,12 @@ Vue 的父组件和子组件生命周期钩子函数执行顺序可以归类为�
 父 beforeDestroy -> 子 beforeDestroy -> 子 destroyed -> 父 destroyed
 
 ## ● 在哪个生命周期内调用异步请求？
-可以在钩子函数 created、beforeMount、mounted 中进行调用，因为在这三个钩子函数中，data 已经创建，可以将服务端端返回的数据进行赋值。但是本人推荐在 created 钩子函数中调用异步请求，因为在 **created 钩子函数**中调用异步请求有以下优点：
-- 能更快获取到服务端数据，减少页面 loading 时间；
-- ssr 不支持 beforeMount 、mounted 钩子函数，所以放在 created 中有助于一致性
+可以在钩子函数 `created`、`beforeMount`、`mounted` 中进行调用，因为在这三个钩子函数中，`data` 已经创建，可以将服务端端返回的数据进行赋值。但是本人推荐在 `created` 钩子函数中调用异步请求，因为在 **created 钩子函数**中调用异步请求有以下优点：
+- 能更快获取到服务端数据，减少页面 `loading` 时间；
+- `ssr` 不支持 `beforeMount` 、`mounted` 钩子函数，所以放在 `created` 中有助于一致性
 
 ## ● 在什么阶段才能访问操作DOM？
-在钩子函数 `mounted` 被调用前，Vue 已经将编译好的模板挂载到页面上，所以在 `mounted` 中可以访问操作 `DOM`。
+在钩子函数 `mounted` 被调用前，`Vue` 已经将编译好的模板挂载到页面上，所以在 `mounted` 中可以访问操作 `DOM`。
 
 ## ● 父组件可以监听到子组件的生命周期吗？
 ### $emit
@@ -401,13 +404,15 @@ mounted(){
 ```
 当然 `@hook` 方法不仅仅是可以监听 `mounted`，其它的生命周期事件，例如：`created`，`updated` 等都可以监听
 
-## ● 谈谈你对 keep-alive 的了解？
-keep-alive 是 Vue 内置的一个组件，可以使被包含的组件保留状态，防止多次渲染 ，其有以下特性：
+## ● 谈谈你对 keep-alive 的了解
+`keep-alive` 是 `Vue` 内置的一个组件，可以使被包含的组件保留状态，防止多次渲染 ，其有以下特性：
 - 一般结合路由和动态组件一起使用，用于缓存组件；
 - 提供 `include` 和 `exclude` 属性，两者都支持字符串或正则表达式， `include` 表示只有名称匹配的组件会被缓存，`exclude` 表示任何名称匹配的组件都不会被缓存 ，其中 `exclude` 的优先级比 `include` 高；
-- 对应两个钩子函数 `activated` 和 `deactivated` ，当组件被激活时，触发钩子函数 `activated`，当组件被移除时，触发钩子函数 `deactivated`
+- 对应两个钩子函数 `activated` 和 `deactivated` ，被 `keep-alive` 缓存的组件激活时调用。 `activated`；被 `keep-alive` 缓存的组件停用时调用 `deactivated`
 
-## ● 组件中 data 为什么是一个函数？
+## ● 组件中 data 为什么是一个函数
+因为组件是用来复用的，且 JS 里对象是引用关系，如果组件中 `data` 是一个对象，子组件中的 `data` 属性值会相互影响，如果组件中 `data` 选项是一个函数，那么每个实例可以维护一份独立的对象拷贝，组件实例之间的 `data` 属性不会互相影响；而 `new Vue` 的实例，是不会被复用的，因此不存在引用对象的问题
+
 - 根实例对象 `data` 可以是对象也可以是函数（根实例是单例），不会产生数据污染情况
 - 组件实例对象 `data` 必须为函数，目的是为了防止多个组件实例对象之间共用一个 `data`，产生数据污染。采用函数的形式，`initData` 时会将其作为工厂函数都会返回全新 `data` 对象
 ```js
@@ -428,7 +433,9 @@ new Vue({
 })
 
 ```
-因为组件是用来复用的，且 JS 里对象是引用关系，如果组件中 data 是一个对象，那么这样作用域没有隔离，子组件中的 data 属性值会相互影响，如果组件中 data 选项是一个函数，那么每个实例可以维护一份独立的对象拷贝，组件实例之间的 data 属性不会互相影响；而 new Vue 的实例，是不会被复用的，因此不存在引用对象的问题
+
+
+
 
 ## ● v-model 的原理？
 `v-model` 指令在表单元素 `<input>`、`<textarea>`、`<select>` 实现双向数据绑定，可以看成是 `value + input` 方法的语法糖，`v-model` 在内部对不同的元素使用不同的属性并抛出不同的事件 
@@ -436,12 +443,182 @@ new Vue({
 - `text` 和 `textarea` 元素使用 `value` 属性 和 `input` 事件
 - `select` 元素将 `value` 作为 `prop` 并将 `change` 作为事件
 
+## ● 为什么Vue采用异步渲染呢？
+因为不采用异步更新，在每次更新数据都会对当前组件进行重新渲染，所以为了性能考虑，`Vue` 会在本轮数据更新后，再去异步更新视图，核心的方法就是 `nextTick`
+
+#### 原理
+1. 当数据变化后会调用 `Dep` 类中的 `notify` 方法，该方法将 `watcher` 遍历，调用 `update` 方法通知 `watcher` 进行更新，这时候 `watcher` 并不会立即去执行
+
+2. 在 `update` 中会调用 `queueWatcher` 方法将 `watcher` 去重放到了一个队列里
+
+3. 最后通过 `nextTick` 方法异步执行 `flushSchedulerQueue` 方法刷新 `watcher` 队列
+
+::: details 点击看源码
+`src\core\observer\dep.js`
+```js
+notify () { // 通知存储的依赖更新
+    const subs = this.subs.slice()
+    if (process.env.NODE_ENV !== 'production' && !config.async) {
+        subs.sort((a, b) => a.id - b.id)
+    }
+    // 循环watcher，发布订阅模式
+    for (let i = 0, l = subs.length; i < l; i++) {
+        subs[i].update() // 调用watcher中的update方法
+    }
+}
+```
+`src\core\observer\watcher.js`
+```js
+update () {
+    if (this.lazy) { // 计算属性
+      this.dirty = true
+    } else if (this.sync) { // 同步watcher
+      this.run()
+    } else {
+      queueWatcher(this) // 将watcher放入队列，this就是当前的watcher
+    }
+}
+```
+`src\core\observer\scheduler.js`
+```js
+export function queueWatcher (watcher: Watcher) {
+    const id = watcher.id // 过滤watcher，每个watcher有一个id，多个属性依赖同一个watcher
+    if (has[id] == null) { // 如果没有就会添加进去
+        has[id] = true
+        if (!flushing) {
+            queue.push(watcher) // 并且将watcher放到队列中去
+        } else {
+            let i = queue.length - 1
+            while (i > index && queue[i].id > watcher.id) {
+            i--
+            }
+            queue.splice(i + 1, 0, watcher)
+        }
+        if (!waiting) {
+            waiting = true
+
+            if (process.env.NODE_ENV !== 'production' && !config.async) {
+            flushSchedulerQueue() // 会做一个清空queue的操作
+            return
+            }
+            nextTick(flushSchedulerQueue) // 在下一个tick中刷新watcher队列
+        }
+    }
+}
+```
+:::
+
+## ● Vue中的 $nextTick 怎么理解?
+在下次 DOM 更新循环结束之后执行延迟回调。`nextTick` 主要使用了宏任务和微任务。根据执行环境分别尝试采用
+
+- Promise.then
+- MutationObserver
+- setImmediate
+- setTimeout
+
+原生方法执行回调函数
+
+### 实现原理
+1. 将传入实例方法 `$nextTick` 的回调函数，压入 `callbacks` 数组，也就是异步队列，然后执行 `timerFunc` 函数
+::: details 点击看源码
+```js
+export function nextTick (cb?: Function, ctx?: Object) {
+  let _resolve
+  callbacks.push(() => {
+    if (cb) {
+      try {
+        cb.call(ctx)
+      } catch (e) {
+        handleError(e, ctx, 'nextTick')
+      }
+    } else if (_resolve) {
+      _resolve(ctx)
+    }
+  })
+  if (!pending) {
+    pending = true
+    timerFunc()
+  }
+  // $flow-disable-line
+  if (!cb && typeof Promise !== 'undefined') {
+    return new Promise(resolve => {
+      _resolve = resolve
+    })
+  }
+}
+```
+:::
+
+2. `timerFunc` 函数会依次尝试使用原生的 `Promise.then`、`MutationObserver` 、`setImmediate` 、`setTimeout(fn, 0) `，执行 `flushCallbacks` 函数
+::: details 点击看源码
+```js
+if (typeof Promise !== 'undefined' && isNative(Promise)) {
+  const p = Promise.resolve()
+  timerFunc = () => {
+    p.then(flushCallbacks)
+    // In problematic UIWebViews, Promise.then doesn't completely break, but
+    // it can get stuck in a weird state where callbacks are pushed into the
+    // microtask queue but the queue isn't being flushed, until the browser
+    // needs to do some other work, e.g. handle a timer. Therefore we can
+    // "force" the microtask queue to be flushed by adding an empty timer.
+    if (isIOS) setTimeout(noop)
+  }
+  isUsingMicroTask = true
+} else if (!isIE && typeof MutationObserver !== 'undefined' && (
+  isNative(MutationObserver) ||
+  // PhantomJS and iOS 7.x
+  MutationObserver.toString() === '[object MutationObserverConstructor]'
+)) {
+  // Use MutationObserver where native Promise is not available,
+  // e.g. PhantomJS, iOS7, Android 4.4
+  // (#6466 MutationObserver is unreliable in IE11)
+  let counter = 1
+  const observer = new MutationObserver(flushCallbacks)
+  const textNode = document.createTextNode(String(counter))
+  observer.observe(textNode, {
+    characterData: true
+  })
+  timerFunc = () => {
+    counter = (counter + 1) % 2
+    textNode.data = String(counter)
+  }
+  isUsingMicroTask = true
+} else if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
+  // Fallback to setImmediate.
+  // Technically it leverages the (macro) task queue,
+  // but it is still a better choice than setTimeout.
+  timerFunc = () => {
+    setImmediate(flushCallbacks)
+  }
+} else {
+  // Fallback to setTimeout.
+  timerFunc = () => {
+    setTimeout(flushCallbacks, 0)
+  }
+}
+```
+::: 
+
+3. `flushCallbacks` 函数，依次执行 `callbacks` 里面的回调函数
+::: details 点击看源码
+```js
+function flushCallbacks () {
+  pending = false
+  const copies = callbacks.slice(0)
+  callbacks.length = 0
+  for (let i = 0; i < copies.length; i++) {
+    copies[i]()
+  }
+}
+```
+:::
+
 ## ● Vue 组件间通信有哪几种方式？
 ### 1. props/$emit
 父组件通过 props 向子组件传递数据，子组件通过 $emit 向父组件派发一个事件，并且可以传递数据
 
 ### 2. $emit/$on
-通过创建一个空的vue实例作为事件中心，用来触发监听事件和触发事件，$on监听事件；$emit触发事件
+通过创建一个空的vue实例作为事件中心，用来触发监听事件和触发事件，`$on` 监听事件；`$emit` 触发事件
 ::: details 点击看例子
 创建一个空的 Vue 实例作为事件总线
 ```js
@@ -509,7 +686,6 @@ export default {
 ### 3. $attrs/$listeners
 `$attrs` 里存放的是父组件中绑定的非 `props` 属性，`$listeners` 存放的是父组件中绑定的非原生事件，一般配合`inheritAttrs`
 ::: details 点击看例子
-
 ```vue
 <!-- 父组件 -->
 <template>
@@ -621,7 +797,6 @@ export default {
 上面的例子中，`$attrs` 里存放的是父组件中绑定的非 `props` 属性，可以通过 `v-bind` 绑定 `$attrs` 继续向下传递，`$listeners` 存放的是父组件中绑定的非原生事件，也可以通过 `v-on="$listeners"`，将事件监听器继续向下传递
 :::
 
-
 ### 4. provide/inject
 这对选项需要一起使用，以允许一个祖先组件向其所有子孙后代注入一个依赖，不论组件层次有多深
 
@@ -666,7 +841,6 @@ export default {
 ```
 :::
 
-
 ### 5. $parent/$children
 `$parent` 可以访问父组件的实例，`$children` 可以访问子组件的实例
 
@@ -691,7 +865,7 @@ SSR大致的意思就是 vue 在客户端将标签渲染成的整个 html 片段
 ## ● Vue 是如何实现数据双向绑定的？
 Vue 数据双向绑定主要是指：数据变化更新视图，视图变化更新数据：
 
-其中，View 变化更新 Data ，可以通过事件监听的方式来实现，所以 Vue 的数据双向绑定的工作主要是如何根据 Data 变化更新 View。
+其中，`View` 变化更新 `Data` ，可以通过事件监听的方式来实现，所以 `Vue` 的数据双向绑定的工作主要是如何根据 `Data` 变化更新 `View`。
 
 Vue 主要通过以下 4 个步骤来实现数据双向绑定的：
 - 实现一个监听器 Observer：对数据对象进行遍历，包括子属性对象的属性，利用 Object.defineProperty() 对属性都加上 setter 和 getter。这样的话，给这个对象的某个值赋值，就会触发 setter，那么就能监听到了数据变化。
@@ -830,262 +1004,11 @@ vue 中 key 值的作用可以分为两种情况来考虑。
     - 同名钩子函数将合并为一个数组，因此都将被调用，另外，**混入对象的钩子将在组件自身钩子之前调用**
     - 值为对象的选项(methods、components、directives)，将被合并为同一个对象。两个对象键名冲突时，取 **组件对象** 的键值对。
 
-## ● 如何让 CSS 只在当前组件中起作用
-在组件的 `style` 标签加上 `scoped` 属性
-
-## ● 渐进式框架的理解
-**主张最少**：在不同的场景，使用 `vue` 中不同的功能
-框架做分层设计，每层都是可选，不同层可以灵活接入其他方案，当你都想用官方的实现时，会发现也早已准备好，各层之间包括配套工具都能比接入其他方案更便捷地协同工作。
-
-## ● assets 和 static 的区别
-区别：`webpack` 处理静态资源的方式不同
-相同点：都是存放静态资源的文件夹，比如：图片、字体图标、样式文件
-- assets
-    - 会走打包流程
-    - 要以相对路径的方式引用，`webpack` 会解析成为模板依赖，会使用相应的 `loader` 解析
-- static
-    - 要以绝对路径的形式引用，该目录下的文件不会被 `webpack` 处理，会直接复制到最终的打包目录下
-
-## ● 如何获取 DOM
-1. 直接给相应的元素加 `id`，然后再 document.getElementById('id') 获取，
-2. 在 `DOM` 元素或者组件上加 `ref="name"`，通过 `this.$refs.name` 获取到该元素，如果在组件上，会获取到组件实例
-
-## ● 说出几种 vue 当中的指令和它的用法？
-- `v-bind`: 绑定元素属性
-- `v-on`: 绑定事件监听器
-- `v-if`: 根据表达式的真假值，有条件地渲染元素
-- `v-show`: 根据表达式的真假值，切换 `css` 的 `display` 属性
-- `v-text`: 更新元素的内容
-- `v-html`: 更新元素的 `innerHTML`，内容按普通的 `HTML` 插入，不会作为 `Vue` 模板进行编译
-- `v-for`: 基于数据源多次渲染元素或模板块
-- `v-modul`: 在表单控件或者组件上创建双向数据绑定
-- `v-solt`: 提供具名插槽或者需要接收 prop 的插槽
-- `v-pre`: 跳过这个元素和它的子元素的编译过程，可以用来显示原始标签，跳过大量没有指令的节点会加快编译
-- `v-once`: 只渲染元素和组件一次，随后的重新渲染，元素或组件及其所有的子节点将被视为静态内容并跳过
-
-## ● 请说出 vue.cli 项目中 src 目录每个文件夹和文件的用法？
-- `assets` 文件夹是放静态资源
-- `components` 是放组件
-- `router` 是定义路由相关的配置
-- `view` 视图
-- `app.vue` 是一个应用主组件
-- `main.js` 是入口文件
-
-## ● vm.$set 原理
-向响应式对象中添加一个 `属性(property)`，并确保这个新 `属性(property)` 同样是响应式的，且触发视图更新
-1. `target(添加的数据)`为数组：利用数组的 `splice` 变异方法触发响应式
-2. `target(添加的数据)`为对象：判断属性存在，即为响应式，直接赋值
-3. `target(添加的数据)`本身就不是响应式，给`target`创建一个全新的属性，直接赋值，调用 defineReactive 方法进行响应式处理
-
-## ● 为什么Vue中的v-if和v-for不建议一起用
-因为 `v-for` 比 `v-if` 的优先级更高，`v-if` 和 `v-for` 同时用在同一个元素上，每次渲染都会先循环再进行条件判断，带来性能方面的浪费
-
-## ● Vue 中组件和插件有什么区别？
-**组件**：组件就是把图形、非图形的各种逻辑均抽象为一个统一的概念（组件）来实现开发的模式，在Vue中每一个.vue文件都可以视为一个组件
-
-**插件**：通常用来为 `Vue` 添加全局功能。插件的功能范围没有严格的限制——一般有下面几种：
-- 添加全局方法或者属性。如: `vue-custom-element`
-- 添加全局资源：指令/过滤器/过渡等。如 `vue-touch`
-- 通过全局混入来添加一些组件选项。如 `vue-router`
-- 添加 Vue 实例方法，通过把它们添加到 `Vue.prototype` 上实现。
-- 一个库，提供自己的 API，同时提供上面提到的一个或多个功能。如 `vue-router`
-
-两者的区别:
-### 1. 编写形式
-#### 编写组件
-编写一个组件，可以有很多方式，我们最常见的就是 `vue` 单文件的这种格式，每一个 `.vue` 文件我们都可以看成是一个组件
-```vue
-<template>
-</template>
-<script>
-export default{ 
-    ...
-}
-</script>
-<style>
-</style>
-```
-还可以通过 `template` 属性来编写一个组件
-```js
-<template id="testComponent">     // 组件显示的内容
-    <div>component!</div>   
-</template>
-
-Vue.component('componentA',{ 
-    template: `<div>component</div>`  // 组件内容少可以通过这种形式
-})
-```
-
-#### 编写插件
-`vue` 插件的实现应该暴露一个 `install` 方法。这个方法的第一个参数是 `Vue` 构造器，第二个参数是一个可选的选项对象
-```js
-MyPlugin.install = function (Vue, options) {
-  // 1. 添加全局方法或 property
-  Vue.myGlobalMethod = function () {
-    // 逻辑...
-  }
-
-  // 2. 添加全局资源
-  Vue.directive('my-directive', {
-    bind (el, binding, vnode, oldVnode) {
-      // 逻辑...
-    }
-    ...
-  })
-
-  // 3. 注入组件选项
-  Vue.mixin({
-    created: function () {
-      // 逻辑...
-    }
-    ...
-  })
-
-  // 4. 添加实例方法
-  Vue.prototype.$myMethod = function (methodOptions) {
-    // 逻辑...
-  }
-}
-```
-
-### 2. 注册形式
-#### 组件注册
-`vue` 组件注册主要分为全局注册与局部注册
-
-**全局注册**：通过 `Vue.component` 方法，第一个参数为组件的名称，第二个参数为传入的配置项
-```js
-Vue.component('my-component-name', { /* ... */ })
-```
-
-**局部注册**：只需在用到的地方通过 `components` 属性注册一个组件
-```js
-const component1 = {...} // 定义一个组件
-
-export default {
- components:{
-  component1   // 局部注册
- }
-}
-```
-
-#### 插件注册
-插件的注册通过 `Vue.use()` 的方式进行注册（安装），第一个参数为插件的名字，第二个参数是可选择的配置项
-```js
-Vue.use(插件名字,{ /* ... */} )
-```
-> 注册插件的时候，需要在调用 `new Vue()` 启动应用之前完成 `Vue.use` 会自动阻止多次注册相同插件，只会注册一次
-
-### 3. 使用场景
-**组件** (Component) 是用来构成应用的业务模块，它的目标是 `App.vue`
-
-**插件** (Plugin) 是用来增强你的技术栈的功能模块，它的目标是 `Vue` 本身，简单来说，插件就是指对 `Vue` 的功能的增强或补充
-
-## ● Vue中的 $nextTick 怎么理解?
-在下次 DOM 更新循环结束之后执行延迟回调。`nextTick` 主要使用了宏任务和微任务。根据执行环境分别尝试采用
-
-- Promise
-- MutationObserver
-- setImmediate
--如果以上都不行则采用setTimeout
-
-
-### 实现原理
-1. 将传入实例方法 `$nextTick` 的回调函数，压入 `callbacks` 数组，也就是异步队列，然后执行 `timerFunc` 函数
-::: details 点击看源码
-```js
-export function nextTick (cb?: Function, ctx?: Object) {
-  let _resolve
-  callbacks.push(() => {
-    if (cb) {
-      try {
-        cb.call(ctx)
-      } catch (e) {
-        handleError(e, ctx, 'nextTick')
-      }
-    } else if (_resolve) {
-      _resolve(ctx)
-    }
-  })
-  if (!pending) {
-    pending = true
-    timerFunc()
-  }
-  // $flow-disable-line
-  if (!cb && typeof Promise !== 'undefined') {
-    return new Promise(resolve => {
-      _resolve = resolve
-    })
-  }
-}
-```
-:::
-
-2. `timerFunc` 函数定义，对异步队列尝试使用原生的 `Promise.then`、`MutationObserver` 和 `setImmediate`，如果执行环境不支持，则会采用 `setTimeout(fn, 0) `代替。
-::: details 点击看源码
-```js
-if (typeof Promise !== 'undefined' && isNative(Promise)) {
-  const p = Promise.resolve()
-  timerFunc = () => {
-    p.then(flushCallbacks)
-    // In problematic UIWebViews, Promise.then doesn't completely break, but
-    // it can get stuck in a weird state where callbacks are pushed into the
-    // microtask queue but the queue isn't being flushed, until the browser
-    // needs to do some other work, e.g. handle a timer. Therefore we can
-    // "force" the microtask queue to be flushed by adding an empty timer.
-    if (isIOS) setTimeout(noop)
-  }
-  isUsingMicroTask = true
-} else if (!isIE && typeof MutationObserver !== 'undefined' && (
-  isNative(MutationObserver) ||
-  // PhantomJS and iOS 7.x
-  MutationObserver.toString() === '[object MutationObserverConstructor]'
-)) {
-  // Use MutationObserver where native Promise is not available,
-  // e.g. PhantomJS, iOS7, Android 4.4
-  // (#6466 MutationObserver is unreliable in IE11)
-  let counter = 1
-  const observer = new MutationObserver(flushCallbacks)
-  const textNode = document.createTextNode(String(counter))
-  observer.observe(textNode, {
-    characterData: true
-  })
-  timerFunc = () => {
-    counter = (counter + 1) % 2
-    textNode.data = String(counter)
-  }
-  isUsingMicroTask = true
-} else if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
-  // Fallback to setImmediate.
-  // Technically it leverages the (macro) task queue,
-  // but it is still a better choice than setTimeout.
-  timerFunc = () => {
-    setImmediate(flushCallbacks)
-  }
-} else {
-  // Fallback to setTimeout.
-  timerFunc = () => {
-    setTimeout(flushCallbacks, 0)
-  }
-}
-```
-::: 
-
-3. 依次执行 `callbacks` 里面的函数
-::: details 点击看源码
-```js
-function flushCallbacks () {
-  pending = false
-  const copies = callbacks.slice(0)
-  callbacks.length = 0
-  for (let i = 0; i < copies.length; i++) {
-    copies[i]()
-  }
-}
-```
-:::
-
 ## ● 说说你对 vue 的 mixin 的理解，有哪些应用场景？
 **mixin（混入）**，提供了一种非常灵活的方式，来分发 `Vue` 组件中的可复用功能。本质其实就是一个 `js` 对象，它可以包含我们组件中任意功能选项，如 `data`、`components`、`methods`、`created`、`computed`等等
+
+## ● vue中相同逻辑如何抽离
+用一个对象将相同的逻辑抽离出来，再使用 `mixins` 选项混入到组件
 
 ### 局部混入
 定义一个 `mixin` 对象，有组件 `options` 的`data`、`methods`属性
@@ -1200,6 +1123,161 @@ export function mergeOptions(
 - 先遍历合并 `parent` 中的 `key`，调用 `mergeField` 方法进行合并，然后保存在变量 `options`
 - 再遍历 `child`，合并补上 `parent` 中没有的 `key`，调用 `mergeField` 方法进行合并，保存在变量 `options`
 - 通过 `mergeField` 函数进行了合并
+
+## ● 如何让 CSS 只在当前组件中起作用
+在组件的 `style` 标签加上 `scoped` 属性
+
+## ● 渐进式框架的理解
+**主张最少**：在不同的场景，使用 `vue` 中不同的功能
+框架做分层设计，每层都是可选，不同层可以灵活接入其他方案，当你都想用官方的实现时，会发现也早已准备好，各层之间包括配套工具都能比接入其他方案更便捷地协同工作。
+
+## ● assets 和 static 的区别
+区别：`webpack` 处理静态资源的方式不同
+相同点：都是存放静态资源的文件夹，比如：图片、字体图标、样式文件
+- assets
+    - 会走打包流程
+    - 要以相对路径的方式引用，`webpack` 会解析成为模板依赖，会使用相应的 `loader` 解析
+- static
+    - 要以绝对路径的形式引用，该目录下的文件不会被 `webpack` 处理，会直接复制到最终的打包目录下
+
+## ● 如何获取 DOM
+1. 直接给相应的元素加 `id`，然后再 document.getElementById('id') 获取，
+2. 在 `DOM` 元素或者组件上加 `ref="name"`，通过 `this.$refs.name` 获取到该元素，如果在组件上，会获取到组件实例
+
+## ● 说出几种 vue 当中的指令和它的用法？
+- `v-bind`: 绑定元素属性
+- `v-on`: 绑定事件监听器
+- `v-if`: 根据表达式的真假值，有条件地渲染元素
+- `v-show`: 根据表达式的真假值，切换 `css` 的 `display` 属性
+- `v-text`: 更新元素的内容
+- `v-html`: 更新元素的 `innerHTML`，内容按普通的 `HTML` 插入，不会作为 `Vue` 模板进行编译
+- `v-for`: 基于数据源多次渲染元素或模板块
+- `v-modul`: 在表单控件或者组件上创建双向数据绑定
+- `v-solt`: 提供具名插槽或者需要接收 prop 的插槽
+- `v-pre`: 跳过这个元素和它的子元素的编译过程，可以用来显示原始标签，跳过大量没有指令的节点会加快编译
+- `v-once`: 只渲染元素和组件一次，随后的重新渲染，元素或组件及其所有的子节点将被视为静态内容并跳过
+
+## ● 请说出 vue.cli 项目中 src 目录每个文件夹和文件的用法？
+- `assets` 文件夹是放静态资源
+- `components` 是放组件
+- `router` 是定义路由相关的配置
+- `view` 视图
+- `app.vue` 是一个应用主组件
+- `main.js` 是入口文件
+
+## ● vm.$set 原理
+向响应式对象中添加一个 `属性(property)`，并确保这个新 `属性(property)` 同样是响应式的，且触发视图更新
+1. `target(添加的数据)`为数组：利用数组的 `splice` 变异方法触发响应式
+2. `target(添加的数据)`为对象：判断属性存在，即为响应式，直接赋值
+3. `target(添加的数据)`本身就不是响应式，给`target`创建一个全新的属性，直接赋值，调用 defineReactive 方法进行响应式处理
+
+## ● 为什么Vue中的v-if和v-for不建议一起用
+因为 `v-for` 比 `v-if` 的优先级更高，`v-if` 和 `v-for` 同时用在同一个元素上，每次渲染都会先循环再进行条件判断，带来性能方面的浪费
+
+## ● 描述组件渲染和更新过程
+- 渲染组件时，会通过 `vue.extend()` 方法构建子组件的构造函数，并进行实例化，最终手动调用 `$mount()` 进行挂载
+- 更新组件时，会进行 `patchVnode` 流程，核心就是 `diff` 算法
+
+## ● Vue 中组件和插件有什么区别？
+**组件**：组件就是把图形、非图形的各种逻辑均抽象为一个统一的概念（组件）来实现开发的模式，在Vue中每一个.vue文件都可以视为一个组件
+
+**插件**：通常用来为 `Vue` 添加全局功能。插件的功能范围没有严格的限制——一般有下面几种：
+- 添加全局方法或者属性。如: `vue-custom-element`
+- 添加全局资源：指令/过滤器/过渡等。如 `vue-touch`
+- 通过全局混入来添加一些组件选项。如 `vue-router`
+- 添加 Vue 实例方法，通过把它们添加到 `Vue.prototype` 上实现。
+- 一个库，提供自己的 API，同时提供上面提到的一个或多个功能。如 `vue-router`
+
+两者的区别:
+### 1. 编写形式
+#### 编写组件
+编写一个组件，可以有很多方式，我们最常见的就是 `vue` 单文件的这种格式，每一个 `.vue` 文件我们都可以看成是一个组件
+```vue
+<template>
+</template>
+<script>
+export default{ 
+    ...
+}
+</script>
+<style>
+</style>
+```
+还可以通过 `template` 属性来编写一个组件
+```js
+<template id="testComponent">     // 组件显示的内容
+    <div>component!</div>   
+</template>
+
+Vue.component('componentA',{ 
+    template: `<div>component</div>`  // 组件内容少可以通过这种形式
+})
+```
+
+#### 编写插件
+`vue` 插件的实现应该暴露一个 `install` 方法。这个方法的第一个参数是 `Vue` 构造器，第二个参数是一个可选的选项对象
+```js
+MyPlugin.install = function (Vue, options) {
+  // 1. 添加全局方法或 property
+  Vue.myGlobalMethod = function () {
+    // 逻辑...
+  }
+
+  // 2. 添加全局资源
+  Vue.directive('my-directive', {
+    bind (el, binding, vnode, oldVnode) {
+      // 逻辑...
+    }
+    ...
+  })
+
+  // 3. 注入组件选项
+  Vue.mixin({
+    created: function () {
+      // 逻辑...
+    }
+    ...
+  })
+
+  // 4. 添加实例方法
+  Vue.prototype.$myMethod = function (methodOptions) {
+    // 逻辑...
+  }
+}
+```
+
+### 2. 注册形式
+#### 组件注册
+`vue` 组件注册主要分为全局注册与局部注册
+
+**全局注册**：通过 `Vue.component` 方法，第一个参数为组件的名称，第二个参数为传入的配置项
+```js
+Vue.component('my-component-name', { /* ... */ })
+```
+
+**局部注册**：只需在用到的地方通过 `components` 属性注册一个组件
+```js
+const component1 = {...} // 定义一个组件
+
+export default {
+ components:{
+  component1   // 局部注册
+ }
+}
+```
+
+#### 插件注册
+插件的注册通过 `Vue.use()` 的方式进行注册（安装），第一个参数为插件的名字，第二个参数是可选择的配置项
+```js
+Vue.use(插件名字,{ /* ... */} )
+```
+> 注册插件的时候，需要在调用 `new Vue()` 启动应用之前完成 `Vue.use` 会自动阻止多次注册相同插件，只会注册一次
+
+### 3. 使用场景
+**组件** (Component) 是用来构成应用的业务模块，它的目标是 `App.vue`
+
+**插件** (Plugin) 是用来增强你的技术栈的功能模块，它的目标是 `Vue` 本身，简单来说，插件就是指对 `Vue` 的功能的增强或补充
+
 
 ## ● 说说你对 slot 的理解？slot 使用场景有哪些？
 `Vue` 实现了一套内容分发的 `API`，将 `<slot>` 元素作为承载分发内容的出口

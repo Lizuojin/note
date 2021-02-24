@@ -76,6 +76,9 @@ sidebarDepth: 2
     ```
     :::
 
+- 模板中访问 `refs` 被自动解开的
+
+
 #### watch 监听器
 `watch` 函数接受 3 个参数
 - 一个响应式引用或我们想要侦听的 `getter` 函数
@@ -108,6 +111,18 @@ export default {
 :::
 
 #### computed 计算属性
+与 `ref` 和 `watch` 类似，也可以使用从 `Vue` 导入的 `computed` 函数在 `Vue` 组件外部创建计算属性
+```js
+import { ref, computed } from 'vue'
+
+const counter = ref(0)
+const twiceTheCounter = computed(() => counter.value * 2)
+
+counter.value++
+console.log(counter.value) // 1
+console.log(twiceTheCounter.value) // 2
+```
+
 
 ### setup 内的生命周期钩子
 组合式 `API` 上的生命周期钩子与选项式 `API` 的名称相同，但前缀为 `on:`即 `mounted` 看起来像 `onMounted`
@@ -132,11 +147,73 @@ setup (props) {
 }
 ```
 
+### provide/inject
+我们也可以在 `组合式 API` 中使用 `provide/inject`。两者都只能在当前活动实例的 `setup()` 期间调用。
 
+- 在 `setup()` 中使用 `provide` 和 `inject` 时，需要从 `vue` 显式导入 `provide` 和 `inject`
+- 为了增加 `provide` 值和 `inject` 值之间的响应性，可以在`provide`值使用 `ref` 或 `reactive`
+- 尽可能在 `provide` 组件内保持响应式 `property` 的任何更改，确保不会被 `inject` 的组件更改，可以对 `provide` 的属性使用 `readonly`
 
-#### 独立的 computed 属性
+::: details 点击看例子
+```vue
+<!-- src/components/MyMap.vue -->
+<template>
+  <MyMarker />
+</template>
 
+<script>
+import { provide, reactive, readonly, ref } from 'vue' // 显示导入
+import MyMarker from './MyMarker.vue
 
+export default {
+components: {
+    MyMarker
+},
+setup() {
+    // provide 使用响应式数据，provide与 inject 之间建立响应性
+    const location = ref('North Pole')
+    const geolocation = reactive({
+        longitude: 90,
+        latitude: 135
+    })
+
+    const updateLocation = () => {
+    location.value = 'South Pole'
+    }
+
+    // 对 `provide` 的属性使用 `readonly`，保不会被 `inject` 的组件更改
+    provide('location', readonly(location))
+    provide('geolocation', readonly(geolocation))
+
+    provide('updateLocation', updateLocation)
+}
+}
+</script>
+```
+
+```vue
+<!-- src/components/MyMarker.vue -->
+<script>
+import { inject } from 'vue'
+
+export default {
+  setup() {
+    const userLocation = inject('location', 'The Universe')
+    const userGeolocation = inject('geolocation')
+    const updateUserLocation = inject('updateLocation')
+
+    return {
+      userLocation,
+      userGeolocation,
+      updateUserLocation
+    }
+  }
+}
+</script>
+```
+:::
+
+### 模板引用
 
 
 

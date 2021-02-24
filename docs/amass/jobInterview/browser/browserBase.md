@@ -303,7 +303,6 @@ console.log(sessionStorage.getItem('age'));// 打印23
 - `cookie` 可以由服务器通过 `http` 来设定
  
 ## ● cookie由哪些部分组成？
-
 除了基础的键值对外，`cookie` 还有下面的属性：
 - Expires ：`cookie` 最长有效期
 - Max-Age：在 `cookie` 失效之前需要经过的秒数
@@ -313,7 +312,14 @@ console.log(sessionStorage.getItem('age'));// 打印23
 - Secure：一个带有安全属性的 `cookie` 只有在请求使用`SSL`和`HTTPS`协议的时候才会被发送到服务器。
 - HttpOnly：设置了 `HttpOnly` 属性的 `cookie` 不能使用 `JavaScript` 经由 `Document.cookie` 属性、`XMLHttpRequest` 和 `Request APIs` 进行访问，以防范跨站脚本攻击（XSS）。
 
+## 请你谈谈Cookie的弊端
+`cookie` 虽然在持久保存客户端数据提供了方便，分担了服务器存储的负担，但还是有很多局限性的
 
+### 1. 每个特定的域名下最多生成20个cookie
+- IE6或更低版本最多20个cookie
+- IE7和之后的版本最后可以有50个cookie。
+- Firefox最多50个cookie
+- chrome和Safari没有做硬性限制
 
 ## ● Service Worler
 `Service Worker` 是运行在浏览器背后的独立线程，一般可以用来实现缓存功能。使用 `Service Worker` 的话，传输协议必须为 HTTPS。因为 `Service Worker` 中涉及到请求拦截，所以必须使用 `HTTPS` 协议来保障安全。
