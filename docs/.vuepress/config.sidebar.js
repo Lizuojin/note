@@ -141,12 +141,12 @@ module.exports = {
         },
         {
             title: "CSS相关",
-            collapsable: true,
+            collapsable: false,
             path: '/amass/jobInterview/css/css'
         },
         {
             title: "HTML相关",
-            collapsable: true,
+            collapsable: false,
             path: '/amass/jobInterview/html/html'
         },
         {
@@ -171,9 +171,9 @@ module.exports = {
     "/vue/vue3/": [
         {
             title: "目录",
-            collabsable: true,
+            collabsable: false,
             children: [
-                { collabsable: true, title: '新特性', path: '/vue/vue3/newFeature' },
+                { title: '新特性', path: '/vue/vue3/newFeature' },
             ]
         },
     ],
@@ -223,6 +223,16 @@ module.exports = {
             collapsable: false,
             children: [
                 { title: '学习笔记', path: '/webAll/ts/ts' },
+            ]
+        },
+    ],
+    "/webAll/axios/":[
+        {
+            title: "目录",
+            collapsable: false,
+            children: [
+                { title: 'axios 基础', path: '/webAll/axios/axiosBase'},
+                { title: 'axios 源码', path: '/webAll/axios/axiosCode'},
             ]
         },
     ]

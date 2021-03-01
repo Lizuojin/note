@@ -31,9 +31,10 @@ module.exports = {
             {
                 text: '大前端',
                 items: [
-                    { text: 'webpack', link: '/webAll/webpack/' },
+                    { text: 'Webpack', link: '/webAll/webpack/' },
                     { text: 'Node', link: '/webAll/node/introduce'},
                     { text: 'TypeScript', link: '/webAll/ts/ts'},
+                    { text: 'Axios', link: '/webAll/axios/'},
                     {
                         text: '方法论',
                         items: [

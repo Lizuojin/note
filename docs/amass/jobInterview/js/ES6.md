@@ -13,7 +13,7 @@ sidebarDepth: 1
 5. `const` 声明的常量，一旦声明则不能再次赋值，再次赋值会报错(更改对象属性不会，因为对象地址没有变)
 :::
 
-#### 作用域提升：
+#### 变量提升：
 ```js
 console.log(a);  // 输出undefined
 console.log(b);  // 报错
