@@ -59,7 +59,32 @@ computed: {
 }
 ```
 
+## ● 页面刷新vuex被清空解决办法？
 
+### 1. 使用 HTML5 本地存储
+- localStorage
+- sessionStorage
+
+### 2. 使用 vuex-persisted 插件
+该插件的原理也是使用 HTML5 本地存储功能实现的，默认是使用 `localStorage`
+```js
+import createPersistedState from "vuex-persistedstate"
+const store = new Vuex.Store({
+    // ...
+    plugins: [createPersistedState()]
+})
+```
+
+存储到 sessionStorage 配置如下
+```js
+import createPersistedState from "vuex-persistedstate"
+const store = new Vuex.Store({
+ // ...
+ plugins: [createPersistedState({
+    storage: window.sessionStorage
+ })]
+})
+```
 
 
 

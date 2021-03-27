@@ -393,13 +393,21 @@ BFC常见应用例子：
 - 旋转：transform
 - border-image
 - 媒体查询
-- 
+
+## 弹性布局 display: flex
+
+### 1. 基本概念
+- 采用 `Flex` 布局的元素，称为 `Flex 容器`，简称容器
+- 它的所有子元素自动成为容器成员，称为 `Flex 项目`，简称 `项目`
+
+### 2. 容器属性
+![img](./image/display-flex1.png)
+
+### 3. 项目属性
+![img](./image/display-flex2.png)
 
 
-
-
-
-
+参考文献：[弹性布局(display:flex)](https://www.cnblogs.com/hellocd/p/10443237.html)
 
 
 
